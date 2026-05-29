@@ -1,0 +1,76 @@
+/* =================================================================== */
+/* MESSAGES & EMPTY STATES — PREMIUM UX                                */
+/* =================================================================== */
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--bg-glass-light);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  margin: 24px 0;
+}
+
+.empty-state-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  color: var(--text-muted);
+  opacity: 0.5;
+  filter: grayscale(1);
+}
+
+.empty-state h3 {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-xl);
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* ------------------------------------------------------------------- */
+/* ALERT BOXES (Inline Messages)                                       */
+/* ------------------------------------------------------------------- */
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--radius-md);
+  background: var(--bg-glass-medium);
+  border: 1px solid var(--border-medium);
+  margin-bottom: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.alert-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.alert-content { flex: 1; }
+.alert-title { font-weight: var(--font-weight-bold); font-family: var(--font-family-display); margin-bottom: 4px; }
+.alert-text { font-size: var(--font-size-sm); color: var(--text-secondary); }
+
+/* Variações */
+.alert-info { background: rgba(0, 210, 255, 0.05); border-color: rgba(0, 210, 255, 0.2); }
+.alert-info .alert-icon { color: var(--accent-blue); }
+
+.alert-warning { background: rgba(249, 200, 70, 0.05); border-color: rgba(249, 200, 70, 0.2); }
+.alert-warning .alert-icon { color: var(--accent-gold); }
+
+.alert-danger { background: rgba(255, 51, 102, 0.05); border-color: rgba(255, 51, 102, 0.2); }
+.alert-danger .alert-icon { color: var(--accent-danger); }
+
+.alert-success { background: rgba(0, 255, 135, 0.05); border-color: rgba(0, 255, 135, 0.2); }
+.alert-success .alert-icon { color: var(--accent-primary); }

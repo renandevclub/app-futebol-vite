@@ -1,0 +1,159 @@
+/* =================================================================== */
+/* BUTTONS — PREMIUM INTERACTION                                       */
+/* =================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  font-family: var(--font-family-display);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius-full); /* Botões em formato "Pílula" (Pill) */
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  z-index: 1;
+}
+
+/* Efeito tátil global */
+.btn:active {
+  transform: scale(0.96);
+}
+
+/* ------------------------------------------------------------------- */
+/* BOTÃO PRIMÁRIO (Neon Green)                                         */
+/* ------------------------------------------------------------------- */
+.btn-primary {
+  background: var(--gradient-green-card);
+  color: var(--text-on-accent);
+  box-shadow: 0 4px 15px rgba(0, 255, 135, 0.2);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 0 20px var(--accent-primary-glow), inset 0 0 10px rgba(255,255,255,0.5);
+  transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  box-shadow: none;
+  border: 1px solid var(--border-medium);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ------------------------------------------------------------------- */
+/* BOTÃO DE DESTAQUE PREMIUM (Gold)                                    */
+/* ------------------------------------------------------------------- */
+.btn-premium {
+  background: var(--gradient-gold-card);
+  color: #000;
+  box-shadow: 0 4px 15px rgba(249, 200, 70, 0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+}
+
+.btn-premium:hover:not(:disabled) {
+  box-shadow: 0 0 20px var(--accent-gold-glow), inset 0 0 10px rgba(255,255,255,0.5);
+  transform: translateY(-2px);
+}
+
+/* ------------------------------------------------------------------- */
+/* BOTÃO SECUNDÁRIO (Glassmorphism outline)                            */
+/* ------------------------------------------------------------------- */
+.btn-secondary {
+  background: var(--bg-glass-medium);
+  color: var(--text-main);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--border-medium);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--bg-glass-heavy);
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 15px var(--accent-blue-glow);
+  transform: translateY(-2px);
+}
+
+/* ------------------------------------------------------------------- */
+/* BOTÃO DE PERIGO (Danger)                                            */
+/* ------------------------------------------------------------------- */
+.btn-danger {
+  background: var(--bg-glass-medium);
+  color: var(--accent-danger);
+  border: 1px solid var(--accent-danger);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--accent-danger);
+  color: #fff;
+  box-shadow: 0 0 20px var(--accent-danger-glow);
+  transform: translateY(-2px);
+}
+
+/* ------------------------------------------------------------------- */
+/* BOTÃO FANTASMA (Apenas texto)                                       */
+/* ------------------------------------------------------------------- */
+.btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--text-main);
+  background: var(--bg-glass-light);
+}
+
+/* ------------------------------------------------------------------- */
+/* TAMANHOS DE BOTÃO                                                   */
+/* ------------------------------------------------------------------- */
+.btn-sm {
+  padding: 8px 16px;
+  font-size: var(--font-size-sm);
+}
+
+.btn-lg {
+  padding: 16px 32px;
+  font-size: var(--font-size-lg);
+}
+
+.btn-icon {
+  padding: 12px;
+  border-radius: var(--radius-full);
+}
+
+/* Efeito de Loading nos botões (spinner integrado) */
+.btn.is-loading {
+  color: transparent !important;
+  pointer-events: none;
+  position: relative;
+}
+
+.btn.is-loading::after {
+  content: "";
+  position: absolute;
+  top: calc(50% - 10px);
+  left: calc(50% - 10px);
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

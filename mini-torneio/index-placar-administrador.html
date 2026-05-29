@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Placar Ao Vivo - ADMINISTRAÇÃO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos do arquivo original */
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); }
+        .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        .pulse-animation { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        
+        /* Cores dos Times */
+		        .time-color-1 {
+		            color: #007bff; /* Azul Vibrante */
+		            text-shadow: 1px 1px 2px rgba(0, 123, 255, 0.3);
+		        }
+		        .time-color-2 {
+		            color: #ff416c; /* Vermelho/Rosa Vibrante */
+		            text-shadow: 1px 1px 2px rgba(255, 65, 108, 0.3);
+		        }
+		        
+		        /* Cronômetro Digital */
+        .cronometro-display {
+            font-family: 'Courier New', monospace;
+            font-size: 6rem;
+            font-weight: 900;
+            text-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        /* Placar Digital */
+        .placar-numero {
+            font-family: 'Courier New', monospace;
+            font-size: 8rem;
+            font-weight: 900;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Animação de gol */
+        @keyframes golAnimation {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .gol-animation {
+            animation: golAnimation 0.5s ease-in-out;
+        }
+        
+        /* Botões de controle */
+        .btn-control {
+            transition: all 0.3s ease;
+        }
+        
+        .btn-control:active {
+            transform: scale(0.95);
+        }
+        
+        /* Status da partida */
+        .status-badge {
+            animation: pulse 2s infinite;
+        }
+
+        /* Destaque Admin */
+        .admin-header {
+            background-color: #ef4444; /* Vermelho para destacar a área de admin */
+        }
+    
+        /* ===== DESIGN ESPORTIVO VIBRANTE ===== */
+        
+        /* Cores Vibrantes */
+        :root {
+            --primary-blue: #007bff;
+            --primary-dark: #0056b3;
+            --accent-red: #ff416c;
+            --accent-orange: #ff4b2b;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+        }
+        
+        /* Melhorias Globais */
+        body {
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8ebf0 100%);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Headers com Design Esportivo */
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 65, 108, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        /* Cards com Efeito Vibrante */
+        .card-shadow {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(0, 123, 255, 0.05);
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 12px 40px rgba(0, 123, 255, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        /* Botões Vibrantes */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.3);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 0.75rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 65, 108, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        /* Inputs Melhorados */
+        .input-field {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .input-field:focus {
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+        
+        /* Badges e Destaques */
+        .badge-vibrante {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        /* Títulos com Estilo */
+        .section-title {
+            font-weight: 800;
+            color: #1f2937;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff 0%, #ff416c 100%);
+            border-radius: 2px;
+        }
+        
+        /* Animações Suaves */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+            }
+        }
+        
+        .animate-in {
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        /* Responsividade Mobile Otimizada */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .gradient-header {
+                padding: 1.5rem !important;
+            }
+            
+            .container {
+                padding: 1rem !important;
+            }
+            
+            .card-shadow {
+                border-radius: 1rem;
+            }
+            
+            .btn-primary {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+                border-radius: 0.625rem;
+            }
+            
+            .input-field {
+                padding: 0.75rem 0.875rem;
+                font-size: 16px;
+            }
+        }
+        
+        /* Grid Responsivo */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                gap: 1rem;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-cols-6 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Efeitos Hover Melhorados */
+        a, button {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-badge.live {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+</style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="supabase-client.js"></script>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Conteúdo Principal do Placar (Administração) -->
+    <div id="placar-content">
+        <!-- Header/Hero Section -->
+     <!-- Novo Header - Design Esportivo -->
+    <header class="gradient-header text-white py-12 shadow-lg">
+        <div class="container mx-auto px-4 max-w-full text-center">
+            <div class="mb-4">
+                <i class="fas fa-trophy text-4xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-1">
+                Mini Torneio (Bolão)
+            </h1>
+            <p class="text-lg md:text-xl font-medium opacity-90 mb-6">
+                Administração do Placar
+            </p>
+            <a href="index-pagina-principal.html" class="inline-flex items-center bg-white/20 hover:bg-white/30 px-6 py-3 rounded-full transition-all text-base font-bold shadow-xl hover:shadow-2xl">
+                <i class="fas fa-home mr-3"></i>Página Principal
+            </a>
+        </div>
+    </header>
+    <!-- Fim do Novo Header -->    </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 max-w-full py-8">
+            
+            <!-- Configuração Inicial da Partida -->
+            <section id="config-partida" class="mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-800">
+                        <i class="fas fa-cog text-blue-600 mr-2"></i>
+                        Configurar Partida
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Time 1</label>
+                            <select id="select-time1" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                                <option value="">Selecione o Time 1</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Time 2</label>
+                            <select id="select-time2" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                                <option value="">Selecione o Time 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <button id="btn-iniciar-partida" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-play mr-2"></i>
+                            Iniciar Partida
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Placar Ao Vivo -->
+            <section id="placar-ao-vivo" class="mb-8 hidden">
+                <div class="bg-white rounded-lg shadow-2xl p-8">
+                    
+                    <!-- Status da Partida -->
+                    <div class="text-center mb-6">
+                        <span id="status-partida" class="status-badge inline-block bg-red-500 text-white px-4 py-2 rounded-full font-semibold text-sm">
+                            <i class="fas fa-circle mr-2"></i>
+                            AO VIVO
+                        </span>
+                    </div>
+
+                    <!-- Cronômetro e Controles -->
+                    <div class="text-center mb-8">
+                        <div id="cronometro" class="cronometro-display text-blue-600">07:00</div>
+                        <div class="flex justify-center gap-4 mt-4">
+                            <button id="btn-play-pause" class="btn-control bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">
+                                <i class="fas fa-pause"></i>
+                            </button>
+                            <button id="btn-reset" class="btn-control bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Placar e Controles -->
+                    <div class="grid grid-cols-7 items-center gap-4 mb-8">
+                        <!-- Time 1 -->
+                        <div class="col-span-3">
+                            <div class="text-center">
+                                <h3 id="nome-time1" class="text-2xl font-extrabold mb-2 time-color-1">Time 1</h3>
+                                <div id="placar-time1" class="placar-numero-vibrante text-blue-600 mb-4 text-6xl font-extrabold">0</div>
+                                <div class="flex justify-center gap-3">
+                                    <button id="btn-aumentar-time1" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg text-2xl">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button id="btn-diminuir-time1" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg text-2xl">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-span-1 text-center">
+                            <span class="text-5xl font-bold text-gray-400">X</span>
+                        </div>
+
+                        <!-- Time 2 -->
+                        <div class="col-span-3">
+                            <div class="text-center">
+                                <h3 id="nome-time2" class="text-2xl font-extrabold mb-2 time-color-2">Time 2</h3>
+                                <div id="placar-time2" class="placar-numero-vibrante text-red-600 mb-4 text-6xl font-extrabold">0</div>
+                                <div class="flex justify-center gap-3">
+                                    <button id="btn-aumentar-time2" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg text-2xl">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button id="btn-diminuir-time2" class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg text-2xl">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registrar Gols Otimizado para Celular -->
+                    <div class="mt-8 p-4 bg-gray-50 rounded-lg shadow-inner">
+                        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">
+                            <i class="fas fa-futbol text-green-600 mr-2"></i> Registrar Gols
+                        </h3>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <!-- Time 1 -->
+                            <div class="p-3 bg-white rounded-lg shadow-sm border-l-4 border-blue-500">
+                                <label class="block text-sm font-medium text-gray-700 mb-2 font-bold">Time 1</label>
+                                <select id="select-artilheiro-time1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base">
+                                    <option value="">Quem marcou?</option>
+                                </select>
+                                <button id="btn-registrar-gol-time1" type="button" class="mt-3 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-all transform hover:scale-[1.01]">
+                                    <i class="fas fa-plus mr-2"></i> Registrar Gol
+                                </button>
+                            </div>
+                            <!-- Time 2 -->
+                            <div class="p-3 bg-white rounded-lg shadow-sm border-l-4 border-red-500">
+                                <label class="block text-sm font-medium text-gray-700 mb-2 font-bold">Time 2</label>
+                                <select id="select-artilheiro-time2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-base">
+                                    <option value="">Quem marcou?</option>
+                                </select>
+                                <button id="btn-registrar-gol-time2" type="button" class="mt-3 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all transform hover:scale-[1.01]">
+                                    <i class="fas fa-plus mr-2"></i> Registrar Gol
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Lista de Gols (Opcional, pode ser movida para um modal ou seção de detalhes se necessário) -->
+                        <div id="lista-gols-container" class="mt-6 border-t pt-4">
+                            <h4 class="text-lg font-bold text-gray-700 mb-3">Gols Registrados</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <h5 id="nome-time1-gols" class="text-sm font-semibold text-blue-600 mb-1">Time 1</h5>
+                                    <ul id="lista-gols-time1" class="space-y-1 text-gray-700 text-xs list-disc list-inside ml-2"></ul>
+                                </div>
+                                <div>
+                                    <h5 id="nome-time2-gols" class="text-sm font-semibold text-red-600 mb-1">Time 2</h5>
+                                    <ul id="lista-gols-time2" class="space-y-1 text-gray-700 text-xs list-disc list-inside ml-2"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botão Finalizar Partida -->
+                    <div class="mt-8 text-center">
+                        <button id="btn-finalizar-partida" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-lg transition-all transform hover:scale-105 shadow-lg">
+                            <i class="fas fa-flag-checkered mr-2"></i>
+                            Finalizar Partida
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            
+            
+            <!-- Histórico de Partidas -->
+            <section id="historico-partidas" class="mt-8">
+                <h2 class="text-3xl font-extrabold mb-6 text-gray-800 border-b-2 pb-2"><i class="fas fa-trophy text-yellow-500 mr-2"></i>Histórico de Partidas</h2>
+                <div id="historico-partidas-lista" class="mt-4 space-y-4 grid grid-cols-1 gap-4">
+                    <p class="text-gray-500 text-center py-8">Nenhuma partida finalizada ainda.</p>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white text-center py-6 mt-8">
+            <p>&copy; 2026 Mini Torneio (Bolão) - Área de Administração</p>
+        </footer>
+    </div>
+
+    <script type="module" src="placar_administrador.js"></script>
+</body>
+</html>

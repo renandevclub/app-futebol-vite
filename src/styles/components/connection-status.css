@@ -1,0 +1,71 @@
+/* =================================================================== */
+/* CONNECTION STATUS — Indicador de status da conexão Realtime         */
+/* =================================================================== */
+
+.fm-connection-dot {
+  position: fixed;
+  bottom: 80px;
+  right: 16px;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: var(--bg-card-elevated);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease, transform 0.3s var(--ease-out-expo);
+  pointer-events: none;
+  user-select: none;
+}
+
+.fm-connection-dot.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fm-connection-dot-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.3s ease;
+}
+
+.fm-connection-dot.connected .fm-connection-dot-indicator {
+  background: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green-glow);
+}
+
+.fm-connection-dot.connecting .fm-connection-dot-indicator,
+.fm-connection-dot.reconnecting .fm-connection-dot-indicator {
+  background: var(--accent-yellow);
+  box-shadow: 0 0 8px var(--accent-yellow-glow);
+  animation: pulse 1.5s infinite;
+}
+
+.fm-connection-dot.disconnected .fm-connection-dot-indicator {
+  background: var(--accent-red);
+  box-shadow: 0 0 8px var(--accent-red-glow);
+}
+
+.fm-connection-dot-label {
+  white-space: nowrap;
+}
+
+/* Esconde em mobile quando bottom nav ativa */
+@media (max-width: 900px) {
+  .fm-connection-dot {
+    bottom: 90px;
+    right: 8px;
+  }
+}

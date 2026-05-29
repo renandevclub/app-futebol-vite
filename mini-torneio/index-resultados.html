@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Resultados e Classificação - Mini Torneio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .gradient-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-shadow:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .tab-button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            border: none;
+            background: #f3f4f6;
+            color: #4b5563;
+            font-size: 1rem;
+        }
+
+        .tab-button:hover {
+            background: #e5e7eb;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .tabs-container {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .aba-content {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Estilos da Tabela de Classificação */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 1rem;
+            background: white;
+        }
+
+        .classification-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .classification-table thead {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .classification-table th {
+            font-weight: 700;
+            color: white;
+            padding: 1.25rem 0.75rem;
+            text-align: center;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .classification-table th:first-child {
+            text-align: center;
+            width: 60px;
+        }
+
+        .classification-table th:nth-child(2) {
+            text-align: left;
+        }
+
+        .classification-table tbody tr {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .classification-table tbody tr:hover {
+            background: linear-gradient(90deg, #f0fdf4 0%, #ffffff 100%);
+            box-shadow: inset 0 0 0 1px #d1fae5;
+        }
+
+        .classification-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .classification-table td {
+            padding: 1.25rem 0.75rem;
+            text-align: center;
+            font-size: 0.95rem;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .classification-table td:first-child {
+            text-align: center;
+        }
+
+        .classification-table td:nth-child(2) {
+            text-align: left;
+            padding-left: 1rem;
+        }
+
+        .position-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .position-1 {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+        }
+
+        .position-2 {
+            background: linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 100%);
+            color: #3730a3;
+        }
+
+        .position-3 {
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+            color: #7c2d12;
+        }
+
+        .position-other {
+            background: #e5e7eb;
+            color: #4b5563;
+        }
+
+        .team-name-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .team-name-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .stat-highlight {
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .stat-negative {
+            color: #ef4444;
+        }
+
+        /* Artilheiros */
+        .artilheiro-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fb 100%);
+            border-left: 4px solid #10b981;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .artilheiro-card:hover {
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+            transform: translateX(4px);
+        }
+
+        .artilheiro-rank {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-right: 1rem;
+            min-width: 2rem;
+            text-align: center;
+        }
+
+        .artilheiro-info {
+            flex: 1;
+        }
+
+        .artilheiro-name {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 1rem;
+        }
+
+        .artilheiro-team {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .artilheiro-gols {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Resultados */
+        .resultado-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fb 100%);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .resultado-card:hover {
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .resultado-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .resultado-data {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .resultado-status {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #0c4a6e;
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .resultado-placar {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .resultado-time {
+            flex: 1;
+        }
+
+        .resultado-time-nome {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .resultado-gols {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .resultado-separador {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #9ca3af;
+        }
+
+        .resultado-gols-detalhes {
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        .resultado-gols-titulo {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .resultado-gol-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #4b5563;
+            margin-bottom: 0.5rem;
+        }
+
+        .resultado-gol-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .resultado-gol-item i {
+            color: #10b981;
+            font-size: 0.75rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state-title {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .gradient-header {
+                padding: 2rem 1rem !important;
+            }
+
+            .container {
+                padding: 1rem !important;
+            }
+
+            .tabs-container {
+                gap: 0.5rem;
+            }
+
+            .tab-button {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .tab-button i {
+                font-size: 1.2rem;
+            }
+
+            .classification-table th,
+            .classification-table td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            .position-badge {
+                width: 2rem;
+                height: 2rem;
+                font-size: 0.9rem;
+            }
+
+            .resultado-placar {
+                grid-template-columns: 1fr auto 1fr;
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .resultado-gols {
+                font-size: 2rem;
+            }
+
+            .resultado-separador {
+                font-size: 1.2rem;
+            }
+
+            .artilheiro-card {
+                padding: 1rem;
+            }
+
+            .artilheiro-rank {
+                font-size: 1.25rem;
+                margin-right: 0.75rem;
+            }
+
+            .artilheiro-gols {
+                font-size: 1.5rem;
+            }
+        }
+    
+        /* ===== DESIGN ESPORTIVO VIBRANTE ===== */
+        
+        /* Cores Vibrantes */
+        :root {
+            --primary-blue: #007bff;
+            --primary-dark: #0056b3;
+            --accent-red: #ff416c;
+            --accent-orange: #ff4b2b;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+        }
+        
+        /* Melhorias Globais */
+        body {
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8ebf0 100%);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Headers com Design Esportivo */
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 65, 108, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        /* Cards com Efeito Vibrante */
+        .card-shadow {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(0, 123, 255, 0.05);
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 12px 40px rgba(0, 123, 255, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        /* Botões Vibrantes */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.3);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 0.75rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 65, 108, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        /* Inputs Melhorados */
+        .input-field {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .input-field:focus {
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+        
+        /* Badges e Destaques */
+        .badge-vibrante {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        /* Títulos com Estilo */
+        .section-title {
+            font-weight: 800;
+            color: #1f2937;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff 0%, #ff416c 100%);
+            border-radius: 2px;
+        }
+        
+        /* Animações Suaves */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+            }
+        }
+        
+        .animate-in {
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        /* Responsividade Mobile Otimizada */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .gradient-header {
+                padding: 1.5rem !important;
+            }
+            
+            .container {
+                padding: 1rem !important;
+            }
+            
+            .card-shadow {
+                border-radius: 1rem;
+            }
+            
+            .btn-primary {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+                border-radius: 0.625rem;
+            }
+            
+            .input-field {
+                padding: 0.75rem 0.875rem;
+                font-size: 16px;
+            }
+        }
+        
+        /* Grid Responsivo */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                gap: 1rem;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-cols-6 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Efeitos Hover Melhorados */
+        a, button {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-badge.live {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+</style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="supabase-client.js"></script>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Novo Header - Design Esportivo -->
+    <header class="gradient-header text-white py-12 shadow-lg">
+        <div class="container mx-auto px-4 max-w-full text-center">
+            <div class="mb-4">
+                <i class="fas fa-trophy text-4xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-1">
+                Mini Torneio (Bolão)
+            </h1>
+            <p class="text-lg md:text-xl font-medium opacity-90 mb-6">
+                Resultados e Classificação
+            </p>
+            <a href="index-pagina-principal.html" class="inline-flex items-center bg-white/20 hover:bg-white/30 px-6 py-3 rounded-full transition-all text-base font-bold shadow-xl hover:shadow-2xl">
+                <i class="fas fa-home mr-3"></i>Página Principal
+            </a>
+        </div>
+    </header>
+    <!-- Fim do Novo Header -->
+
+    <main class="container mx-auto px-4 max-w-full py-6 md:py-10">
+
+        <!-- Abas de Navegação -->
+        <div class="tabs-container">
+            <button class="tab-button active" data-tab="classificacao">
+                <i class="fas fa-list-ol"></i>
+                <span>Classificação</span>
+            </button>
+            <button class="tab-button" data-tab="artilheiros">
+                <i class="fas fa-futbol"></i>
+                <span>Artilheiros</span>
+            </button>
+            <button class="tab-button" data-tab="resultados">
+                <i class="fas fa-history"></i>
+                <span>Resultados</span>
+            </button>
+        </div>
+
+        <!-- Conteúdo das Abas -->
+        <div id="abas-container">
+
+            <!-- Aba: Classificação -->
+            <section id="aba-classificacao" class="aba-content bg-white rounded-2xl card-shadow p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-1 h-8 bg-gradient-to-b from-green-500 to-green-600 rounded"></div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Tabela de Classificação</h2>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="classification-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Time</th>
+                                <th title="Pontos">P</th>
+                                <th title="Jogos">J</th>
+                                <th title="Vitórias">V</th>
+                                <th title="Empates">E</th>
+                                <th title="Derrotas">D</th>
+                                <th title="Gols Feitos">GF</th>
+                                <th title="Gols Sofridos">GS</th>
+                                <th title="Saldo de Gols">SG</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-classificacao-body">
+                            <tr>
+                                <td colspan="10" class="text-center py-8 text-gray-500">
+                                    <i class="fas fa-spinner fa-spin mr-2"></i>Carregando dados...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Aba: Artilheiros -->
+            <section id="aba-artilheiros" class="hidden aba-content bg-white rounded-2xl card-shadow p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-1 h-8 bg-gradient-to-b from-yellow-500 to-yellow-600 rounded"></div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Artilharia do Torneio</h2>
+                </div>
+
+                <div id="lista-artilheiros" class="space-y-3">
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>Carregando dados...
+                    </div>
+                </div>
+            </section>
+
+            <!-- Aba: Resultados -->
+            <section id="aba-resultados" class="hidden aba-content bg-white rounded-2xl card-shadow p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="w-1 h-8 bg-gradient-to-b from-blue-500 to-blue-600 rounded"></div>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Resultados das Partidas</h2>
+                </div>
+
+                <div id="lista-resultados" class="space-y-4">
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>Carregando dados...
+                    </div>
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 mt-12">
+        <div class="container mx-auto px-4 max-w-full text-center text-sm">
+            <p>&copy; 2025 Mini Torneio • Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <script type="module" src="script-resultados-isolado.js"></script>
+</body>
+</html>
+

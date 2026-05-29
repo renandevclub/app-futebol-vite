@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="FutMilhão" />
+    <meta name="description" content="Plataforma de organização de futebol - Futebol Milhão" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/emblema-castor.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/emblema-castor.png" />
+    <link rel="apple-touch-icon" href="/assets/images/emblema-castor.png" />
+    <title>Placar Ao Vivo - Tá na Hora do Futebol</title>
+    <!-- Prevenção contra Flash of Unstyled Content (FOUC) -->
+    <style>
+      html, body {
+        background-color: #060913 !important;
+        color: #f8fafc !important;
+      }
+    </style>
+    <script>
+      (function() {
+        const theme = localStorage.getItem('fm-theme');
+        if (theme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+          document.head.insertAdjacentHTML('beforeend', '<style id="fouc-light">html, body { background-color: #f8fafc !important; color: #0f172a !important; }</style>');
+        }
+      })();
+    </script>
+    <meta name="description" content="Acompanhe o placar ao vivo das partidas do Futebol do Líder em tempo real." />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="/src/styles/core.css" />
+    <link rel="stylesheet" href="/src/styles/pages/placar-ao-vivo.css" />
+</head>
+<body class="placar-page">
+    <div class="pav-wrapper">
+
+        <!-- Header -->
+        <header class="pav-header">
+            <div class="pav-header-left">
+                <img src="/assets/images/emblema-castor.png"
+                     alt="Logo" class="pav-header-logo" />
+                <span class="pav-header-title">Placar Ao Vivo</span>
+            </div>
+            <a href="index.html" class="pav-header-back">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <main class="pav-main">
+
+            <!-- Status e Cronômetro -->
+            <div class="pav-status-card">
+                <div id="pav-status" class="pav-status-badge waiting">
+                    <span class="pav-status-dot"></span> AGUARDANDO PARTIDA
+                </div>
+                <div id="pav-cronometro" class="pav-cronometro">00:00</div>
+            </div>
+
+            <!-- Mensagem quando não há partida -->
+            <div id="pav-no-match" class="pav-no-match">
+                <div class="pav-no-match-icon">⚽</div>
+                <div class="pav-no-match-text">Nenhuma partida em andamento</div>
+                <div class="pav-no-match-sub">Quando uma partida começar, o placar aparecerá aqui automaticamente.</div>
+            </div>
+
+            <!-- Conteúdo da partida (oculto até ter partida) -->
+            <div id="pav-match-content" style="display: none;">
+
+                <!-- Card do Placar -->
+                <div id="pav-placar-card" class="pav-placar-card">
+                    <div class="pav-placar-grid">
+                        <div class="pav-team">
+                            <div id="pav-nome-time1" class="pav-team-name team1">Time 1</div>
+                            <div id="pav-placar-time1" class="pav-score team1">0</div>
+                        </div>
+                        <div class="pav-team">
+                            <div class="pav-separator">×</div>
+                        </div>
+                        <div class="pav-team">
+                            <div id="pav-nome-time2" class="pav-team-name team2">Time 2</div>
+                            <div id="pav-placar-time2" class="pav-score team2">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eventos: Gols -->
+                <div id="pav-events" class="pav-events-card" style="display: none;">
+                    <div class="pav-events-title">
+                        <i class="fas fa-futbol"></i> Gols da Partida
+                    </div>
+                    <div class="pav-events-grid">
+                        <div>
+                            <div class="pav-events-team-label team1">Time 1</div>
+                            <div id="pav-gols-time1"></div>
+                        </div>
+                        <div>
+                            <div class="pav-events-team-label team2">Time 2</div>
+                            <div id="pav-gols-time2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eventos: Cartões -->
+                <div id="pav-cartoes-section" class="pav-events-card" style="display: none;">
+                    <div class="pav-events-title">
+                        <i class="fas fa-square" style="color: #ef4444;"></i> Cartões Vermelhos
+                    </div>
+                    <div class="pav-events-grid">
+                        <div>
+                            <div class="pav-events-team-label team1">Time 1</div>
+                            <div id="pav-cartoes-time1"></div>
+                        </div>
+                        <div>
+                            <div class="pav-events-team-label team2">Time 2</div>
+                            <div id="pav-cartoes-time2"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Histórico de Partidas -->
+            <div class="pav-historico-card">
+                <div class="pav-historico-title">
+                    <i class="fas fa-history"></i> Histórico de Partidas
+                </div>
+                <div class="pav-standings-filter">
+                    <select id="pav-historico-select" class="pav-standings-select">
+                        <option value="">— Escolha uma competição —</option>
+                    </select>
+                </div>
+                <div id="pav-historico-lista">
+                    <p class="pav-empty-message">Selecione uma competição para ver o histórico detalhado.</p>
+                </div>
+            </div>
+
+            <!-- Classificação (Standings) -->
+            <div id="pav-standings-section" class="pav-standings-card">
+                <div class="pav-standings-title">
+                    <i class="fas fa-trophy"></i> Classificação
+                </div>
+                <div class="pav-standings-filter">
+                    <select id="pav-standings-select" class="pav-standings-select">
+                        <option value="">— Escolha uma competição —</option>
+                    </select>
+                </div>
+                <div id="pav-standings-container">
+                    <p class="pav-empty-message">Selecione uma competição para ver a classificação.</p>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="pav-footer">
+            &copy; 2025 Tá na Hora do Futebol ⚽
+        </footer>
+
+    </div>
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <!-- Vite Entry -->
+    <script type="module" src="/src/entries/placar.js"></script>
+</body>
+</html>

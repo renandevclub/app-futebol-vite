@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Placar Ao Vivo - Mini Torneio (Bolão)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Reset e Fontes */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f0f2f5; /* Fundo mais suave */
+        }
+        
+        /* Cores e Estilos Modernos */
+        .primary-color { color: #007bff; } /* Azul primário */
+        .secondary-color { color: #dc3545; } /* Vermelho secundário */
+        .gradient-bg { 
+            /* Gradiente mais vibrante e moderno */
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); 
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        
+        /* Cartões e Sombras */
+        .card-shadow { 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); 
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+	        /* Cronômetro e Placar Digital (Mobile-first) */
+	        .cronometro-display {
+	            font-family: 'Inter', sans-serif;
+	            font-size: 6rem; /* Aumentado para destaque */
+	            font-weight: 900;
+	            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+	            line-height: 1;
+	        }
+	        
+	        .placar-numero {
+	            font-family: 'Inter', sans-serif;
+	            font-size: 8rem; 
+	            font-weight: 900;
+	            text-shadow: 0 3px 6px rgba(0,0,0,0.25);
+	            line-height: 1;
+	        }
+	
+	        /* Animação de gol (mais sutil) */
+	        @keyframes golAnimation {
+	            0%, 100% { transform: scale(1); }
+	            50% { transform: scale(1.1); }
+	        }
+	        
+	        .gol-animation {
+	            animation: golAnimation 0.3s ease-in-out;
+	        }
+	        
+	        /* Status da partida (mais compacto e integrado) */
+	        .status-container {
+	            display: flex;
+	            flex-direction: column; /* Coloca status e cronômetro em colunas */
+	            align-items: center;
+	            justify-content: center;
+	            margin-bottom: 2rem; /* Mais espaço abaixo */
+	        }
+	
+	        .status-badge {
+	            display: flex;
+	            align-items: center;
+	            padding: 0.3rem 0.8rem; /* Mais compacto */
+	            border-radius: 20px;
+	            font-weight: 700;
+	            text-transform: uppercase;
+	            font-size: 0.75rem; /* Menor */
+	            color: white;
+	            white-space: nowrap;
+	            margin-bottom: 0.75rem; /* Espaço entre o status e o cronômetro */
+	        }
+	        
+	        .status-badge.live {
+	            background-color: #dc3545; /* Vermelho para AO VIVO */
+	            animation: pulse 2s infinite;
+	        }
+	
+	        .status-badge.waiting {
+	            background-color: #6c757d; /* Cinza para AGUARDANDO */
+	            animation: none;
+	        }
+	        
+	        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+	        
+	        /* Cores dos Times */
+		        .time-color-1 {
+		            color: #007bff; /* Azul Vibrante */
+		            text-shadow: 1px 1px 2px rgba(0, 123, 255, 0.3);
+		        }
+		        .time-color-2 {
+		            color: #ff416c; /* Vermelho/Rosa Vibrante */
+		            text-shadow: 1px 1px 2px rgba(255, 65, 108, 0.3);
+		        }
+		        
+		        /* Ajuste para o placar principal em mobile */
+	        .placar-grid {
+	            display: grid;
+	            grid-template-columns: 1fr auto 1fr; /* Time 1 | X | Time 2 */
+	            align-items: center;
+	            gap: 0.5rem;
+	        }
+.placar-grid .time-name {
+		            font-size: 1.5rem; /* Aumentado para destaque */
+		            font-weight: 900; /* Mais negrito */
+		            white-space: nowrap;
+		            overflow: hidden;
+		            text-overflow: ellipsis;
+		        }
+
+        /* Histórico de Partidas - ESTILOS ANTIGOS (REMOVIDOS) */
+        .historico-item-old {
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 0; /* Aumenta o padding vertical */
+        }
+        .historico-item-old:hover {
+            background-color: #e9ecef;
+        }
+        
+        .historico-item-old .date {
+            width: 20%; /* Reserva espaço para a data */
+            text-align: left;
+            padding-left: 0.5rem;
+            color: #6c757d;
+        }
+
+        .historico-item-old .match-info {
+            width: 80%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+        }
+        
+        .historico-item-old .team-name {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 40%; /* Limita o tamanho do nome do time */
+        }
+
+        .historico-item-old .score {
+            font-weight: 700;
+            margin: 0 0.5rem;
+        }
+
+    
+        /* Estilos para o Histórico de Partidas */
+.historico-item {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr 3fr; /* Data | Time 1 | Placar | Time 2 */
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e5e7eb; /* Linha divisória suave */
+    transition: background-color 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.historico-item:last-child {
+    border-bottom: none;
+}
+
+.historico-item:hover {
+    background-color: #f9fafb; /* Efeito hover suave */
+}
+
+.historico-item .date {
+    font-weight: 500;
+    color: #6b7280; /* Cinza médio para a data */
+    text-align: left;
+    padding-left: 0.5rem;
+}
+
+.historico-item .team-name {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right; /* Alinha o nome do time 1 à direita */
+    padding-right: 0.5rem;
+}
+
+.historico-item .score-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #1f2937; /* Cor escura para o placar */
+}
+
+.historico-item .score-time1 {
+    color: var(--primary-blue, #007bff); /* Usa a cor primária para o placar do time 1 */
+    margin-right: 0.25rem;
+}
+
+.historico-item .score-time2 {
+    color: var(--accent-red, #ff416c); /* Usa a cor de destaque para o placar do time 2 */
+    margin-left: 0.25rem;
+}
+
+.historico-item .separator {
+    color: #9ca3af; /* Cor cinza para o 'x' */
+    font-weight: 400;
+    margin: 0 0.25rem;
+}
+
+/* Cores dos Times no Histórico */
+.team-color-historico-1 {
+    color: var(--primary-blue, #007bff); /* Time 1: Azul */
+}
+
+.team-color-historico-2 {
+    color: var(--accent-red, #ff416c); /* Time 2: Vermelho/Rosa */
+    text-align: left; /* Alinha o nome do time 2 à esquerda */
+    padding-left: 0.5rem;
+}
+
+/* Título da seção */
+#historico-partidas h2 {
+    display: flex;
+    align-items: center;
+    font-size: 1.25rem; /* Aumenta o título */
+    color: #1f2937;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem !important;
+}
+
+#historico-partidas h2 i {
+    color: var(--primary-blue, #007bff);
+    margin-right: 0.5rem;
+}
+
+/* Garante que o container da lista não tenha margem superior desnecessária */
+#historico-partidas-lista {
+    margin-top: 0 !important;
+}
+
+/* ===== DESIGN ESPORTIVO VIBRANTE ===== */
+        
+        /* Cores Vibrantes */
+        :root {
+            --primary-blue: #007bff;
+            --primary-dark: #0056b3;
+            --accent-red: #ff416c;
+            --accent-orange: #ff4b2b;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+        }
+        
+        /* Melhorias Globais */
+        body {
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8ebf0 100%);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Headers com Design Esportivo */
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 65, 108, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        /* Cards com Efeito Vibrante */
+        .card-shadow {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(0, 123, 255, 0.05);
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 12px 40px rgba(0, 123, 255, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        /* Botões Vibrantes */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.3);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 0.75rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 65, 108, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        /* Inputs Melhorados */
+        .input-field {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .input-field:focus {
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+        
+        /* Badges e Destaques */
+        .badge-vibrante {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        /* Títulos com Estilo */
+        .section-title {
+            font-weight: 800;
+            color: #1f2937;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff 0%, #ff416c 100%);
+            border-radius: 2px;
+        }
+        
+        /* Animações Suaves */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+            }
+        }
+        
+        .animate-in {
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        /* Responsividade Mobile Otimizada */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .gradient-header {
+                padding: 1.5rem !important;
+            }
+            
+            .container {
+                padding: 1rem !important;
+            }
+            
+            .card-shadow {
+                border-radius: 1rem;
+            }
+            
+            .btn-primary {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+                border-radius: 0.625rem;
+            }
+            
+            .input-field {
+                padding: 0.75rem 0.875rem;
+                font-size: 16px;
+            }
+        }
+        
+        /* Grid Responsivo */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                gap: 1rem;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-cols-6 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Efeitos Hover Melhorados */
+        a, button {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-badge.live {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+</style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="supabase-client.js"></script>
+</head>
+<body>
+    
+    <!-- Conteúdo Principal do Placar (Visualização) -->
+    <div id="placar-content" class="min-h-screen flex flex-col">
+        
+	        <!-- Header/Hero Section -->
+	        <header class="gradient-bg text-white pt-8 pb-4 relative text-center">
+	            <div class="container mx-auto px-4 max-w-full">
+	                <div class="flex flex-col items-center">
+	                    <i class="fas fa-trophy text-3xl mb-1"></i>
+	                    <h1 class="text-3xl font-bold">Mini Torneio (Bolão)</h1>
+	                    <p class="text-base opacity-90 mb-4">Placar Ao Vivo para Espectadores</p>
+	                    <a href="index-pagina-principal.html" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-all text-sm font-medium flex items-center">
+	                        <i class="fas fa-home mr-2"></i>Página Principal
+	                    </a>
+	                </div>
+	            </div>
+	        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 max-w-full py-6 flex-grow">
+            
+            <!-- Placar Ao Vivo (Visível) -->
+	            <section id="placar-ao-vivo" class="mb-6">
+	                <div class="bg-white card-shadow p-6">
+	                    
+	                    <!-- Status da Partida e Cronômetro (Centralizado e Compacto) -->
+	                    <div class="status-container">
+	                        <div id="status-partida" class="status-badge waiting">
+	                            <i class="fas fa-circle mr-1 text-xs"></i>
+	                            AGUARDANDO PARTIDA
+	                        </div>
+	                        <div id="cronometro" class="cronometro-display primary-color">00:00</div>
+	                    </div>
+	
+	                    <!-- Placar -->
+	                    <div class="placar-grid">
+                        <!-- Time 1 -->
+                        <div class="text-center">
+                            <h3 id="nome-time1" class="time-name mb-2 time-color-1">Time 1</h3>
+                            <div id="placar-time1" class="placar-numero-vibrante primary-color text-6xl font-extrabold">0</div>
+                        </div>
+
+                        <div class="text-center">
+                            <span class="text-3xl font-extrabold text-gray-400">X</span>
+                        </div>
+
+                        <!-- Time 2 -->
+                        <div class="text-center">
+                            <h3 id="nome-time2" class="time-name mb-2 time-color-2">Time 2</h3>
+                            <div id="placar-time2" class="placar-numero-vibrante secondary-color text-6xl font-extrabold">0</div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Histórico de Partidas (Visível) -->
+            <section id="historico-partidas">
+                <div class="bg-white card-shadow p-5">
+                    <h2 class="section-title"><i class="fas fa-history mr-2"></i>Histórico Recente</h2>
+                    <div id="historico-partidas-lista" class="mt-3 space-y-1">
+                        
+                        <p class="text-gray-500 text-center py-4 text-sm">Nenhuma partida finalizada ainda.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white text-center py-4 mt-auto">
+            <p class="text-xs opacity-70">&copy; 2025 Mini Torneio (Bolão)</p>
+        </footer>
+    </div>
+
+    <script type="module" src="placar_espectador.js"></script>
+</body>
+</html>

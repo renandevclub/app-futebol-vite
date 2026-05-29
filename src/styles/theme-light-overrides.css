@@ -1,0 +1,61 @@
+/* =================================================================== */
+/* OVERRIDES — Tema Claro (Componentes Compartilhados)                  */
+/* =================================================================== */
+
+[data-theme="light"] .main-header {
+  background: rgba(255,255,255,0.96);
+  border-bottom-color: rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+[data-theme="light"] .main-header h1 { color: var(--text-main); }
+[data-theme="light"] .nav-toggle {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.1);
+  color: #1e293b;
+}
+[data-theme="light"] .nav-toggle:hover { background: rgba(0,0,0,0.08); }
+[data-theme="light"] .nav-buttons-container {
+  background: rgba(255,255,255,0.98);
+  border-color: rgba(0,0,0,0.08);
+  box-shadow: -4px 8px 24px rgba(0,0,0,0.1);
+}
+[data-theme="light"] .nav-button { color: var(--text-secondary); }
+[data-theme="light"] .nav-button:hover {
+  background: rgba(0,0,0,0.04);
+  color: var(--text-main);
+}
+[data-theme="light"] .nav-logout {
+  border-top-color: rgba(0,0,0,0.06);
+  color: #dc2626;
+}
+[data-theme="light"] .nav-logout:hover { background: rgba(239,68,68,0.06); }
+[data-theme="light"] .main-footer {
+  background: rgba(255,255,255,0.85);
+  border-top-color: rgba(0,0,0,0.06);
+}
+[data-theme="light"] .error-message {
+  color: #b91c1c;
+  background: rgba(239,68,68,0.08);
+  border-color: rgba(239,68,68,0.15);
+}
+[data-theme="light"] .success-message {
+  color: #047857;
+  background: rgba(16,185,129,0.08);
+  border-color: rgba(16,185,129,0.15);
+}
+[data-theme="light"] .input-group select option {
+  background: #fff;
+  color: #1e293b;
+}
+[data-theme="light"] .nav-theme-toggle { border-top-color: rgba(0,0,0,0.06); }
+[data-theme="light"] .btn-secondary {
+  background: rgba(0,0,0,0.04);
+  color: var(--text-main);
+  border-color: rgba(0,0,0,0.12);
+}
+[data-theme="light"] .btn-secondary:hover { background: rgba(0,0,0,0.08); }
+[data-theme="light"] .match-team-chip,
+[data-theme="light"] .player-team-badge {
+  background: rgba(0,0,0,0.04);
+  border-color: rgba(0,0,0,0.08);
+}

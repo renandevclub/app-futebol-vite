@@ -1,0 +1,410 @@
+/* ===================================================================
+ * NAVEGAÇÃO PREMIUM MOBILE-FIRST — EA FC / FUT Style
+ * =================================================================== */
+
+.main-header {
+    position: fixed;
+    top: 0; left: 0; z-index: 1100;
+    width: 100%; 
+    height: var(--header-height, 70px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    background: var(--bg-glass-heavy);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: var(--shadow-sm);
+}
+
+body { padding-top: var(--header-height, 70px); }
+body.login-page { padding-top: 0; }
+
+.main-header > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+}
+
+.main-header .header-logo,
+.main-header .header-logo-large {
+    height: 40px;
+    width: auto;
+    display: block;
+    filter: drop-shadow(0 0 10px rgba(0, 255, 135, 0.4));
+}
+
+.main-header h1,
+.main-header #page-header-title {
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-black);
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--text-main);
+    letter-spacing: 0.05em;
+    background: var(--gradient-green-card);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* Truncamento para evitar quebra de layout no mobile com títulos longos */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+@media (min-width: 360px) {
+    .main-header h1,
+    .main-header #page-header-title {
+        max-width: 170px;
+    }
+}
+
+@media (min-width: 400px) {
+    .main-header h1,
+    .main-header #page-header-title {
+        max-width: 200px;
+    }
+}
+
+@media (min-width: 600px) {
+    .main-header h1,
+    .main-header #page-header-title {
+        max-width: 380px;
+    }
+}
+
+@media (min-width: 901px) {
+    .main-header h1,
+    .main-header #page-header-title {
+        max-width: none;
+    }
+}
+
+/* ------------------------------------------------------------------- */
+/* HAMBURGER MENU (Mobile Top)                                         */
+/* ------------------------------------------------------------------- */
+.nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    background: var(--bg-glass-medium);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    z-index: 1200;
+}
+
+.nav-toggle:hover {
+    background: var(--bg-glass-heavy);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 15px var(--accent-primary-glow);
+}
+
+.nav-toggle-bar,
+.nav-toggle-bar::before,
+.nav-toggle-bar::after {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.3s var(--ease-fluid), opacity 0.2s;
+}
+.nav-toggle-bar { position: relative; }
+.nav-toggle-bar::before, .nav-toggle-bar::after {
+    content: "";
+    position: absolute;
+    left: 0;
+}
+.nav-toggle-bar::before { transform: translateY(-6px); }
+.nav-toggle-bar::after  { transform: translateY(6px); }
+
+.main-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.main-nav.is-open .nav-toggle-bar { background: transparent; }
+.main-nav.is-open .nav-toggle-bar::before { transform: rotate(45deg); }
+.main-nav.is-open .nav-toggle-bar::after  { transform: rotate(-45deg); }
+
+/* ------------------------------------------------------------------- */
+/* SIDEBAR (Mobile Overlay)                                            */
+/* ------------------------------------------------------------------- */
+.nav-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    z-index: 1099;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-normal);
+}
+.nav-overlay.is-active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.nav-buttons-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    padding: 80px 16px 24px;
+    background: var(--bg-surface);
+    border-left: 1px solid var(--border-medium);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1101;
+    box-shadow: var(--shadow-lg);
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.4s var(--ease-bouncy), opacity 0.3s;
+}
+
+.main-nav.is-open .nav-buttons-container {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ------------------------------------------------------------------- */
+/* BOTOES DE NAVEGAÇÃO                                                 */
+/* ------------------------------------------------------------------- */
+.nav-button {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-family-display);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+}
+
+.nav-button:hover {
+    background: var(--bg-glass-medium);
+    color: var(--text-main);
+    transform: translateX(4px);
+}
+
+.nav-button.active {
+    background: rgba(0, 255, 135, 0.1);
+    color: var(--accent-primary);
+    box-shadow: inset 4px 0 0 var(--accent-primary);
+}
+
+.nav-icon { font-size: 1.25rem; }
+
+/* ------------------------------------------------------------------- */
+/* DESKTOP NAV                                                         */
+/* ------------------------------------------------------------------- */
+@media (min-width: 901px) {
+    .nav-toggle { display: none; }
+    
+    .nav-buttons-container {
+        position: static;
+        width: auto;
+        height: auto;
+        padding: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    .nav-button { 
+        padding: 10px 16px; 
+        font-size: var(--font-size-sm); 
+        border-radius: var(--radius-full);
+    }
+    
+    .nav-button:hover {
+        transform: translateY(-2px);
+    }
+    
+    .nav-button.active {
+        box-shadow: none;
+        background: var(--gradient-green-card);
+        color: #000;
+    }
+}
+
+/* =================================================================== */
+/* BOTTOM NAVIGATION (Mobile FLOATING GLASS PILL)                      */
+/* =================================================================== */
+@media (max-width: 900px) {
+  .nav-bottom-bar {
+    display: flex;
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    right: 24px;
+    z-index: 1000;
+    background: var(--bg-glass-heavy);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-full);
+    padding: 8px 16px;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+  }
+
+  .nav-bottom-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border-radius: var(--radius-full);
+    color: var(--text-secondary); /* Itens inativos agora são legíveis */
+    font-family: var(--font-family-display);
+    font-size: 0.65rem;
+    font-weight: var(--font-weight-bold);
+    text-transform: uppercase;
+    transition: all var(--transition-fast);
+  }
+
+  .nav-bottom-item .nav-bottom-icon {
+    font-size: 1.4rem;
+    transition: transform 0.3s var(--ease-bouncy);
+  }
+
+  .nav-bottom-item.active {
+    color: var(--accent-primary);
+  }
+
+  .nav-bottom-item.active .nav-bottom-icon {
+    transform: translateY(-4px) scale(1.1);
+    filter: drop-shadow(0 0 8px var(--accent-primary-glow));
+  }
+
+    body.has-bottom-nav {
+    padding-bottom: 100px;
+  }
+}
+
+/* Botão de destaque do Mini Torneio no Header */
+.btn-header-tournament {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(245, 158, 11, 0.12); /* Fundo dourado/âmbar premium translúcido */
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 50px;
+    color: #fbbf24;
+    text-decoration: none;
+    font-family: var(--font-family-display, 'Outfit', sans-serif);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.05);
+    z-index: 1200;
+    flex-shrink: 0;
+}
+
+.btn-header-tournament:hover {
+    background: rgba(245, 158, 11, 0.22);
+    border-color: rgba(245, 158, 11, 0.55);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+    transform: translateY(-2px);
+}
+
+.btn-header-tournament:active {
+    transform: translateY(0);
+}
+
+/* Pulsação quando o torneio estiver ativo */
+.btn-header-tournament.pulse-active {
+    animation: glowPulse 2s infinite ease-in-out;
+    border-color: rgba(245, 158, 11, 0.7);
+}
+
+@keyframes glowPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+        background: rgba(245, 158, 11, 0.12);
+    }
+    50% {
+        box-shadow: 0 0 12px 6px rgba(245, 158, 11, 0.2);
+        background: rgba(245, 158, 11, 0.2);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+        background: rgba(245, 158, 11, 0.12);
+    }
+}
+
+.btn-header-tournament .tournament-emoji {
+    font-size: 0.95rem;
+    display: inline-block;
+    animation: bounceTrofeu 2s infinite alternate ease-in-out;
+}
+
+@keyframes bounceTrofeu {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-2px) scale(1.15) rotate(5deg); }
+}
+
+/* Ocultar em telas maiores (desktop) onde o menu principal já está todo visível */
+@media (min-width: 901px) {
+    .btn-header-tournament {
+        display: none !important;
+    }
+}
+
+/* Ajustes responsivos para celulares estreitos para evitar corte do menu hamburger */
+@media (max-width: 480px) {
+    /* Oculta o texto do botão do torneio, exibindo apenas o emoji 🏆 animado */
+    .btn-header-tournament .tournament-text {
+        display: none !important;
+    }
+    
+    .btn-header-tournament {
+        padding: 8px 10px !important;
+        gap: 0 !important;
+    }
+    
+    /* Reduz levemente o padding do header para ganhar mais espaço útil */
+    .main-header {
+        padding: 0 16px !important;
+    }
+    
+    /* Limita o gap na navegação */
+    .main-nav {
+        gap: 8px !important;
+    }
+}
+

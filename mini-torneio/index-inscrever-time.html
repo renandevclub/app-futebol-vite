@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Inscrição de Times - Mini Torneio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3);
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-shadow:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .input-field {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+
+        .input-field:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .badge-count {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+        }
+
+        .team-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fb 100%);
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            border-left-color: #764ba2;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .player-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            transition: all 0.3s ease;
+            min-width: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .player-item:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .player-item input {
+            flex: 1;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .btn-remove {
+            background: #fee2e2;
+            color: #dc2626;
+            width: 2.25rem;
+            height: 2.25rem;
+            min-width: 2.25rem;
+            min-height: 2.25rem;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .btn-remove:hover {
+            background: #fecaca;
+            transform: scale(1.05);
+        }
+
+        .btn-secondary {
+            background: #f0f9ff;
+            color: #0369a1;
+            border: 2px solid #0369a1;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #0369a1;
+            color: white;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid #0369a1;
+            color: #0c4a6e;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #d97706;
+            color: #78350f;
+        }
+
+        .fieldset-title {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            word-break: break-word;
+        }
+
+        .fieldset-title i {
+            color: #667eea;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        legend {
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .modal-backdrop {
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .teams-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        #lista-jogadores,
+        #modal-lista-jogadores {
+            width: 100%;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .gradient-header {
+                padding: 2rem 1rem !important;
+            }
+
+            .container {
+                padding: 1rem !important;
+            }
+
+            .player-item {
+                padding: 0.5rem;
+                gap: 0.35rem;
+            }
+
+            .player-item input {
+                font-size: 0.9rem;
+                padding: 0.5rem 0.75rem !important;
+            }
+        }
+    
+        /* ===== DESIGN ESPORTIVO VIBRANTE ===== */
+        
+        /* Cores Vibrantes */
+        :root {
+            --primary-blue: #007bff;
+            --primary-dark: #0056b3;
+            --accent-red: #ff416c;
+            --accent-orange: #ff4b2b;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+        }
+        
+        /* Melhorias Globais */
+        body {
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8ebf0 100%);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Headers com Design Esportivo */
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 65, 108, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        /* Cards com Efeito Vibrante */
+        .card-shadow {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(0, 123, 255, 0.05);
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 12px 40px rgba(0, 123, 255, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        /* Botões Vibrantes */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.3);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 0.75rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 65, 108, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        /* Inputs Melhorados */
+        .input-field {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .input-field:focus {
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+        
+        /* Badges e Destaques */
+        .badge-vibrante {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        /* Títulos com Estilo */
+        .section-title {
+            font-weight: 800;
+            color: #1f2937;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff 0%, #ff416c 100%);
+            border-radius: 2px;
+        }
+        
+        /* Animações Suaves */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+            }
+        }
+        
+        .animate-in {
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        /* Responsividade Mobile Otimizada */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .gradient-header {
+                padding: 1.5rem !important;
+            }
+            
+            .container {
+                padding: 1rem !important;
+            }
+            
+            .card-shadow {
+                border-radius: 1rem;
+            }
+            
+            .btn-primary {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+                border-radius: 0.625rem;
+            }
+            
+            .input-field {
+                padding: 0.75rem 0.875rem;
+                font-size: 16px;
+            }
+        }
+        
+        /* Grid Responsivo */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                gap: 1rem;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-cols-6 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Efeitos Hover Melhorados */
+        a, button {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-badge.live {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+</style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="supabase-client.js"></script>
+</head>
+<body class="bg-gray-50">
+    
+    <!-- Novo Header - Design Esportivo -->
+    <header class="gradient-header text-white py-12 shadow-lg">
+        <div class="container mx-auto px-4 max-w-full text-center">
+            <div class="mb-4">
+                <i class="fas fa-trophy text-4xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-1">
+                Mini Torneio (Bolão)
+            </h1>
+            <p class="text-lg md:text-xl font-medium opacity-90 mb-6">
+                Inscrição de Times
+            </p>
+            <a href="index-pagina-principal.html" class="inline-flex items-center bg-white/20 hover:bg-white/30 px-6 py-3 rounded-full transition-all text-base font-bold shadow-xl hover:shadow-2xl">
+                <i class="fas fa-home mr-3"></i>Página Principal
+            </a>
+        </div>
+    </header>
+    <!-- Fim do Novo Header -->
+
+    <main class="container mx-auto px-4 max-w-full py-6 md:py-10">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+            
+            <!-- Coluna Principal -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Seção: Formulário de Inscrição -->
+                <section class="bg-white rounded-2xl card-shadow animate-in p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-1 h-8 bg-gradient-to-b from-purple-500 to-purple-600 rounded"></div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Formulário de Inscrição</h2>
+                    </div>
+
+                    <div class="info-box p-4 rounded-lg mb-6">
+                        <div class="flex gap-3">
+                            <i class="fas fa-info-circle flex-shrink-0 mt-0.5"></i>
+                            <p class="text-sm md:text-base">Após o envio, a lista de jogadores será enviada ao WhatsApp do organizador para confirmação.</p>
+                        </div>
+                    </div>
+
+                    <form id="form-inscricao" class="space-y-6">
+                        
+                        <!-- Dados do Time -->
+                        <fieldset class="space-y-4">
+                            <legend class="fieldset-title">
+                                <i class="fas fa-users"></i>
+                                <span>1. Dados do Time e Capitão</span>
+                            </legend>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Nome do Time *</label>
+                                <input type="text" name="nome-time" required 
+                                       class="w-full px-4 py-3 input-field rounded-lg bg-gray-50"
+                                       placeholder="Ex: Dragões do Vale">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Nome do Capitão *</label>
+                                <input type="text" name="capitao" required 
+                                       class="w-full px-4 py-3 input-field rounded-lg bg-gray-50"
+                                       placeholder="Seu nome completo">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Telefone (WhatsApp) ou Senha *</label>
+                                <input type="tel" name="telefone-ou-senha" required 
+                                       class="w-full px-4 py-3 input-field rounded-lg bg-gray-50"
+                                       placeholder="(XX) 9XXXX-XXXX ou senha">
+                            </div>
+                        </fieldset>
+
+                        <!-- Divisor -->
+                        <div class="border-t border-gray-200"></div>
+
+                        <!-- Lista de Jogadores -->
+                        <fieldset class="space-y-4">
+                            <legend class="fieldset-title">
+                                <i class="fas fa-user-tie"></i>
+                                <span>2. Lista de Jogadores</span>
+                            </legend>
+                            
+                            <div id="lista-jogadores" class="space-y-3">
+                                <!-- Campos de jogador serão adicionados aqui -->
+                            </div>
+
+                            <button type="button" id="btn-add-jogador" 
+                                    class="w-full py-3 px-4 border-2 border-dashed border-purple-300 text-purple-600 font-semibold rounded-lg hover:bg-purple-50 transition-all">
+                                <i class="fas fa-plus mr-2"></i>Adicionar Jogador
+                            </button>
+                        </fieldset>
+
+                        <!-- Divisor -->
+                        <div class="border-t border-gray-200"></div>
+
+                        <!-- Observações -->
+                        <div class="form-group">
+                            <label class="form-label">Observações (opcional)</label>
+                            <textarea name="observacoes" rows="3" 
+                                      class="w-full px-4 py-3 input-field rounded-lg bg-gray-50 resize-none"
+                                      placeholder="Alguma informação adicional sobre o time..."></textarea>
+                        </div>
+
+                        <!-- Checkbox de Concordância -->
+                        <div class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg">
+                            <input type="checkbox" id="confirma-regras" required 
+                                   class="w-5 h-5 mt-0.5 cursor-pointer accent-purple-600 rounded">
+                            <label for="confirma-regras" class="text-sm text-gray-700 cursor-pointer">
+                                Li e concordo com as <strong>regras do torneio</strong> e estou ciente do valor da inscrição.
+                            </label>
+                        </div>
+
+                        <!-- Botão de Envio -->
+                        <button type="submit" 
+                                class="w-full btn-primary shadow-lg text-white font-bold py-4 rounded-lg text-lg flex items-center justify-center gap-2">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>Enviar Inscrição</span>
+                        </button>
+                    </form>
+
+                    <!-- Mensagem de Sucesso -->
+                    <div id="msg-sucesso-inscricao" class="hidden mt-6 success-message text-white p-4 rounded-lg items-center gap-3">
+                        <i class="fas fa-check-circle text-xl"></i>
+                        <div>
+                            <p class="font-semibold">Inscrição enviada com sucesso!</p>
+                            <p class="text-sm opacity-90">Redirecionando para o WhatsApp...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Seção: Edição de Inscrição -->
+                <section class="bg-white rounded-2xl card-shadow animate-in p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-1 h-8 bg-gradient-to-b from-blue-500 to-blue-600 rounded"></div>
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Já se inscreveu?</h2>
+                    </div>
+
+                    <p class="text-gray-600 mb-6">Precisa alterar a lista de jogadores? Acesse com seu telefone ou senha.</p>
+
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="tel" id="telefone-acesso" 
+                               class="flex-1 px-4 py-3 input-field rounded-lg bg-gray-50"
+                               placeholder="Telefone ou Senha">
+                        <button id="btn-acessar-edicao" 
+                                class="btn-secondary font-bold py-3 px-6 rounded-lg whitespace-nowrap">
+                            <i class="fas fa-edit mr-2"></i>Editar
+                        </button>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Coluna Lateral: Times Inscritos -->
+            <div class="lg:col-span-1">
+                <aside class="bg-white rounded-2xl card-shadow animate-in p-6 md:p-8 sticky top-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-1 h-8 bg-gradient-to-b from-green-500 to-green-600 rounded"></div>
+                        <h2 class="text-2xl font-bold text-gray-800">Times Inscritos</h2>
+                    </div>
+
+                    <div id="times-inscritos-container" class="teams-list">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p class="font-semibold text-gray-600">Nenhum time inscrito ainda</p>
+                            <p class="text-sm text-gray-500">Seja o primeiro a se inscrever!</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal de Edição -->
+    <div id="modal-edicao" class="hidden fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 p-4 modal-backdrop">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] flex flex-col modal-content">
+            
+            <!-- Header do Modal -->
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center relative">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                        <i class="fas fa-users-cog text-purple-600"></i>
+                        Editar Jogadores
+                    </h3>
+                    <p id="modal-nome-time" class="text-gray-600 text-sm mt-1"></p>
+                    <!-- Menu de Navegação Rápida (Apenas para o Capitão) -->
+                    <div id="menu-capitao" class="mt-4 flex-col sm:flex-row gap-2 hidden">
+                        <a href="index-pagamento-jogadores.html" class="text-xs font-semibold text-white bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded-full transition-colors flex items-center gap-1">
+                            <i class="fas fa-money-check-alt"></i> Pagamentos
+                        </a>
+                        <a href="index-financeiro.html" class="text-xs font-semibold text-white bg-green-500 hover:bg-green-600 px-3 py-1 rounded-full transition-colors flex items-center gap-1">
+                            <i class="fas fa-chart-line"></i> Financeiro
+                        </a>
+                    </div>
+                </div>
+                <button id="btn-fechar-modal" class="text-gray-400 hover:text-gray-600 text-2xl transition-colors">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Conteúdo do Modal -->
+            <div class="p-6 space-y-4 overflow-y-auto flex-1">
+                <div id="modal-lista-jogadores" class="space-y-3">
+                    <!-- Jogadores para edição -->
+                </div>
+                <button id="btn-add-jogador-modal" 
+                        class="w-full border-2 border-dashed border-gray-300 hover:bg-gray-50 text-gray-600 font-semibold py-3 rounded-lg transition-all">
+                    <i class="fas fa-plus mr-2"></i>Adicionar Novo Jogador
+                </button>
+            </div>
+
+            <!-- Footer do Modal -->
+            <div class="p-6 border-t border-gray-200 bg-gray-50 rounded-b-2xl">
+                <div class="warning-box p-3 rounded-lg mb-4 text-sm">
+                    <div class="flex gap-2">
+                        <i class="fas fa-exclamation-triangle flex-shrink-0 mt-0.5"></i>
+                        <p>Ao salvar, uma notificação será enviada ao organizador.</p>
+                    </div>
+                </div>
+                <button id="btn-salvar-edicao" class="w-full btn-primary shadow-lg text-white font-bold py-3 rounded-lg transition-all">
+                    <i class="fas fa-save mr-2"></i>Salvar e Notificar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 mt-12">
+        <div class="container mx-auto px-4 max-w-full text-center text-sm">
+            <p>&copy; 2025 Mini Torneio • Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <script type="module" src="inscricoes-isolada.js"></script>
+</body>
+</html>
+

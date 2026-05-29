@@ -1,0 +1,113 @@
+/* =================================================================== */
+/* BADGES & TAGS — EA FC STYLE                                         */
+/* =================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-bold);
+  font-size: 0.75rem; /* 12px */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Dot animado (para status ao vivo) */
+.badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ------------------------------------------------------------------- */
+/* VARIAÇÕES                                                           */
+/* ------------------------------------------------------------------- */
+
+.badge-success, .badge-green {
+  background: rgba(0, 255, 135, 0.1);
+  color: var(--accent-primary);
+  border: 1px solid rgba(0, 255, 135, 0.2);
+}
+.badge-success .dot { background: var(--accent-primary); }
+
+.badge-danger, .badge-red {
+  background: rgba(255, 51, 102, 0.1);
+  color: var(--accent-danger);
+  border: 1px solid rgba(255, 51, 102, 0.2);
+}
+.badge-danger .dot { background: var(--accent-danger); }
+
+.badge-warning, .badge-gold {
+  background: rgba(249, 200, 70, 0.1);
+  color: var(--accent-gold);
+  border: 1px solid rgba(249, 200, 70, 0.2);
+}
+.badge-warning .dot { background: var(--accent-gold); }
+
+.badge-info, .badge-blue {
+  background: rgba(0, 210, 255, 0.1);
+  color: var(--accent-blue);
+  border: 1px solid rgba(0, 210, 255, 0.2);
+}
+.badge-info .dot { background: var(--accent-blue); }
+
+.badge-neutral, .badge-gray {
+  background: var(--bg-glass-medium);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-medium);
+}
+.badge-neutral .dot { background: var(--text-secondary); }
+
+/* Variação "Solid" para maior destaque */
+.badge-solid-green {
+  background: var(--gradient-green-card);
+  color: #000;
+  box-shadow: 0 0 10px rgba(0, 255, 135, 0.3);
+}
+
+.badge-solid-gold {
+  background: var(--gradient-gold-card);
+  color: #000;
+  box-shadow: 0 0 10px rgba(249, 200, 70, 0.3);
+}
+
+/* ------------------------------------------------------------------- */
+/* ESTATÍSTICAS (Pequenas tags de Rating do jogador)                   */
+/* ------------------------------------------------------------------- */
+.stat-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: var(--bg-glass-light);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  min-width: 48px;
+}
+
+.stat-badge .value {
+  font-family: var(--font-family-display);
+  font-weight: var(--font-weight-black);
+  font-size: var(--font-size-md);
+  color: var(--text-main);
+}
+
+.stat-badge .label {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Cores específicas de Rating (Estilo FUT OVR) */
+.stat-badge[data-rating="high"] .value { color: var(--accent-primary); }
+.stat-badge[data-rating="medium"] .value { color: var(--accent-gold); }
+.stat-badge[data-rating="low"] .value { color: var(--accent-danger); }

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Financeiro - Mini Torneio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3);
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-shadow:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .input-field {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+
+        .input-field:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border-radius: 2px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid;
+        }
+
+        .stat-card.receita {
+            border-top-color: #10b981;
+        }
+
+        .stat-card.despesa {
+            border-top-color: #ef4444;
+        }
+
+        .stat-card.saldo {
+            border-top-color: #3b82f6;
+        }
+
+        .stat-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .badge-receita {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-despesa {
+            background: #fee2e2;
+            color: #7f1d1d;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-edit:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 640px) {
+            .gradient-header {
+                padding: 1.5rem !important;
+            }
+
+            .container {
+                padding: 1rem !important;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            table {
+                font-size: 0.875rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+    
+        /* ===== DESIGN ESPORTIVO VIBRANTE ===== */
+        
+        /* Cores Vibrantes */
+        :root {
+            --primary-blue: #007bff;
+            --primary-dark: #0056b3;
+            --accent-red: #ff416c;
+            --accent-orange: #ff4b2b;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+        }
+        
+        /* Melhorias Globais */
+        body {
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8ebf0 100%);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Headers com Design Esportivo */
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 65, 108, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        /* Cards com Efeito Vibrante */
+        .card-shadow {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(0, 123, 255, 0.05);
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 12px 40px rgba(0, 123, 255, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        /* Botões Vibrantes */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.3);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 0.75rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 65, 108, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        /* Inputs Melhorados */
+        .input-field {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .input-field:focus {
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+        
+        /* Badges e Destaques */
+        .badge-vibrante {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        /* Títulos com Estilo */
+        .section-title {
+            font-weight: 800;
+            color: #1f2937;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff 0%, #ff416c 100%);
+            border-radius: 2px;
+        }
+        
+        /* Animações Suaves */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+            }
+        }
+        
+        .animate-in {
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        /* Responsividade Mobile Otimizada */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .gradient-header {
+                padding: 1.5rem !important;
+            }
+            
+            .container {
+                padding: 1rem !important;
+            }
+            
+            .card-shadow {
+                border-radius: 1rem;
+            }
+            
+            .btn-primary {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+                border-radius: 0.625rem;
+            }
+            
+            .input-field {
+                padding: 0.75rem 0.875rem;
+                font-size: 16px;
+            }
+        }
+        
+        /* Grid Responsivo */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                gap: 1rem;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-cols-6 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Efeitos Hover Melhorados */
+        a, button {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-badge.live {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+</style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="supabase-client.js"></script>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Novo Header - Design Esportivo -->
+    <header class="gradient-header text-white py-12 shadow-lg">
+        <div class="container mx-auto px-4 max-w-full text-center">
+            <div class="mb-4">
+                <i class="fas fa-trophy text-4xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-1">
+                Mini Torneio (Bolão)
+            </h1>
+            <p class="text-lg md:text-xl font-medium opacity-90 mb-6">
+                Controle Financeiro
+            </p>
+            <a href="index-pagina-principal.html" class="inline-flex items-center bg-white/20 hover:bg-white/30 px-6 py-3 rounded-full transition-all text-base font-bold shadow-xl hover:shadow-2xl">
+                <i class="fas fa-home mr-3"></i>Página Principal
+            </a>
+        </div>
+    </header>
+    <!-- Fim do Novo Header -->
+
+    <main class="container mx-auto px-4 max-w-full py-8">
+        
+        <!-- Resumo Financeiro -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="stat-card receita">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 font-medium">Total de Receitas</p>
+                        <p class="stat-value text-green-600">R$ <span id="total-receitas">0,00</span></p>
+                    </div>
+                    <i class="fas fa-arrow-up text-green-500 text-3xl opacity-20"></i>
+                </div>
+            </div>
+
+            <div class="stat-card despesa">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 font-medium">Total de Despesas</p>
+                        <p class="stat-value text-red-600">R$ <span id="total-despesas">0,00</span></p>
+                    </div>
+                    <i class="fas fa-arrow-down text-red-500 text-3xl opacity-20"></i>
+                </div>
+            </div>
+
+            <div class="stat-card saldo">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 font-medium">Saldo</p>
+                        <p class="stat-value text-blue-600">R$ <span id="saldo-total">0,00</span></p>
+                    </div>
+                    <i class="fas fa-balance-scale text-blue-500 text-3xl opacity-20"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Abas de Navegação -->
+        <div class="bg-white rounded-2xl card-shadow animate-in p-6 mb-8">
+            <div class="flex gap-4 border-b border-gray-200">
+                <button class="tab-btn active px-4 py-3 font-medium text-purple-600 border-b-2 border-purple-600 transition-all" data-tab="receitas">
+                    <i class="fas fa-plus-circle mr-2"></i>Receitas
+                </button>
+                <button class="tab-btn px-4 py-3 font-medium text-gray-600 hover:text-gray-800 transition-all" data-tab="despesas">
+                    <i class="fas fa-minus-circle mr-2"></i>Despesas
+                </button>
+            </div>
+        </div>
+
+        <!-- Seção de Receitas -->
+        <div id="receitas-section" class="tab-content active space-y-6">
+            <div class="bg-white rounded-2xl card-shadow animate-in p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-1 h-8 bg-gradient-to-b from-green-500 to-green-600 rounded"></div>
+                    <h2 class="text-2xl font-bold text-gray-800">Registrar Receita</h2>
+                </div>
+
+                <form id="form-receita" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="form-label"><i class="fas fa-tag text-green-500 mr-2"></i>Descrição</label>
+                            <input type="text" id="receita-descricao" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" placeholder="Ex: Inscrição do Time A" required>
+                        </div>
+                        <div>
+                            <label class="form-label"><i class="fas fa-dollar-sign text-green-500 mr-2"></i>Valor (R$)</label>
+                            <input type="number" id="receita-valor" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" placeholder="0,00" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label"><i class="fas fa-calendar text-green-500 mr-2"></i>Data</label>
+                        <input type="date" id="receita-data" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" required>
+                    </div>
+                    <button type="submit" class="w-full btn-primary shadow-lg text-white font-bold py-3 rounded-lg">
+                        <i class="fas fa-plus mr-2"></i>Adicionar Receita
+                    </button>
+                </form>
+            </div>
+
+            <!-- Tabela de Receitas -->
+            <div class="bg-white rounded-2xl card-shadow animate-in p-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-list text-green-500 mr-2"></i>Histórico de Receitas
+                </h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="receitas-tbody">
+                            <tr>
+                                <td colspan="4" class="text-center text-gray-500 py-8">
+                                    <i class="fas fa-inbox text-2xl mb-2 block opacity-50"></i>
+                                    Nenhuma receita registrada
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Despesas -->
+        <div id="despesas-section" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-2xl card-shadow animate-in p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-1 h-8 bg-gradient-to-b from-red-500 to-red-600 rounded"></div>
+                    <h2 class="text-2xl font-bold text-gray-800">Registrar Despesa</h2>
+                </div>
+
+                <form id="form-despesa" class="space-y-5">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="form-label"><i class="fas fa-tag text-red-500 mr-2"></i>Descrição</label>
+                            <input type="text" id="despesa-descricao" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" placeholder="Ex: Aluguel do Campo" required>
+                        </div>
+                        <div>
+                            <label class="form-label"><i class="fas fa-dollar-sign text-red-500 mr-2"></i>Valor (R$)</label>
+                            <input type="number" id="despesa-valor" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" placeholder="0,00" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="form-label"><i class="fas fa-calendar text-red-500 mr-2"></i>Data</label>
+                        <input type="date" id="despesa-data" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" required>
+                    </div>
+                    <button type="submit" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-lg transition-all">
+                        <i class="fas fa-plus mr-2"></i>Adicionar Despesa
+                    </button>
+                </form>
+            </div>
+
+            <!-- Tabela de Despesas -->
+            <div class="bg-white rounded-2xl card-shadow animate-in p-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">
+                    <i class="fas fa-list text-red-500 mr-2"></i>Histórico de Despesas
+                </h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="despesas-tbody">
+                            <tr>
+                                <td colspan="4" class="text-center text-gray-500 py-8">
+                                    <i class="fas fa-inbox text-2xl mb-2 block opacity-50"></i>
+                                    Nenhuma despesa registrada
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-6 mt-12">
+        <div class="container mx-auto px-4 max-w-full text-center text-sm">
+            <p>&copy; 2025 Mini Torneio (Bolão) - Financeiro</p>
+        </div>
+    </footer>
+
+    <!-- Modal de Edição -->
+    <div id="modal-edicao" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Editar Lançamento</h2>
+                <button id="btn-fechar-modal" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="form-edicao" class="space-y-5">
+                <input type="hidden" id="edicao-id">
+                <input type="hidden" id="edicao-tipo">
+
+                <div>
+                    <label class="form-label">Descrição</label>
+                    <input type="text" id="edicao-descricao" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" required>
+                </div>
+
+                <div>
+                    <label class="form-label">Valor (R$)</label>
+                    <input type="number" id="edicao-valor" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" min="0" step="0.01" required>
+                </div>
+
+                <div>
+                    <label class="form-label">Data</label>
+                    <input type="date" id="edicao-data" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" required>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="submit" class="flex-1 btn-primary shadow-lg text-white font-bold py-3 rounded-lg">
+                        <i class="fas fa-save mr-2"></i>Salvar
+                    </button>
+                    <button type="button" id="btn-cancelar-edicao" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 rounded-lg transition-all">
+                        <i class="fas fa-times mr-2"></i>Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="financeiro.js"></script>
+</body>
+</html>
+

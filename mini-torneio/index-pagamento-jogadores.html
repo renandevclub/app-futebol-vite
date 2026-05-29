@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Pagamento de Jogadores - Mini Torneio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3);
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-shadow:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .input-field {
+            transition: all 0.3s ease;
+            border: 2px solid #e5e7eb;
+        }
+
+        .input-field:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid;
+        }
+
+        .stat-card.pago {
+            border-top-color: #10b981;
+        }
+
+        .stat-card.pendente {
+            border-top-color: #ef4444;
+        }
+
+        .stat-card.percentual {
+            border-top-color: #3b82f6;
+        }
+
+        .stat-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+
+        .jogador-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .jogador-card:hover {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-pago {
+            display: inline-block;
+            background: #d1fae5;
+            color: #065f46;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .badge-pendente {
+            display: inline-block;
+            background: #fee2e2;
+            color: #7f1d1d;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .btn-editar-pagamento {
+            background: #3b82f6;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-editar-pagamento {
+            background: #3b82f6;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 120px; /* Largura mínima para acomodar "Registrar" e "Editar" */
+            text-align: center;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-editar-pagamento:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 640px) {
+            .gradient-header {
+                padding: 1.5rem !important;
+            }
+
+            .container {
+                padding: 1rem !important;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+            }
+
+            .jogador-card {
+                flex-direction: column;
+            }
+        }
+    
+        /* ===== DESIGN ESPORTIVO VIBRANTE ===== */
+        
+        /* Cores Vibrantes */
+        :root {
+            --primary-blue: #007bff;
+            --primary-dark: #0056b3;
+            --accent-red: #ff416c;
+            --accent-orange: #ff4b2b;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+        }
+        
+        /* Melhorias Globais */
+        body {
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8ebf0 100%);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Headers com Design Esportivo */
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 65, 108, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        /* Cards com Efeito Vibrante */
+        .card-shadow {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(0, 123, 255, 0.05);
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 12px 40px rgba(0, 123, 255, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        /* Botões Vibrantes */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.3);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 0.75rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 65, 108, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        /* Inputs Melhorados */
+        .input-field {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .input-field:focus {
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+        
+        /* Badges e Destaques */
+        .badge-vibrante {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        /* Títulos com Estilo */
+        .section-title {
+            font-weight: 800;
+            color: #1f2937;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff 0%, #ff416c 100%);
+            border-radius: 2px;
+        }
+        
+        /* Animações Suaves */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+            }
+        }
+        
+        .animate-in {
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        /* Responsividade Mobile Otimizada */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .gradient-header {
+                padding: 1.5rem !important;
+            }
+            
+            .container {
+                padding: 1rem !important;
+            }
+            
+            .card-shadow {
+                border-radius: 1rem;
+            }
+            
+            .btn-primary {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+                border-radius: 0.625rem;
+            }
+            
+            .input-field {
+                padding: 0.75rem 0.875rem;
+                font-size: 16px;
+            }
+        }
+        
+        /* Grid Responsivo */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                gap: 1rem;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-cols-6 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Efeitos Hover Melhorados */
+        a, button {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-badge.live {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+</style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="supabase-client.js"></script>
+</head>
+<body class="bg-gray-50">
+
+    <!-- Header - Design Esportivo -->
+    <header class="gradient-header text-white py-12 shadow-lg">
+        <div class="container mx-auto px-4 max-w-full text-center">
+            <div class="mb-4">
+                <i class="fas fa-trophy text-4xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-1">
+                Mini Torneio (Bolão)
+            </h1>
+            <p class="text-lg md:text-xl font-medium opacity-90 mb-6">
+                Pagamento de Jogadores
+            </p>
+            <a href="index-pagina-principal.html" class="inline-flex items-center bg-white/20 hover:bg-white/30 px-6 py-3 rounded-full transition-all text-base font-bold shadow-xl hover:shadow-2xl">
+                <i class="fas fa-home mr-3"></i>Página Principal
+            </a>
+        </div>
+    </header>
+    <!-- Fim do Header -->
+
+    <main class="container mx-auto px-4 max-w-full py-8">
+        
+        <!-- Seletor de Time -->
+        <div class="bg-white rounded-2xl card-shadow animate-in p-6 mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-1 h-8 bg-gradient-to-b from-purple-500 to-purple-600 rounded"></div>
+                <h2 class="text-xl font-bold text-gray-800">Selecione seu Time</h2>
+            </div>
+            <select id="select-time-pagamento" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50">
+                <option value="">-- Selecione um time --</option>
+            </select>
+        </div>
+
+        <!-- Resumo de Pagamentos -->
+        <div id="resumo-pagamentos" class="hidden">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="stat-card pago">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 font-medium">Jogadores Pagos</p>
+                            <p class="stat-value text-green-600"><span id="jogadores-pagos">0</span>/<span id="total-jogadores">0</span></p>
+                        </div>
+                        <i class="fas fa-check-circle text-green-500 text-3xl opacity-20"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card percentual">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 font-medium">Percentual Pago</p>
+                            <p class="stat-value text-blue-600"><span id="percentual-pagamento">0</span>%</p>
+                        </div>
+                        <i class="fas fa-chart-pie text-blue-500 text-3xl opacity-20"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card pago">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 font-medium">Total Arrecadado</p>
+                            <p class="stat-value text-green-600">R$ <span id="total-arrecadado">0,00</span></p>
+                        </div>
+                        <i class="fas fa-money-bill-wave text-green-500 text-3xl opacity-20"></i>
+                    </div>
+                </div>
+
+                <div class="stat-card pendente">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-600 font-medium">Pendentes</p>
+                            <p class="stat-value text-red-600"><span id="jogadores-pendentes">0</span></p>
+                        </div>
+                        <i class="fas fa-hourglass-end text-red-500 text-3xl opacity-20"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Jogadores -->
+            <div class="bg-white rounded-2xl card-shadow animate-in p-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-1 h-8 bg-gradient-to-b from-blue-500 to-blue-600 rounded"></div>
+                    <h2 class="text-2xl font-bold text-gray-800">Jogadores do Time</h2>
+                </div>
+
+                <div id="container-jogadores-pagamento" class="space-y-3">
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-inbox text-3xl mb-2 block opacity-50"></i>
+                        <p>Selecione um time para visualizar os jogadores</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensagem de Seleção -->
+        <div id="msg-selecione-time" class="text-center py-12">
+            <i class="fas fa-hand-pointer text-5xl text-gray-300 mb-4 block"></i>
+            <p class="text-gray-500 text-lg font-medium">Selecione um time acima para começar</p>
+        </div>
+
+    </main>
+
+    <!-- Modal de Pagamento -->
+    <div id="modal-pagamento-jogador" class="modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Registrar Pagamento</h2>
+                <button id="btn-fechar-modal-pagamento" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="mb-6 p-4 bg-purple-50 rounded-lg">
+                <p class="text-sm text-gray-600">Jogador: <strong id="pagamento-nome-jogador"></strong></p>
+            </div>
+
+            <form id="form-pagamento-jogador" class="space-y-5">
+                <div>
+                    <label class="form-label"><i class="fas fa-dollar-sign text-green-500 mr-2"></i>Valor Pago (R$)</label>
+                    <input type="number" id="pagamento-valor" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" placeholder="0,00" min="0" step="0.01" required>
+                </div>
+
+                <div>
+                    <label class="form-label"><i class="fas fa-calendar text-blue-500 mr-2"></i>Data do Pagamento</label>
+                    <input type="date" id="pagamento-data" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" required>
+                </div>
+
+                <div>
+                    <label class="form-label"><i class="fas fa-check-circle text-purple-500 mr-2"></i>Status</label>
+                    <select id="pagamento-status" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50" required>
+                        <option value="pendente">Pendente</option>
+                        <option value="pago">Pago</option>
+                        <option value="parcial">Pagamento Parcial</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="form-label"><i class="fas fa-sticky-note text-gray-500 mr-2"></i>Observações (opcional)</label>
+                    <textarea id="pagamento-observacoes" class="w-full px-4 py-3 input-field rounded-lg bg-gray-50 resize-none" rows="3" placeholder="Adicione observações se necessário..."></textarea>
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="submit" class="flex-1 btn-primary shadow-lg text-white font-bold py-3 rounded-lg">
+                        <i class="fas fa-save mr-2"></i>Salvar Pagamento
+                    </button>
+                    <button type="button" id="btn-cancelar-pagamento" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 rounded-lg transition-all">
+                        <i class="fas fa-times mr-2"></i>Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-6 mt-12">
+        <div class="container mx-auto px-4 max-w-full text-center text-sm">
+            <p>&copy; 2025 Mini Torneio (Bolão) - Pagamento de Jogadores</p>
+        </div>
+    </footer>
+
+    <script type="module" src="pagamento-jogadores.js"></script>
+    <script>
+        // Mostrar/ocultar resumo quando selecionar um time
+        const selectTime = document.getElementById('select-time-pagamento');
+        const resumoPagamentos = document.getElementById('resumo-pagamentos');
+        const msgSelecione = document.getElementById('msg-selecione-time');
+
+        selectTime?.addEventListener('change', (e) => {
+            if (e.target.value) {
+                resumoPagamentos.classList.remove('hidden');
+                msgSelecione.classList.add('hidden');
+            } else {
+                resumoPagamentos.classList.add('hidden');
+                msgSelecione.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
+

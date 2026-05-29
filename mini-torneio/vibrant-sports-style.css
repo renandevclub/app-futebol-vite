@@ -1,0 +1,163 @@
+/*
+ * Sistema de Design "Esportivo Vibrante" para Mini Torneio (Bolão)
+ * Otimizado para Mobile e usando Tailwind CSS
+ */
+
+/* 1. Cores Base */
+:root {
+    --color-primary-start: #007bff; /* Azul Elétrico (Base) */
+    --color-primary-end: #0056b3;   /* Azul Escuro (Fim do Gradiente) */
+    --color-secondary-start: #ff416c; /* Rosa/Vermelho Vibrante (Destaque) */
+    --color-secondary-end: #ff4b2b;   /* Laranja/Vermelho (Fim do Gradiente) */
+    --color-success: #10b981; /* Verde (Sucesso/Positivo) */
+    --color-danger: #ef4444;  /* Vermelho (Perigo/Negativo) */
+    --color-background: #f0f2f5; /* Fundo Suave */
+    --color-card-background: #ffffff;
+}
+
+/* 2. Estilos Globais */
+body {
+    background-color: var(--color-background);
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* 3. Gradientes e Sombras */
+.gradient-primary-bg {
+    background: linear-gradient(135deg, var(--color-primary-start) 0%, var(--color-primary-end) 100%);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+}
+
+.gradient-secondary-bg {
+    background: linear-gradient(135deg, var(--color-secondary-start) 0%, var(--color-secondary-end) 100%);
+    box-shadow: 0 8px 20px rgba(255, 65, 108, 0.4);
+}
+
+.card-shadow {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 1rem; /* Borda mais arredondada */
+    overflow: hidden;
+}
+
+.card-shadow:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+/* 4. Botões */
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-secondary-start) 0%, var(--color-secondary-end) 100%);
+    transition: all 0.3s ease;
+    border: none;
+    color: white;
+    font-weight: 700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(255, 65, 108, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(255, 65, 108, 0.2);
+}
+
+/* 5. Inputs */
+.input-field {
+    transition: all 0.3s ease;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: #f9fafb;
+}
+
+.input-field:focus {
+    border-color: var(--color-primary-start);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    outline: none;
+}
+
+/* 6. Títulos e Destaques */
+.section-title-style {
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-title-style::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 50px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-primary-start) 0%, var(--color-secondary-end) 100%);
+    border-radius: 2px;
+}
+
+/* 7. Estilos Específicos */
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.placar-numero-vibrante {
+    font-family: 'Inter', sans-serif;
+    font-size: 6rem;
+    font-weight: 900;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    line-height: 1;
+}
+
+/* 8. Responsividade (Mobile First) */
+@media (max-width: 640px) {
+    .cronometro-display {
+        font-size: 3rem !important;
+    }
+    .placar-numero-vibrante {
+        font-size: 4rem !important;
+    }
+    .stat-value {
+        font-size: 1.5rem;
+    }
+}
+
+/* Substituições de classes antigas */
+.gradient-header {
+    /* Substitui o antigo gradiente azul/roxo */
+    background: linear-gradient(135deg, var(--color-primary-start) 0%, var(--color-primary-end) 100%);
+    box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3);
+}
+
+/* Estilos para a página de resultados (verde antigo) */
+.gradient-header-resultados {
+    background: linear-gradient(135deg, var(--color-success) 0%, #047857 100%);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+}
+
+.tab-button.active-resultados {
+    background: linear-gradient(135deg, var(--color-success) 0%, #047857 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.position-1 {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important; /* Ouro */
+    color: #333 !important;
+}
+
+.position-2 {
+    background: linear-gradient(135deg, #adb5bd 0%, #6c757d 100%) !important; /* Prata */
+    color: white !important;
+}
+
+.position-3 {
+    background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%) !important; /* Bronze */
+    color: white !important;
+}

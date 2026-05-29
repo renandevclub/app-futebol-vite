@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Mini Torneio (Bolão) - Início</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            scroll-behavior: smooth;
+        }
+
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 10px 30px rgba(0, 123, 255, 0.3);
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-shadow:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border-radius: 2px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid #0369a1;
+            color: #0c4a6e;
+        }
+
+        .nav-link-item {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-link-item::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 123, 255, 0.1), rgba(0, 86, 179, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .nav-link-item:hover {
+            border-left-color: #667eea;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+        }
+
+        .nav-link-item:hover::before {
+            opacity: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #6b7280;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .gradient-header {
+                padding: 2rem 1rem !important;
+            }
+
+            .container {
+                padding: 1rem !important;
+            }
+        }
+    
+        /* ===== DESIGN ESPORTIVO VIBRANTE ===== */
+        
+        /* Cores Vibrantes */
+        :root {
+            --primary-blue: #007bff;
+            --primary-dark: #0056b3;
+            --accent-red: #ff416c;
+            --accent-orange: #ff4b2b;
+            --success-green: #10b981;
+            --danger-red: #ef4444;
+        }
+        
+        /* Melhorias Globais */
+        body {
+            background: linear-gradient(135deg, #f0f2f5 0%, #e8ebf0 100%);
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        /* Headers com Design Esportivo */
+        .gradient-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255, 65, 108, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        /* Cards com Efeito Vibrante */
+        .card-shadow {
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid rgba(0, 123, 255, 0.05);
+        }
+        
+        .card-shadow:hover {
+            box-shadow: 0 12px 40px rgba(0, 123, 255, 0.15);
+            transform: translateY(-4px);
+        }
+        
+        /* Botões Vibrantes */
+        .btn-primary {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            box-shadow: 0 6px 20px rgba(255, 65, 108, 0.3);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: none;
+            color: white;
+            font-weight: 700;
+            border-radius: 0.75rem;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 65, 108, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        
+        /* Inputs Melhorados */
+        .input-field {
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.875rem 1rem;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .input-field:focus {
+            border-color: #007bff;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+            outline: none;
+        }
+        
+        /* Badges e Destaques */
+        .badge-vibrante {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        /* Títulos com Estilo */
+        .section-title {
+            font-weight: 800;
+            color: #1f2937;
+            position: relative;
+            padding-bottom: 0.75rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff 0%, #ff416c 100%);
+            border-radius: 2px;
+        }
+        
+        /* Animações Suaves */
+
+        /* ===== ESTILOS DO MENU DE NAVEGAÇÃO RÁPIDA (BASEADO NA IMAGEM) ===== */
+        .quick-nav-card {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .quick-nav-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 123, 255, 0.2);
+        }
+
+        .quick-nav-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .quick-nav-text {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #1f2937;
+        }
+
+        /* Cores dos Cards (Baseado na Imagem) */
+        .card-placar {
+            background: linear-gradient(135deg, #fffbe6 0%, #fff3cd 100%); /* Amarelo/Laranja Suave */
+        }
+        .card-placar .quick-nav-icon {
+            color: #d97706; /* Laranja Escuro */
+        }
+        .card-placar:hover {
+            border-color: #d97706;
+        }
+
+        .card-resultados {
+            background: linear-gradient(135deg, #f0fff4 0%, #d1fae5 100%); /* Verde Suave */
+        }
+        .card-resultados .quick-nav-icon {
+            color: #10b981; /* Verde Esmeralda */
+        }
+        .card-resultados:hover {
+            border-color: #10b981;
+        }
+        
+        /* Ajuste para o título do menu */
+        .quick-nav-title {
+            font-weight: 700;
+            color: #4f46e5; /* Roxo */
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        /* ===== FIM DOS ESTILOS DO MENU DE NAVEGAÇÃO RÁPIDA ===== */
+
+        /* Animações Suaves */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+            }
+        }
+        
+        .animate-in {
+            animation: slideInUp 0.5s ease-out;
+        }
+        
+        /* Responsividade Mobile Otimizada */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .gradient-header {
+                padding: 1.5rem !important;
+            }
+            
+            .container {
+                padding: 1rem !important;
+            }
+            
+            .card-shadow {
+                border-radius: 1rem;
+            }
+            
+            .btn-primary {
+                padding: 0.875rem 1.5rem;
+                font-size: 1rem;
+                border-radius: 0.625rem;
+            }
+            
+            .input-field {
+                padding: 0.75rem 0.875rem;
+                font-size: 16px;
+            }
+        }
+        
+        /* Grid Responsivo */
+        .grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                gap: 1rem;
+            }
+            
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-cols-3 {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .grid-cols-6 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Efeitos Hover Melhorados */
+        a, button {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-badge.live {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.3);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+</style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="supabase-client.js"></script>
+</head>
+<body class="bg-gray-50">
+
+    
+
+    <!-- Header -->
+    <header class="gradient-header text-white py-16 py-20">
+        <div class="container mx-auto px-4 max-w-full text-center">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-2xl mb-6">
+                <i class="fas fa-trophy text-4xl text-yellow-300"></i>
+            </div>
+            <h1 class="text-4xl text-4xl font-bold mb-4">Mini Torneio (Bolão)</h1>
+            
+            <!-- Cronômetro Regressivo -->
+            <div id="countdown-container" class="hidden bg-white/10 backdrop-blur-sm rounded-xl p-6 max-w-2xl mx-auto mb-8 shadow-lg">
+                <p id="countdown-title" class="text-lg font-bold mb-4">O torneio começa em:</p>
+                <div id="countdown-display" class="grid grid-cols-4 gap-2 gap-4 text-center">
+                    <div><div id="countdown-days" class="text-4xl font-bold">00</div><div class="text-xs opacity-70">Dias</div></div>
+                    <div><div id="countdown-hours" class="text-4xl font-bold">00</div><div class="text-xs opacity-70">Horas</div></div>
+                    <div><div id="countdown-minutes" class="text-4xl font-bold">00</div><div class="text-xs opacity-70">Minutos</div></div>
+                    <div><div id="countdown-seconds" class="text-4xl font-bold">00</div><div class="text-xs opacity-70">Segundos</div></div>
+                </div>
+                <p id="countdown-date" class="text-sm font-semibold mt-4 opacity-80"><i class="fas fa-calendar-check mr-2"></i>Data: <span id="countdown-date-text">--</span></p>
+            </div>
+
+            <div class="flex flex-wrap gap-4 justify-center">
+                <a href="index-inscrever-time.html" class="btn-primary shadow-lg text-white font-bold py-3 px-8 rounded-lg shadow-lg">
+                    <i class="fas fa-clipboard-list mr-2"></i>Inscrever Time
+                </a>
+                <a href="https://wa.me/5591993370456" target="_blank" class="bg-white/20 border-2 border-white text-white font-bold py-3 px-8 rounded-lg transition-all hover:bg-white hover:text-purple-700">
+                    <i class="fab fa-whatsapp mr-2"></i>Falar com o Organizador
+                </a>
+                <a href="../pages/welcome.html" class="bg-white/10 border border-white/30 text-white font-bold py-3 px-8 rounded-lg transition-all hover:bg-white hover:text-blue-900 flex items-center justify-center gap-2">
+                    <i class="fas fa-arrow-left"></i>Voltar ao Futebol Milhão
+                </a>
+            </div>
+        </div>
+    </header>
+
+    
+
+    <!-- Alerta de Partida Ao Vivo no Local do Menu -->
+    <div id="live-match-alert-menu-container" class="sticky top-0 z-40">
+        <!-- O alerta será injetado aqui pelo JavaScript -->
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 max-w-full py-12">
+        
+        <!-- Menu de Navegação Rápida -->
+        <section class="mb-12">
+            <h2 class="quick-nav-title text-xl font-bold mb-6">
+                <i class="fas fa-bolt text-purple-600"></i>
+                Navegação Rápida
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                
+                <!-- Placar Ao Vivo -->
+                <a href="index-placar-publico.html" class="quick-nav-card card-placar animate-in hidden">
+                    <i class="fas fa-tv quick-nav-icon"></i>
+                    <span class="quick-nav-text">Placar Ao Vivo</span>
+                </a>
+
+                <!-- Resultados -->
+                <a href="index-resultados.html" class="quick-nav-card card-resultados animate-in">
+                    <i class="fas fa-chart-bar quick-nav-icon"></i>
+                    <span class="quick-nav-text">Resultados</span>
+                </a>
+                
+                <!-- Exemplo de Outros (Remover se não for usar) -->
+                <!--
+                <a href="#" class="quick-nav-card animate-in" style="background: linear-gradient(135deg, #e6f0ff 0%, #cce0ff 100%);">
+                    <i class="fas fa-users quick-nav-icon" style="color: #007bff;"></i>
+                    <span class="quick-nav-text">Times</span>
+                </a>
+                <a href="#" class="quick-nav-card animate-in" style="background: linear-gradient(135deg, #f0e6ff 0%, #e0ccff 100%);">
+                    <i class="fas fa-money-bill-wave quick-nav-icon" style="color: #8a2be2;"></i>
+                    <span class="quick-nav-text">Financeiro</span>
+                </a>
+                -->
+                
+            </div>
+        </section>
+        
+        <!-- Resumo do Torneio -->
+        <section class="mb-12">
+            <h2 class="section-title text-lg text-lg font-bold text-gray-800 mb-8">Informações do Torneio</h2>
+            <div class="grid grid-cols-1 gap-6">
+                <div class="bg-white rounded-2xl card-shadow animate-in p-8 text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl mb-4">
+                        <i class="fas fa-users text-lg text-blue-600"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-gray-800"><span data-config="quantidade-times">3</span> Times</h3>
+                    <p class="text-gray-600 text-sm">Formato dinâmico com rotação contínua.</p>
+                </div>
+                <div class="bg-white rounded-2xl card-shadow animate-in p-8 text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl mb-4">
+                        <i class="fas fa-clock text-lg text-green-600"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-gray-800">Partidas de <span data-config="tempo-cronometro">7</span> min</h3>
+                    <p class="text-gray-600 text-sm">Ação rápida e muitos jogos para todos.</p>
+                </div>
+                <div class="bg-white rounded-2xl card-shadow animate-in p-8 text-center">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-2xl mb-4">
+                        <i class="fas fa-dollar-sign text-lg text-yellow-600"></i>
+                    </div>
+                    <h3 class="font-bold text-lg mb-2 text-gray-800">Inscrição <span data-config="valor-inscricao">R$ 150</span></h3>
+                    <p class="text-gray-600 text-sm">Valor por time para participar.</p>
+                </div>
+            </div>
+        </section>
+
+
+
+	        <!-- Seção de Regras -->
+	        <section id="regras" class="mb-12 bg-white rounded-2xl card-shadow p-8">
+	            <div class="flex items-center gap-3 mb-8">
+	                <div class="w-1 h-10 bg-gradient-to-b from-purple-500 to-purple-600 rounded"></div>
+	                <h2 class="text-lg font-bold text-gray-800">Regras do Jogo</h2>
+	            </div>
+	            
+	            <div class="info-box p-6 rounded-lg mb-8">
+	                <div class="flex gap-3">
+	                    <i class="fas fa-info-circle flex-shrink-0 mt-0.5"></i>
+	                    <p class="text-sm text-base">Conheça as regras completas do torneio para garantir uma competição justa e divertida para todos os times.</p>
+	                </div>
+	            </div>
+	
+	            <div class="grid grid-cols-1 gap-8">
+	                <div>
+<h3 class="text-lg font-bold mb-6 text-purple-600 flex items-center gap-2">
+		                        <i class="fas fa-gamepad"></i>Dinâmica das Partidas
+		                    </h3>
+<ul class="space-y-4 text-gray-700">
+			                        <li class="flex items-start gap-3">
+			                            <i class="fas fa-check-circle text-green-500 mt-1 flex-shrink-0"></i>
+			                            <span><strong>Formato:</strong> Pontos corridos com 3 times.</span>
+			                        </li>
+			                        <li class="flex items-start gap-3">
+			                            <i class="fas fa-check-circle text-green-500 mt-1 flex-shrink-0"></i>
+			                            <span><strong>Em campo:</strong> 2 times jogam, 1 aguarda.</span>
+			                        </li>
+			                        <li class="flex items-start gap-3">
+			                            <i class="fas fa-check-circle text-green-500 mt-1 flex-shrink-0"></i>
+			                            <span><strong>Fim da partida:</strong> 7 minutos ou 2 gols marcados.</span>
+			                        </li>
+			                        <li class="flex items-start gap-3">
+			                            <i class="fas fa-check-circle text-green-500 mt-1 flex-shrink-0"></i>
+			                            <span><strong>Rotação:</strong> O time vencedor permanece em campo. O perdedor sai para o time que estava aguardando.</span>
+			                        </li>
+			                        <li class="flex items-start gap-3">
+			                            <i class="fas fa-info-circle text-yellow-500 mt-1 flex-shrink-0"></i>
+			                            <span><strong>Empate no tempo:</strong> Capitães decidem no par ou ímpar quem fica. Ambos os times ganham 1 ponto.</span>
+			                        </li>
+			                    </ul>
+</div>
+		                <div>
+		                    <h3 class="text-lg font-bold mb-6 text-purple-600 flex items-center gap-2">
+		                        <i class="fas fa-star"></i>Sistema de Pontuação
+		                    </h3>
+		                    <div class="space-y-4">
+		                        <div class="flex justify-between items-center p-4 bg-white rounded-lg border-l-4 border-green-500 shadow-sm">
+		                            <p class="font-semibold text-gray-700">Vitória:</p>
+		                            <p class="font-bold text-lg text-green-600">3 pts</p>
+		                        </div>
+		                        <div class="flex justify-between items-center p-4 bg-white rounded-lg border-l-4 border-yellow-500 shadow-sm">
+		                            <p class="font-semibold text-gray-700">Empate:</p>
+		                            <p class="font-bold text-lg text-yellow-600">1 pt</p>
+		                        </div>
+		                        <div class="flex justify-between items-center p-4 bg-white rounded-lg border-l-4 border-red-500 shadow-sm">
+		                            <p class="font-semibold text-gray-700">Derrota:</p>
+		                            <p class="font-bold text-lg text-red-600">0 pts</p>
+		                        </div>
+		                    </div>
+		
+		                    <h3 class="text-lg font-bold mt-8 mb-4 text-purple-600 flex items-center gap-2">
+		                        <i class="fas fa-balance-scale"></i>Critérios de Desempate
+		                    </h3>
+		                    <ol class="list-decimal list-inside space-y-2 pl-2 text-gray-700">
+		                        <li>Maior número de pontos</li>
+		                        <li>Maior número de vitórias</li>
+		                        <li>Melhor saldo de gols</li>
+		                    </ol>
+		                </div>
+		                <div>
+			                    <h3 class="text-lg font-bold mb-6 text-purple-600 flex items-center gap-2">
+			                        <i class="fas fa-shield-alt"></i>Regras de Conduta
+		                    </h3>
+		                    <ul class="space-y-4 text-gray-700">
+		                        <li class="flex items-start gap-3">
+		                            <i class="fas fa-check-circle text-green-500 mt-1 flex-shrink-0"></i>
+		                            <span><strong>Fair Play:</strong> Respeito mútuo entre jogadores, árbitros e organizadores é obrigatório.</span>
+		                        </li>
+		                    </ul>
+		                </div>
+	            </div>
+	        </section>
+	
+	        <!-- Seção de Premiação -->
+	        <section id="premiacao" class="mb-12 bg-white rounded-2xl card-shadow p-8">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-1 h-10 bg-gradient-to-b from-yellow-500 to-yellow-600 rounded"></div>
+                <h2 class="text-lg font-bold text-gray-800">Arrecadação e Premiação</h2>
+            </div>
+
+            <div class="grid grid-cols-1 gap-8">
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border-l-4 border-blue-500">
+                    <h3 class="text-lg font-bold mb-6 text-blue-700 flex items-center gap-2">
+                        <i class="fas fa-calculator"></i>Cálculo de Valores
+                    </h3>
+                    <div class="space-y-3 text-gray-700">
+                        <div class="flex justify-between p-3 bg-white rounded-lg">
+                            <span>Inscrição por Time:</span>
+                            <strong data-config="valor-inscricao">R$ 150,00</strong>
+                        </div>
+                        <div class="flex justify-between p-3 bg-white rounded-lg">
+                            <span>Total de Times:</span>
+                            <strong data-config="quantidade-times">3</strong>
+                        </div>
+                        <div class="flex justify-between p-3 bg-white rounded-lg border-t-2 border-blue-300 mt-3">
+                            <span class="font-semibold">Arrecadação Bruta:</span>
+                            <strong data-config="arrecadacao-total">R$ 450,00</strong>
+                        </div>
+                        <div class="flex justify-between p-3 bg-white rounded-lg">
+                            <span>Aluguel do Campo:</span>
+                            <strong class="text-red-600">- <span data-config="aluguel-campo">R$ 150,00</span></strong>
+                        </div>
+                        <div class="flex justify-between p-3 bg-gradient-to-r from-green-100 to-green-50 rounded-lg border-t-2 border-green-300 mt-3">
+                            <span class="font-bold text-green-700">Total para Prêmios:</span>
+                            <strong class="text-green-700 text-base" data-config="disponivel-premiacao">R$ 300,00</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold mb-6 text-yellow-700 flex items-center gap-2">
+                        <i class="fas fa-medal"></i>Distribuição dos Prêmios
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="bg-gradient-to-r from-yellow-100 to-yellow-50 rounded-lg p-4 flex justify-between items-center border-l-4 border-yellow-500">
+                            <span class="font-bold text-base text-yellow-800">🥇 1º Lugar:</span>
+                            <span class="font-bold text-lg text-yellow-600" data-config="premio-primeiro">R$ 250,00</span>
+                        </div>
+                        <div class="bg-gradient-to-r from-gray-200 to-gray-100 rounded-lg p-4 flex justify-between items-center border-l-4 border-gray-400">
+                            <span class="font-bold text-base text-gray-800">🥈 2º Lugar:</span>
+                            <span class="font-bold text-lg text-gray-700" data-config="premio-segundo">R$ 50,00</span>
+                        </div>
+                        <div class="bg-gradient-to-r from-orange-100 to-orange-50 rounded-lg p-4 flex justify-between items-center border-l-4 border-orange-500">
+                            <span class="font-bold text-base text-orange-800">🥉 3º Lugar:</span>
+                            <span class="font-bold text-lg text-orange-600" data-config="premio-terceiro">R$ 0,00</span>
+                        </div>
+                        <div id="premiacao-artilheiro-container" class="hidden bg-gradient-to-r from-purple-100 to-purple-50 rounded-lg p-4 justify-between items-center border-l-4 border-purple-500">
+                            <span class="font-bold text-base text-purple-800">🎯 Artilheiro:</span>
+                            <span class="font-bold text-lg text-purple-600" data-config="premio-artilheiro">R$ 50,00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção de Interesse em Participar -->
+        <section id="interesse" class="mb-12 bg-gradient-to-br from-blue-500 via-purple-500 to-blue-500 text-white rounded-2xl card-shadow p-8 md:p-10 shadow-2xl">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-white/20 rounded-full">
+                    <i class="fas fa-hand-paper text-xl"></i>
+                </div>
+                <h2 class="text-2xl md:text-3xl font-bold">Tem Interesse em Participar?</h2>
+            </div>
+            <p class="mb-8 opacity-95 text-base md:text-lg leading-relaxed">Se você tem interesse em participar do torneio com seu time, preencha o formulário abaixo. Entraremos em contato para fornecer mais informações e detalhes sobre como se inscrever!</p>
+            
+            <form id="form-interesse" class="space-y-5 max-w-2xl">
+                <div class="grid grid-cols-1 gap-4">
+                    <div>
+                        <input type="text" name="nome-time" required class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm rounded-lg placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/30 text-white transition-all" placeholder="Nome do Time *">
+                    </div>
+                    <div>
+                        <input type="text" name="capitao" required class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm rounded-lg placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/30 text-white transition-all" placeholder="Nome do Capitão *">
+                    </div>
+                    <div>
+                        <input type="tel" name="telefone" required class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm rounded-lg placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/30 text-white transition-all" placeholder="Telefone/WhatsApp *">
+                    </div>
+                </div>
+                <div>
+                    <textarea name="mensagem" rows="5" class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm rounded-lg placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white focus:bg-white/30 text-white transition-all resize-none" placeholder="Mensagem adicional (opcional)..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-white text-transparent bg-clip-text bg-gradient-to-r from-blue-100 to-blue-100 font-bold py-3 px-6 rounded-lg transition-all hover:bg-gray-100 hover:text-white shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95">
+                    <i class="fab fa-whatsapp mr-2"></i>Manifestar Interesse via WhatsApp
+                </button>
+            </form>
+            <div id="agradecimento-interesse" class="hidden mt-6 bg-green-500/90 text-white text-center px-4 py-3 rounded-lg animate-pulse">
+                <i class="fas fa-check-circle mr-2"></i>Obrigado pelo interesse! Entraremos em contato em breve com mais informações.
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8 mt-12">
+        <div class="container mx-auto px-4 max-w-full">
+                <div class="flex flex-row justify-between items-center text-center">
+                <div>
+                    <p class="font-semibold text-white">&copy; Desenvolvido Por Renan Lima 1°Mini Torneio (Bolão)</p>
+                    <p class="text-sm opacity-70 mt-1">Todos os direitos reservados</p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <a href="index-admin.html" class="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Painel de Controle</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

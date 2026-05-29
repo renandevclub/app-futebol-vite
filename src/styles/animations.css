@@ -1,0 +1,66 @@
+/* =================================================================== */
+/* ANIMATIONS & MICROINTERACTIONS                                      */
+/* =================================================================== */
+
+/* Entrada suave subindo (usar em listas, cards que carregam) */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUpFade 0.4s var(--ease-out-back) forwards;
+}
+
+/* Para aplicar stagger (cascata) em listas geradas via JS */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+
+/* Pulse sutil (usado em badges "AO VIVO" ou loading indicators) */
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(0, 255, 135, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 255, 135, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 135, 0); }
+}
+
+.animate-pulse {
+  animation: pulseGlow 2s infinite;
+}
+
+/* Fade In básico */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s var(--ease-fluid) forwards;
+}
+
+/* Efeito de Escala Tátil (Botões, Cards Clicáveis) - JS ou :active */
+.click-scale {
+  transition: transform var(--transition-fast);
+}
+.click-scale:active {
+  transform: scale(0.96);
+}
+
+/* Shake de Erro (Validações de form) */
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shakeError 0.5s var(--ease-fluid);
+}

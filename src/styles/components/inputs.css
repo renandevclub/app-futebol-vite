@@ -1,0 +1,158 @@
+/* =================================================================== */
+/* INPUTS & FORMS — PREMIUM UX                                         */
+/* =================================================================== */
+
+.input-group {
+  margin-bottom: 20px;
+  position: relative;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  transition: color var(--transition-fast);
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border-medium);
+  color: var(--text-main);
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------------- */
+/* FOCUS STATES (Neon Glow)                                            */
+/* ------------------------------------------------------------------- */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(0, 255, 135, 0.15), 0 0 10px var(--accent-primary-glow);
+  background: rgba(0, 255, 135, 0.02);
+}
+
+input:focus + label,
+select:focus + label,
+textarea:focus + label {
+  color: var(--accent-primary);
+}
+
+/* ------------------------------------------------------------------- */
+/* SELECT CUSTOMIZADO                                                  */
+/* ------------------------------------------------------------------- */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+select option {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  padding: 12px;
+}
+
+/* ------------------------------------------------------------------- */
+/* CHECKBOX & RADIO (Fut Style)                                        */
+/* ------------------------------------------------------------------- */
+.checkbox-group, .radio-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--bg-input);
+  border: 2px solid var(--border-medium);
+  border-radius: 4px; /* Circulo para radio é feito no border-radius abaixo */
+  display: grid;
+  place-content: center;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+input[type="radio"] {
+  border-radius: 50%;
+}
+
+input[type="checkbox"]::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em var(--bg-base);
+  background-color: var(--text-on-accent);
+  transform-origin: center;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="radio"]::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  background-color: var(--text-on-accent);
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary-glow);
+}
+
+input[type="checkbox"]:checked::before,
+input[type="radio"]:checked::before {
+  transform: scale(1);
+}
+
+/* ------------------------------------------------------------------- */
+/* ERRO E VALIDAÇÃO                                                    */
+/* ------------------------------------------------------------------- */
+.input-error input,
+.input-error select,
+.input-error textarea {
+  border-color: var(--accent-danger);
+  box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.15);
+}
+
+.error-message {
+  color: var(--accent-danger);
+  font-size: var(--font-size-xs);
+  margin-top: 6px;
+  display: block;
+}
