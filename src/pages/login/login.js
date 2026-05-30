@@ -134,10 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     throw new Error('Erro de conexão com servidor. Recarregue a página.');
                 }
                 
+                const redirectUrl = `${window.location.origin}/pages/welcome.html`;
                 const { error } = await client.auth.signInWithOAuth({
                     provider: 'google',
                     options: {
-                        redirectTo: 'http://localhost:5173/pages/welcome.html'
+                        redirectTo: redirectUrl
                     }
                 });
                 
