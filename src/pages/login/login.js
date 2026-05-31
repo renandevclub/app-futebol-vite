@@ -15,6 +15,21 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Lógica para abas (tabs) de seleção de perfil (Jogador vs Administrador)
+    const roleTabs = document.querySelectorAll('.role-tab');
+    roleTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            roleTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            const selectedRole = tab.getAttribute('data-role');
+            roleSelect.value = selectedRole;
+            
+            // Dispara o evento change no select original para atualizar o texto do botão
+            roleSelect.dispatchEvent(new Event('change'));
+        });
+    });
+
     // Attempt to load Supabase client initialization if needed
     if (typeof initDB === 'function') {
         initDB().catch(console.warn);

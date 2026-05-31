@@ -5,12 +5,10 @@
  * Ele combina o SW personalizado existente com o precache do Workbox.
  */
 
-importScripts(
-  "https://storage.googleapis.com/workbox-cdn/releases/6.6.2/workbox-sw.js",
-);
+import { precacheAndRoute } from 'workbox-precaching';
 importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
 
-workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
+precacheAndRoute(self.__WB_MANIFEST || []);
 
 const CACHE_NAME = "futmilhao-v4";
 const RUNTIME_CACHE = "futmilhao-runtime-v4";

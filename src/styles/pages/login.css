@@ -18,7 +18,6 @@ body.login-page {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     min-height: 100vh;
     width: 100%;
     margin: 0;
@@ -30,11 +29,11 @@ body.login-page {
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    padding: 10px 16px 8px;
+    padding: 24px 16px;
     box-sizing: border-box;
     position: relative;
     overflow-x: hidden;
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
 /* Background Animated Elements */
@@ -60,9 +59,8 @@ body.login-page::before {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: calc(100vh - 48px);
     z-index: 1;
-    padding-bottom: 0;
 }
 
 /* Caixa de login - Premium Glassmorphism */
@@ -74,10 +72,9 @@ body.login-page::before {
     border-top: 1px solid var(--border-glass-top);
     box-shadow: var(--shadow-glass);
     border-radius: var(--radius-xl);
-    padding: 32px 28px;
+    padding: 24px 28px;
     width: 100%;
-    max-width: 420px;
-    max-height: calc(100vh - 40px);
+    max-width: 400px;
     text-align: center;
     animation: slideUpFade 0.8s var(--ease-bouncy) forwards;
 }
@@ -90,8 +87,8 @@ body.login-page::before {
 /* Logo */
 .login-logo {
     display: block;
-    margin: 0 auto 18px;
-    max-width: 180px;
+    margin: 0 auto 12px;
+    max-width: 90px;
     filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
     transition: transform 0.3s ease;
 }
@@ -102,18 +99,54 @@ body.login-page::before {
 
 /* Títulos */
 .login-box h2 {
-    margin: 0 0 8px 0;
+    margin: 0 0 4px 0;
     color: var(--text-main);
-    font-size: 2rem;
+    font-size: 1.6rem;
     font-weight: 700;
     letter-spacing: -0.02em;
 }
 
 .subtitulo {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #cbd5e1; /* Cinza claro para maior legibilidade */
-    margin: 0 0 32px 0;
+    margin: 0 0 20px 0;
     font-weight: 400;
+}
+
+/* Abas de Seleção de Role (Jogador vs Admin) */
+.role-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 3px;
+    margin-bottom: 20px;
+    gap: 4px;
+}
+
+.role-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.role-tab.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+    color: #0b1528;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+}
+
+.role-tab:hover:not(.active) {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
 }
 
 /* Inputs */
@@ -216,27 +249,31 @@ body.login-page::before {
     transform: translateY(1px);
 }
 
-/* Link de registro */
-.register-link {
-    margin-top: 24px;
-    font-size: 0.95rem;
+/* Links do Rodapé do Login */
+.login-footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    font-size: 0.9rem;
     color: var(--text-muted);
 }
 
-.register-link p {
-    margin: 0;
-}
-
-.register-link a {
+.footer-link {
     color: var(--primary);
     text-decoration: none;
     font-weight: 600;
-    transition: color 0.2s, text-shadow 0.2s;
+    transition: all 0.2s ease;
 }
 
-.register-link a:hover {
+.footer-link:hover {
     color: #34d399;
     text-shadow: 0 0 8px rgba(52, 211, 153, 0.4);
+}
+
+.link-dot {
+    color: var(--glass-border);
 }
 
 /* Mensagem de Erro */
@@ -408,71 +445,60 @@ body.login-page::before {
     background: linear-gradient(to right, transparent, var(--glass-border), transparent);
 }
 
-.btn-visitor {
-    width: 100%;
-    padding: 14px 20px;
-    background: rgba(245, 158, 11, 0.14); /* Fundo um pouco mais visível */
-    border: 1px solid rgba(245, 158, 11, 0.45); /* Borda mais definida */
+/* ===== Grid de Logins Alternativos (Lado a Lado) ===== */
+.alternative-login-grid {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.btn-alternative {
+    flex: 1;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
     border-radius: 12px;
-    color: #fcd34d; /* Cor amarela âmbar mais clara para maior contraste */
-    font-size: 1rem;
+    color: var(--text-main);
+    font-size: 0.95rem;
     font-weight: 600;
     font-family: inherit;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-visitor:hover {
-    background: rgba(245, 158, 11, 0.15);
+.btn-alternative:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.btn-alternative:active {
+    transform: translateY(0);
+}
+
+#google-login-btn.btn-alternative:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+}
+
+#visitor-btn.btn-alternative {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: #fcd34d;
+}
+
+#visitor-btn.btn-alternative:hover {
+    background: rgba(245, 158, 11, 0.12);
     border-color: rgba(245, 158, 11, 0.5);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.15);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
 }
 
-.btn-visitor:active {
-    transform: translateY(0);
-}
-
-.visitor-icon {
-    font-size: 1.2rem;
-}
-
-/* ===== Botão de Login com o Google ===== */
-.btn-google {
-    width: 100%;
-    padding: 14px 20px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 12px;
-    color: #f8fafc;
-    font-size: 1rem;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 12px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-google:hover {
-    background: rgba(255, 255, 255, 0.14);
-    border-color: rgba(255, 255, 255, 0.25);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.06);
-}
-
-.btn-google:active {
-    transform: translateY(0);
-}
-
-.btn-google svg {
+.btn-alternative svg,
+.btn-alternative span {
     flex-shrink: 0;
 }
 
@@ -577,17 +603,26 @@ body.login-page::before {
 [data-theme="light"] .input-group input::placeholder { color: rgba(100, 116, 139, 0.6); }
 [data-theme="light"] .error-message { color: #b91c1c; background: rgba(239, 68, 68, 0.06); }
 [data-theme="light"] .btn-live { color: #dc2626; border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.06); }
-[data-theme="light"] .btn-visitor { color: #b45309; border-color: rgba(245, 158, 11, 0.2); background: rgba(245, 158, 11, 0.06); }
-[data-theme="light"] .btn-google {
+[data-theme="light"] .login-footer-links { color: #64748b; }
+[data-theme="light"] .btn-alternative {
     background: #ffffff;
     border-color: rgba(0, 0, 0, 0.12);
     color: #1e293b;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
-[data-theme="light"] .btn-google:hover {
+[data-theme="light"] .btn-alternative:hover {
     background: #f8fafc;
     border-color: rgba(0, 0, 0, 0.2);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+[data-theme="light"] #visitor-btn.btn-alternative {
+    background: rgba(245, 158, 11, 0.05);
+    border-color: rgba(245, 158, 11, 0.2);
+    color: #b45309;
+}
+[data-theme="light"] #visitor-btn.btn-alternative:hover {
+    background: rgba(245, 158, 11, 0.08);
+    border-color: rgba(245, 158, 11, 0.35);
 }
 [data-theme="light"] .visitor-modal-overlay { background: rgba(241, 245, 249, 0.85); }
 [data-theme="light"] .visitor-modal-card {
