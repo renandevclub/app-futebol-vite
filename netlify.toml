@@ -1,8 +1,8 @@
 # ============================================================
 # NETLIFY.TOML — Futebol Milhão (Vite Migration)
-# Última atualização: 18/05/2026
+# Última atualização: 31/05/2026
 #
-# ESTRATÉGIA DE CACHE (3 camadas):
+# ESTRATÉGIA DE CACHE (4 camadas):
 #
 # 1. HTML → SEMPRE revalidar (no-cache)
 #    Motivo: O HTML é a "porta de entrada". Ele referencia
@@ -24,22 +24,12 @@
 #    Isso inclui sw.js, OneSignalSDKWorker.js,
 #    OneSignalSDKUpdaterWorker.js.
 #
-# 4. Imagens → Cache moderado (24 horas)
-#    Motivo: Imagens mudam raramente. 24h equilibra
+# 4. Imagens → Cache moderado (7 dias)
+#    Motivo: Imagens mudam raramente. 7 dias equilibra
 #    performance com atualização.
 #
-# COMPARAÇÃO: Antes vs Depois
-# Antes (sem Vite):
-#   - CSS/JS sem hash: nomes nunca mudam
-#   - Chrome Mobile cacheia agressivamente
-#   - Usuário precisa limpar cache manualmente
-#   - Netlify tinha que usar "no-cache" em tudo
-#
-# Depois (com Vite):
-#   - CSS/JS com hash: nomes mudam a cada deploy
-#   - Chrome Mobile vê arquivo NOVO → baixa automaticamente
-#   - Cache forte melhora performance em visitas repetidas
-#   - Usuário NUNCA precisa limpar cache
+# 5. Fontes → Cache forte (1 ano, immutable)
+#    Motivo: Fontes nunca mudam. Cache máximo.
 # ============================================================
 
 [build]
@@ -47,6 +37,55 @@
   publish = "dist"
   # Comando de build
   command = "npm run build"
+
+# ============================================================
+# BUILD: Variáveis de ambiente de build
+# ============================================================
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--prefer-offline"
+
+# ============================================================
+# BUILD: Processamento de recursos
+# ============================================================
+[build.processing]
+  skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = true
+
+# ============================================================
+# HEADERS GLOBAIS: Segurança + Cache padrão
+# Aplicados a TODOS os arquivos
+# ============================================================
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # === SEGURANÇA AVANÇADA ===
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-XSS-Protection = "1; mode=block"
+    # Cross-Origin policies para isolamento
+    Cross-Origin-Opener-Policy = "same-origin-allow-popups"
+    Cross-Origin-Resource-Policy = "same-site"
+    # Content-Security-Policy reforçado
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.onesignal.com https://onesignal.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://onesignal.com https://cdn.onesignal.com https://accounts.google.com wss://*.supabase.co; frame-src 'self' https://accounts.google.com; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    # Cache padrão para HTML e clean URLs
+    Cache-Control = "public, no-cache, must-revalidate"
 
 # ============================================================
 # HEADERS: HTML → SEMPRE revalidar
@@ -61,7 +100,6 @@
 # Motivo: Service workers PRECISAM ser carregados frescos.
 # Se ficarem em cache, o navegador pode usar versão antiga
 # e as notificações push param de funcionar.
-# Isso inclui o sw.js do PWA e os workers do OneSignal.
 # ============================================================
 [[headers]]
   for = "/sw.js"
@@ -90,27 +128,12 @@
     Cache-Control = "public, max-age=86400, must-revalidate"
     Content-Type = "application/manifest+json"
 
-# Também aplica para a raiz (/) e clean URLs sem extensão
-[[headers]]
-  for = "/*"
-  [headers.values]
-    # === SEGURANÇA ===
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
-    X-XSS-Protection = "1; mode=block"
-    # Cache padrão para HTML e clean URLs
-    Cache-Control = "public, no-cache, must-revalidate"
-
 # ============================================================
 # JS/CSS com HASH → Cache FORTE (1 ano, immutable)
 # ============================================================
 # O Vite coloca hash nos nomes: dashboard-a1b2c3d4.js
 # O hash muda quando o conteúdo muda → URL nova → download novo
 # "immutable" = o navegador NUNCA revalida (confia que nunca muda)
-# Isso é seguro porque o nome do arquivo contém o hash do conteúdo.
 [[headers]]
   for = "/assets/js/*"
   [headers.values]
@@ -122,26 +145,55 @@
     Cache-Control = "public, max-age=31536000, immutable"
 
 # ============================================================
-# IMAGENS → Cache moderado (24 horas)
+# FONTES → Cache forte (1 ano, immutable)
+# Fontes nunca mudam. Cache máximo para melhor performance.
+# ============================================================
+[[headers]]
+  for = "*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.woff"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ============================================================
+# IMAGENS → Cache moderado (7 dias)
 # ============================================================
 [[headers]]
   for = "/assets/images/*"
   [headers.values]
-    Cache-Control = "public, max-age=86400, must-revalidate"
+    Cache-Control = "public, max-age=604800, must-revalidate"
 
-# Outros assets (fontes, etc.)
+# ============================================================
+# Outros assets (gerados pelo Vite com hash)
+# ============================================================
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
 # ============================================================
-# REDIRECIONAMENTOS (Clean URLs)
+# Favicon → Cache médio (1 dia)
 # ============================================================
-# Mantém os mesmos redirects de antes.
-# status = 200 = rewrite (URL do navegador NÃO muda)
-# O Vite gera o HTML em dist/, então o path é relativo a dist/
+[[headers]]
+  for = "/favicon.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"
 
+# ============================================================
+# REDIRECIONAMENTOS — Páginas Principais (Clean URLs)
+# status = 200 = rewrite (URL do navegador NÃO muda)
+# ============================================================
+
+# --- Página raiz ---
+[[redirects]]
+  from = "/login"
+  to = "/index.html"
+  status = 200
+
+# --- Páginas do app ---
 [[redirects]]
   from = "/admin-placar"
   to = "/pages/admin-placar.html"
@@ -191,3 +243,100 @@
   from = "/placar"
   to = "/placar-ao-vivo.html"
   status = 200
+
+# --- Páginas de Recuperação de Senha ---
+[[redirects]]
+  from = "/esqueci-senha"
+  to = "/pages/forgot-password.html"
+  status = 200
+
+[[redirects]]
+  from = "/redefinir-senha"
+  to = "/pages/reset-password.html"
+  status = 200
+
+# --- Mini Torneio (Clean URLs) ---
+[[redirects]]
+  from = "/mini-torneio"
+  to = "/mini-torneio/index-pagina-principal.html"
+  status = 200
+
+[[redirects]]
+  from = "/mini-torneio/admin"
+  to = "/mini-torneio/index-admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/mini-torneio/inscrever"
+  to = "/mini-torneio/index-inscrever-time.html"
+  status = 200
+
+[[redirects]]
+  from = "/mini-torneio/placar-admin"
+  to = "/mini-torneio/index-placar-administrador.html"
+  status = 200
+
+[[redirects]]
+  from = "/mini-torneio/placar"
+  to = "/mini-torneio/index-placar-publico.html"
+  status = 200
+
+[[redirects]]
+  from = "/mini-torneio/resultados"
+  to = "/mini-torneio/index-resultados.html"
+  status = 200
+
+[[redirects]]
+  from = "/mini-torneio/financeiro"
+  to = "/mini-torneio/index-financeiro.html"
+  status = 200
+
+[[redirects]]
+  from = "/mini-torneio/pagamentos"
+  to = "/mini-torneio/index-pagamento-jogadores.html"
+  status = 200
+
+# ============================================================
+# HTTPS: Forçar HTTPS em todos os acessos
+# ============================================================
+[[redirects]]
+  from = "http://fut-resenha.netlify.app/*"
+  to = "https://fut-resenha.netlify.app/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://futebol-milhao.netlify.app/*"
+  to = "https://futebol-milhao.netlify.app/:splat"
+  status = 301
+  force = true
+
+# ============================================================
+# PÁGINA 404 CUSTOMIZADA
+# ============================================================
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# ============================================================
+# CONTEXTOS: Configurações por ambiente
+# ============================================================
+
+# Deploy Preview (branch != main)
+[context.deploy-preview]
+  command = "npm run build"
+  [context.deploy-preview.environment]
+    NODE_ENV = "preview"
+
+# Branch Deploy
+[context.branch-deploy]
+  command = "npm run build"
+  [context.branch-deploy.environment]
+    NODE_ENV = "preview"
+
+# Produção
+[context.production]
+  command = "npm run build"
+  [context.production.environment]
+    NODE_ENV = "production"
