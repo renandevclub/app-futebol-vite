@@ -98,6 +98,7 @@ export function buildDashboardMatchCardHtml({
         <span class="status-pill ${statusClass}">${escapeHtml(match.status)}</span>
       </div>
       <div class="match-card-body">
+        ${match.title ? `<h3 class="match-card-title">${escapeHtml(match.title)}</h3>` : ''}
         <div class="match-info-grid">
           <span class="match-info-item"><i class="fas fa-map-marker-alt text-accent"></i> <span><strong>${escapeHtml(match.location)}</strong>${locationIconHtml}</span></span>
           <span class="match-info-item"><i class="far fa-clock text-accent"></i> <span>${escapeHtml(match.time)}h</span></span>

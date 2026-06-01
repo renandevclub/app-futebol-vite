@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           formattedDate,
           matchDateTime,
           isAdmin: currentUser && isAdminRole(currentUser.role),
-          showPaymentButton: currentUserPaymentStatus?.confirmed,
+          showPaymentButton: currentUserPaymentStatus?.confirmed && match.status !== "ENCERRADA",
         });
 
         matchListDiv.appendChild(card);

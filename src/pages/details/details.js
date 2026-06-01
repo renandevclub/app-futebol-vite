@@ -54,6 +54,7 @@ import {
   isScratchCardEnabled as selectIsScratchCardEnabled,
   playerCanDrawAgain as selectPlayerCanDrawAgain,
 } from '../../modules/details/details-state.js';
+import { getStandingsByMatch } from '../../services/live-score.service.js';
 
 document.addEventListener("DOMContentLoaded", async () => {
   await initDB();
@@ -288,7 +289,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       }
 
-      pageTitle.textContent = `Detalhes: ${currentMatch.location}`;
+      pageTitle.textContent = currentMatch.title ? currentMatch.title : `Detalhes: ${currentMatch.location}`;
       if (
         currentMatch.status === "ENCERRADA" &&
         !currentMatch.results_processed &&
@@ -299,6 +300,15 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       renderAllSections();
       setupMatchRealtimeSubscription(currentMatch.id);
+
+      // Exibe modal de campeão automaticamente uma vez por sessão para partidas encerradas
+      if (currentMatch.status === "ENCERRADA") {
+        const sessionKey = `champion_modal_shown_${currentMatch.id}`;
+        if (!sessionStorage.getItem(sessionKey)) {
+          sessionStorage.setItem(sessionKey, '1');
+          setTimeout(() => showChampionModal(currentMatch), 600);
+        }
+      }
     } catch (error) {
       console.error("Erro fatal ao carregar detalhes:", error);
       mainContainer.innerHTML = `<div class="card"><h2>Erro ao Carregar Partida</h2><p>Ocorreu um erro. Tente recarregar.</p></div>`;
@@ -928,6 +938,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   function renderActionButtons() {
     actionButtonsContainer.innerHTML = "";
 
+    // Se a partida está encerrada, exibe botão de campeão para todos os usuários
+    if (currentMatch.status === "ENCERRADA") {
+      const championBtn = document.createElement("button");
+      championBtn.className = "btn-champion";
+      championBtn.innerHTML = `🏆 Ver Campeão da Partida`;
+      championBtn.addEventListener("click", () => showChampionModal(currentMatch));
+      actionButtonsContainer.appendChild(championBtn);
+
+      if (!isAdminRole(currentUser.role)) {
+        return;
+      }
+    }
+
     const currentPlayer = getMatchPlayer(currentUser.username);
     const isPlayerInMatch = Boolean(currentPlayer);
     const isWithdrawn = currentPlayer?.status === "withdrew";
@@ -1034,6 +1057,81 @@ document.addEventListener("DOMContentLoaded", async () => {
         createActionButton("Quero Participar", "btn-primary", handleJoinMatch),
       );
     }
+  }
+
+  async function showChampionModal(match) {
+    const client =
+      typeof getSupabaseClient === "function" ? getSupabaseClient() : null;
+    if (!client) {
+      FMModal.warning("Serviço indisponível no momento. Tente novamente.");
+      return;
+    }
+
+    const { data: standings, error } = await getStandingsByMatch(match.id, client);
+
+    if (error || !standings || standings.length === 0) {
+      FMModal.info({
+        title: "Classificação indisponível",
+        message: "Ainda não há dados de classificação registrados para esta partida.",
+      });
+      return;
+    }
+
+    const champion = standings[0];
+    const teamColor = champion.team_color || "#f9c846";
+    const gdSign = champion.goal_difference > 0 ? "+" : "";
+    const gdClass = champion.goal_difference > 0 ? "positive" : champion.goal_difference < 0 ? "negative" : "";
+
+    const html = `
+      <div class="champion-modal-content">
+        <div class="champion-trophy">🏆</div>
+        <div class="champion-team-name" style="color: ${teamColor};">${champion.team_name}</div>
+        <div class="champion-subtitle">Campeão da Partida</div>
+        <div class="champion-stats-grid">
+          <div class="champion-stat-card">
+            <div class="champion-stat-value highlight">${champion.points}</div>
+            <div class="champion-stat-label">Pontos</div>
+          </div>
+          <div class="champion-stat-card">
+            <div class="champion-stat-value">${champion.matches_played}</div>
+            <div class="champion-stat-label">Jogos</div>
+          </div>
+          <div class="champion-stat-card">
+            <div class="champion-stat-value positive">${champion.wins}</div>
+            <div class="champion-stat-label">Vitórias</div>
+          </div>
+          <div class="champion-stat-card">
+            <div class="champion-stat-value">${champion.draws}</div>
+            <div class="champion-stat-label">Empates</div>
+          </div>
+          <div class="champion-stat-card">
+            <div class="champion-stat-value negative">${champion.losses}</div>
+            <div class="champion-stat-label">Derrotas</div>
+          </div>
+          <div class="champion-stat-card">
+            <div class="champion-stat-value ${gdClass}">${gdSign}${champion.goal_difference}</div>
+            <div class="champion-stat-label">Saldo Gols</div>
+          </div>
+          <div class="champion-stat-card">
+            <div class="champion-stat-value">${champion.goals_for}</div>
+            <div class="champion-stat-label">Gols Pró</div>
+          </div>
+          <div class="champion-stat-card">
+            <div class="champion-stat-value">${champion.goals_against}</div>
+            <div class="champion-stat-label">Gols Contra</div>
+          </div>
+        </div>
+      </div>`;
+
+    FMModal.show({
+      type: "success",
+      title: "🏆 Campeão da Partida",
+      icon: "🏆",
+      html,
+      width: "440px",
+      priority: 70,
+      okLabel: "Fechar",
+    });
   }
 
   function renderAdminControls() {

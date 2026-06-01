@@ -2407,3 +2407,171 @@
   70% { box-shadow: 0 0 0 10px rgba(255, 51, 102, 0); }
   100% { box-shadow: 0 0 0 0 rgba(255, 51, 102, 0); }
 }
+
+.match-details-title-container {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+    padding-bottom: 15px;
+}
+
+.match-details-title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--text-main, #f8fafc);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid var(--accent-primary, #00ff87);
+    padding-left: 12px;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+/* =================================================================== */
+/* ===== MODAL DE CAMPEÃO DA PARTIDA ===== */
+/* =================================================================== */
+
+.champion-modal-content {
+    text-align: center;
+    padding: 4px 0;
+}
+
+.champion-trophy {
+    font-size: 4rem;
+    line-height: 1;
+    margin-bottom: 8px;
+    display: inline-block;
+    animation: championPulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 20px rgba(249, 200, 70, 0.4));
+}
+
+@keyframes championPulse {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 20px rgba(249, 200, 70, 0.4)); }
+    50% { transform: scale(1.12); filter: drop-shadow(0 8px 30px rgba(249, 200, 70, 0.65)); }
+}
+
+.champion-team-name {
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin: 8px 0 4px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.champion-subtitle {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 20px;
+    opacity: 0.7;
+}
+
+.champion-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 0 auto;
+    max-width: 380px;
+}
+
+.champion-stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px 8px;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.champion-stat-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.champion-stat-value {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--text-main, #f8fafc);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.champion-stat-value.highlight {
+    color: #f9c846;
+}
+
+.champion-stat-value.positive {
+    color: #51f7b0;
+}
+
+.champion-stat-value.negative {
+    color: #ff688e;
+}
+
+.champion-stat-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.2;
+}
+
+/* Botão Ver Campeão (dourado, premium) */
+.btn-champion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f9c846 0%, #d4a017 50%, #b8860b 100%);
+    color: #1a1a2e;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 6px 20px rgba(249, 200, 70, 0.25);
+}
+
+.btn-champion:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(249, 200, 70, 0.4);
+    filter: brightness(1.08);
+}
+
+.btn-champion:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+    .champion-stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+    }
+
+    .champion-stat-card {
+        padding: 10px 6px;
+        border-radius: 10px;
+    }
+
+    .champion-stat-value {
+        font-size: 1.2rem;
+    }
+
+    .champion-stat-label {
+        font-size: 0.58rem;
+    }
+
+    .champion-team-name {
+        font-size: 1.3rem;
+    }
+
+    .champion-trophy {
+        font-size: 3.2rem;
+    }
+}

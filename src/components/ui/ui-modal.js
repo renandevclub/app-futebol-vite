@@ -553,7 +553,7 @@ import { escapeHtml } from '../../utils/sanitize.js';
         : '<button class="fm-modal-close" type="button" data-fm-modal-close aria-label="Fechar">×</button>';
     const iconClass =
       options.type === "loading" ? "fm-modal-icon is-loading" : "fm-modal-icon";
-    const bodyContent = `${messageHtml(options.message)}${details}${field}`;
+    const bodyContent = options.html || `${messageHtml(options.message)}${details}${field}`;
 
     root.innerHTML = `
             <div class="fm-modal-backdrop" data-fm-modal-backdrop>

@@ -71,6 +71,18 @@
     margin-bottom: 4px;
 }
 
+.match-card-title {
+    font-family: var(--font-family-display, inherit);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-main, #f8fafc);
+    margin: 0 0 16px 0;
+    border-left: 3px solid var(--accent-primary, #00ff87);
+    padding-left: 10px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+}
+
 /* ===== Match Info Grid (Modern Grid Layout) ===== */
 .match-info-grid {
     display: grid;

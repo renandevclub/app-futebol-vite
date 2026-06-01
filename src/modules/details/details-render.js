@@ -160,7 +160,12 @@ export function buildMatchDetailsInfoHtml(match, teams = []) {
     ? `<a href="${locationUrl}" target="_blank" class="location-map-link"><i class="fas fa-external-link-alt text-xs mr-1"></i> Ver no Mapa</a>`
     : '';
 
+  const titleHtml = match?.title
+    ? `<div class="match-details-title-container"><h2 class="match-details-title">${escapeHtml(match.title)}</h2></div>`
+    : '';
+
   return `
+    ${titleHtml}
     <div class="match-card-header">
       <h3>Informações da Partida</h3>
       <span class="match-status-pill" style="${statusBadgeStyle}">${escapeHtml(match?.status)}</span>
