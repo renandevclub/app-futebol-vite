@@ -1043,6 +1043,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         actionButtonsContainer.appendChild(payBtn);
       }
 
+      // Escolher ou mudar time se tiver exatamente 2 times registrados
+      const teams = getMatchTeams();
+      if (teams.length === 2) {
+        const btnLabel = playerHasTeam ? "🔄 Mudar de Time" : "👕 Escolher Time";
+        const chooseTeamBtn = createActionButton(
+          btnLabel,
+          "btn-secondary",
+          handleChooseTeam
+        );
+        chooseTeamBtn.style.marginBottom = "12px";
+        actionButtonsContainer.appendChild(chooseTeamBtn);
+      }
+
       actionButtonsContainer.appendChild(
         createActionButton(
           "Não Poderei Comparecer",
@@ -1344,6 +1357,32 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
+    let selectedTeam = null;
+    const teams = getMatchTeams();
+    if (teams.length === 2) {
+      const team1 = teams[0];
+      const team2 = teams[1];
+
+      const result = await FMModal.show({
+        type: "info",
+        title: "Escolha seu Time",
+        message: "Selecione o time em que você deseja jogar nesta partida:",
+        closeOnEsc: true,
+        closeOnBackdrop: true,
+        actions: [
+          { id: "team1", label: team1.name, variant: "primary" },
+          { id: "team2", label: team2.name, variant: "primary" },
+          { id: "cancel", label: "Cancelar", variant: "ghost" }
+        ]
+      });
+
+      if (!result || result.action === "cancel" || result.action === "close" || result.action === "escape" || result.action === "backdrop") {
+        return; // cancelou
+      }
+
+      selectedTeam = result.action === "team1" ? team1 : team2;
+    }
+
     const btn = document.querySelector(".action-buttons .btn-primary");
     if (btn) {
       btn.innerHTML = "⏳ Confirmando...";
@@ -1355,6 +1394,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         username: currentUser.username,
         paid: false,
         receiptSent: false,
+        ...(selectedTeam
+          ? {
+              teamId: selectedTeam.id,
+              teamName: selectedTeam.name,
+              assignmentMode: "manual",
+            }
+          : {}),
       };
 
       // Adicionar ao array de jogadores local
@@ -1380,6 +1426,58 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (btn) {
         btn.innerHTML = "Quero Participar";
         btn.disabled = false;
+      }
+    }
+  }
+
+  async function handleChooseTeam() {
+    if (!currentUser || !currentMatch) return;
+
+    const teams = getMatchTeams();
+    if (teams.length !== 2) return;
+
+    const team1 = teams[0];
+    const team2 = teams[1];
+
+    const result = await FMModal.show({
+      type: "info",
+      title: "Escolha seu Time",
+      message: "Selecione o time em que você deseja jogar nesta partida:",
+      closeOnEsc: true,
+      closeOnBackdrop: true,
+      actions: [
+        { id: "team1", label: team1.name, variant: "primary" },
+        { id: "team2", label: team2.name, variant: "primary" },
+        { id: "cancel", label: "Cancelar", variant: "ghost" }
+      ]
+    });
+
+    if (!result || result.action === "cancel" || result.action === "close" || result.action === "escape" || result.action === "backdrop") {
+      return; // cancelou
+    }
+
+    const selectedTeam = result.action === "team1" ? team1 : team2;
+
+    const player = currentMatch.players.find(
+      (p) => getDrawKey(p.username) === getDrawKey(currentUser.username)
+    );
+
+    if (player) {
+      player.teamId = selectedTeam.id;
+      player.teamName = selectedTeam.name;
+      player.assignmentMode = "manual";
+
+      try {
+        await playerUpdateMatchData(
+          currentMatch.id,
+          currentMatch.players,
+          currentMatch.votes,
+        );
+        loadAndRenderPage();
+        FMModal.success(`Time alterado para "${selectedTeam.name}" com sucesso!`);
+      } catch (error) {
+        console.error("Erro ao alterar time:", error);
+        FMModal.error("Erro ao alterar time. Tente novamente.");
       }
     }
   }

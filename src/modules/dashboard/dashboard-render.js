@@ -91,8 +91,14 @@ export function buildDashboardMatchCardHtml({
     ? '<button class="btn btn-primary payment-button has-ripple" data-payment-button><i class="fas fa-credit-card"></i> Pagar Partida</button>'
     : '';
 
+  const isEncerrada = match.status === 'ENCERRADA';
+  const stampHtml = isEncerrada
+    ? `<div class="match-stamp-closed"><i class="fas fa-flag-checkered mr-1"></i> ENCERRADA</div>`
+    : '';
+
   return `
     <div class="match-card-inner">
+      ${stampHtml}
       <div class="match-card-header">
         <span class="match-date">${escapeHtml(formattedDate)}</span>
         <span class="status-pill ${statusClass}">${escapeHtml(match.status)}</span>

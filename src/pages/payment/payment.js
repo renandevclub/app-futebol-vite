@@ -48,6 +48,25 @@
     }
   }
 
+  function setMatchClosedState() {
+    if (alertEl) {
+      alertEl.textContent = "Pagamento indisponível — nenhuma partida agendada";
+      alertEl.classList.add("is-expired");
+    }
+
+    if (countdownBox) {
+      countdownBox.classList.add("is-expired");
+      const title = countdownBox.querySelector(".countdown-title");
+      if (title) title.textContent = "Sem partidas ativas no momento";
+    }
+
+    setCountdown(0, 0, 0, 0);
+
+    setupPaymentButton(btnEarly, null);
+    setupPaymentButton(btnRegular, null);
+    setupPaymentButton(btnGoalkeeper, null);
+  }
+
   function updateCountdown() {
     const now = new Date();
     const diff = DEADLINE.getTime() - now.getTime();
@@ -104,6 +123,66 @@
     });
   }
 
+  /**
+   * Encontra a próxima partida ativa (AGENDADA ou CONFIRMADA).
+   * Retorna null se todas estiverem ENCERRADA/CANCELADA.
+   */
+  function findActiveMatch(matches) {
+    if (!matches || matches.length === 0) return null;
+
+    // Filtra apenas partidas com status ativo
+    const activeMatches = matches.filter(
+      (m) => m.status === "AGENDADA" || m.status === "CONFIRMADA"
+    );
+
+    if (activeMatches.length === 0) return null;
+
+    // Ordena por data mais próxima
+    activeMatches.sort(
+      (a, b) => new Date(a.date + "T" + a.time) - new Date(b.date + "T" + b.time)
+    );
+
+    return activeMatches[0];
+  }
+
+  /**
+   * Atualiza as informações do evento na tela (data e local) 
+   * com os dados da partida ativa.
+   */
+  function updateMatchInfo(match) {
+    if (!match) return;
+
+    const eventItems = document.querySelectorAll(".event-item");
+
+    // Atualiza a data
+    if (eventItems[0] && match.date && match.time) {
+      const dateStrong = eventItems[0].querySelector("strong");
+      if (dateStrong) {
+        const [year, month, day] = match.date.split("-");
+        const timeParts = match.time.split(":");
+        const formattedDate = `${day}/${month}/${year} às ${timeParts[0]}h`;
+        dateStrong.textContent = formattedDate;
+      }
+    }
+
+    // Atualiza o local
+    if (eventItems[1] && match.location) {
+      const locationStrong = eventItems[1].querySelector("strong");
+      if (locationStrong) {
+        locationStrong.textContent = match.location;
+      }
+    }
+
+    // Atualiza os valores de pagamento se disponíveis
+    const feeValue = Number(match.playerFee || 0);
+    if (feeValue > 0) {
+      const priceRows = document.querySelectorAll(".price-row strong");
+      if (priceRows[0]) {
+        priceRows[0].textContent = `R$ ${feeValue.toFixed(2).replace(".", ",")}`;
+      }
+    }
+  }
+
   try {
     await initDB();
     const currentUser = getCurrentStoredUser();
@@ -118,7 +197,25 @@
       return;
     }
 
-    if (playerPayment.payment_status === "paid") {
+    // Busca todas as partidas para verificar se há alguma ativa
+    const matches = await getAllMatches();
+    const activeMatch = findActiveMatch(matches);
+
+    // Se não há partida ativa, bloqueia tudo
+    if (!activeMatch) {
+      setMatchClosedState();
+      return;
+    }
+
+    // Atualiza info da partida na tela
+    updateMatchInfo(activeMatch);
+
+    // Verifica se na partida ativa o status de pagamento do jogador está como pago
+    const playerInMatch = activeMatch.players.find(
+      (p) => p.username === currentUser.username
+    );
+
+    if (playerInMatch && playerInMatch.paid) {
       FMModal.success("Pagamento já registrado. Obrigado!");
     }
 
@@ -155,3 +252,4 @@
   }
 
 })();
+

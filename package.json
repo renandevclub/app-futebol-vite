@@ -12,9 +12,8 @@
     "test:phase3:http": "npm run build && node scripts/phase3-flow-smoke.mjs",
     "test:phase3:browser": "npm run build && node scripts/phase3-browser-smoke.mjs"
   },
-  "devDependencies": {
+  "dependencies": {
     "vite": "^6.0.0",
     "vite-plugin-pwa": "^1.3.0"
-  },
-  "dependencies": {}
+  }
 }

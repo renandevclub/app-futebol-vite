@@ -1023,8 +1023,9 @@ import { escapeHtml } from '../../utils/sanitize.js';
     
     try {
       const status = await getPlayerPaymentStatus(currentUser.auth_id || currentUser.id);
-      if (status && status.confirmed === true && status.payment_status !== "paid") {
-        
+      if (!status || status.confirmed !== true) return;
+
+      const showPendingModal = () => {
         markPaymentModalShown();
         
         api.show({
@@ -1043,6 +1044,40 @@ import { escapeHtml } from '../../utils/sanitize.js';
             window.location.href = "payment.html";
           }
         });
+      };
+
+      // Se temos o serviço de partidas disponível, fazemos a checagem precisa por partida ativa
+      if (typeof getAllMatches === 'function') {
+        const matches = await getAllMatches();
+        if (matches && matches.length > 0) {
+          // Encontra partidas com status ativo
+          const activeMatches = matches.filter(
+            (m) => m.status === "AGENDADA" || m.status === "CONFIRMADA"
+          );
+
+          if (activeMatches.length > 0) {
+            // Ordena por data mais próxima
+            activeMatches.sort(
+              (a, b) => new Date(a.date + "T" + a.time) - new Date(b.date + "T" + b.time)
+            );
+
+            const activeMatch = activeMatches[0];
+            const playerInMatch = activeMatch.players.find(
+              (p) => p.username === currentUser.username
+            );
+
+            // Só alerta se o jogador estiver confirmado na partida ativa e não tiver pago nela
+            if (playerInMatch && !playerInMatch.paid) {
+              showPendingModal();
+            }
+            return;
+          }
+        }
+      }
+
+      // Fallback legado caso getAllMatches não esteja disponível ou não haja partidas ativas
+      if (status.payment_status !== "paid") {
+        showPendingModal();
       }
     } catch (e) {
       console.warn("Erro ao checar status de pagamento:", e);

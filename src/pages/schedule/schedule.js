@@ -7,6 +7,7 @@ import {
     syncDrawsWithTeams,
     syncPlayersWithTeams,
 } from '../../modules/matches/team-draft.js';
+import { normalizeTeamDraws } from '../../services/impl/match-normalizer.js';
 import { formatDateBR } from '../../utils/date.js';
 import { formatCurrencyBRL } from '../../utils/format.js';
 

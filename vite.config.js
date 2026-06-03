@@ -169,6 +169,10 @@ export default defineConfig({
       injectManifest: {
         swSrc: "sw.js",
       },
+      devOptions: {
+        enabled: true,
+        type: "module",
+      },
       includeAssets: ["favicon.ico"],
       manifest: {
         name: "Futebol Milhão",

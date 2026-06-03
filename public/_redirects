@@ -1,16 +1,5 @@
-/assets/* /assets/:splat 200
-/sw.js /sw.js 200
-/manifest.webmanifest /manifest.webmanifest 200
-/OneSignalSDKWorker.js /OneSignalSDKWorker.js 200
-/OneSignalSDKUpdaterWorker.js /OneSignalSDKUpdaterWorker.js 200
-
-/admin-placar /pages/admin-placar.html 200
-/dashboard /pages/dashboard.html 200
-/detalhes /pages/details.html 200
-/financeiro /pages/financials.html 200
-/pagamento /pages/payment.html 200
-/perfil /pages/profile.html 200
-/registro /pages/register.html 200
-/agenda /pages/schedule.html 200
-/inicio /pages/welcome.html 200
-/placar /placar-ao-vivo.html 200
+# =========================================================================
+# NOTA: Este arquivo foi desativado em favor do netlify.toml.
+# Todas as regras de redirecionamento agora estão centralizadas no netlify.toml
+# na raiz do projeto para evitar duplicidade e conflitos.
+# =========================================================================

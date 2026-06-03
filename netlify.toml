@@ -1,39 +1,10 @@
 # ============================================================
-# NETLIFY.TOML — Futebol Milhão (Vite Migration)
-# Última atualização: 31/05/2026
-#
-# ESTRATÉGIA DE CACHE (4 camadas):
-#
-# 1. HTML → SEMPRE revalidar (no-cache)
-#    Motivo: O HTML é a "porta de entrada". Ele referencia
-#    os JS/CSS com hash. Se o HTML ficar em cache, o
-#    navegador nunca verá os novos nomes de arquivo.
-#    "no-cache" significa: guarde no cache, mas SEMPRE
-#    pergunte ao servidor se mudou antes de usar.
-#
-# 2. JS/CSS com hash → Cache FORTE (1 ano, immutable)
-#    Motivo: O Vite gera hashes nos nomes dos arquivos.
-#    Ex: dashboard-a1b2c3d4.js. Se o código muda, o hash
-#    muda, gerando um NOVO arquivo com NOVA URL.
-#    O navegador nunca tenta carregar o antigo.
-#    Cache de 1 ano evita downloads desnecessários.
-#
-# 3. Service Workers → NUNCA cachear (no-store)
-#    Motivo: Service workers precisam ser carregados
-#    frescos a cada acesso para funcionar corretamente.
-#    Isso inclui sw.js, OneSignalSDKWorker.js,
-#    OneSignalSDKUpdaterWorker.js.
-#
-# 4. Imagens → Cache moderado (7 dias)
-#    Motivo: Imagens mudam raramente. 7 dias equilibra
-#    performance com atualização.
-#
-# 5. Fontes → Cache forte (1 ano, immutable)
-#    Motivo: Fontes nunca mudam. Cache máximo.
+# NETLIFY.TOML — Futebol Milhão (Configuração Otimizada)
+# Última atualização: 01/06/2026
 # ============================================================
 
 [build]
-  # Vite gera os arquivos prontos na pasta dist/
+  # Pasta de saída do build do Vite
   publish = "dist"
   # Comando de build
   command = "npm run build"
@@ -46,49 +17,38 @@
   NPM_FLAGS = "--prefer-offline"
 
 # ============================================================
-# BUILD: Processamento de recursos
+# BUILD: Desativar processamento de post-build do Netlify
+# O Vite já faz minificação, bundling e compressão de assets.
 # ============================================================
 [build.processing]
-  skip_processing = false
-
-[build.processing.css]
-  bundle = true
-  minify = true
-
-[build.processing.js]
-  bundle = true
-  minify = true
-
-[build.processing.html]
-  pretty_urls = true
-
-[build.processing.images]
-  compress = true
+  skip_processing = true
 
 # ============================================================
-# HEADERS GLOBAIS: Segurança + Cache padrão
-# Aplicados a TODOS os arquivos
+# HEADERS GLOBAIS: Segurança + Cache padrão para HTML
+# Aplicados a todos os arquivos como fallback
 # ============================================================
 [[headers]]
   for = "/*"
   [headers.values]
-    # === SEGURANÇA AVANÇADA ===
+    # === SEGURANÇA ===
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()"
     Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
-    X-XSS-Protection = "1; mode=block"
-    # Cross-Origin policies para isolamento
+    
+    # Políticas de Isolamento Cross-Origin
     Cross-Origin-Opener-Policy = "same-origin-allow-popups"
     Cross-Origin-Resource-Policy = "same-site"
-    # Content-Security-Policy reforçado
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.onesignal.com https://onesignal.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://onesignal.com https://cdn.onesignal.com https://accounts.google.com wss://*.supabase.co; frame-src 'self' https://accounts.google.com; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
-    # Cache padrão para HTML e clean URLs
+    
+    # Content Security Policy (CSP) reforçado
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com https://cdn.jsdelivr.net https://cdn.onesignal.com https://onesignal.com https://*.onesignal.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://onesignal.com https://*.onesignal.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net https://onesignal.com https://*.onesignal.com; connect-src 'self' https: wss:; frame-src 'self' https://accounts.google.com https://www.youtube.com https://youtube.com https://*.youtube.com; worker-src 'self' blob:; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    
+    # Cache padrão: Sempre revalidar arquivos HTML e rotas
     Cache-Control = "public, no-cache, must-revalidate"
 
 # ============================================================
-# HEADERS: HTML → SEMPRE revalidar
+# HEADERS: HTML → Sempre revalidar
 # ============================================================
 [[headers]]
   for = "/*.html"
@@ -96,10 +56,8 @@
     Cache-Control = "public, no-cache, must-revalidate"
 
 # ============================================================
-# HEADERS: Service Workers → NUNCA cachear
-# Motivo: Service workers PRECISAM ser carregados frescos.
-# Se ficarem em cache, o navegador pode usar versão antiga
-# e as notificações push param de funcionar.
+# HEADERS: Service Workers e PWA → NUNCA cachear
+# Evita que atualizações do app ou push notifications parem de funcionar
 # ============================================================
 [[headers]]
   for = "/sw.js"
@@ -120,7 +78,7 @@
     Service-Worker-Allowed = "/"
 
 # ============================================================
-# HEADERS: Manifest → cache curto (1 dia)
+# HEADERS: Webmanifest → Cache curto (1 dia)
 # ============================================================
 [[headers]]
   for = "/manifest.webmanifest"
@@ -129,25 +87,23 @@
     Content-Type = "application/manifest+json"
 
 # ============================================================
-# JS/CSS com HASH → Cache FORTE (1 ano, immutable)
+# HEADERS: Imagens → Cache moderado (7 dias)
+# Necessário para imagens em public/assets/images que não possuem hash no nome
 # ============================================================
-# O Vite coloca hash nos nomes: dashboard-a1b2c3d4.js
-# O hash muda quando o conteúdo muda → URL nova → download novo
-# "immutable" = o navegador NUNCA revalida (confia que nunca muda)
 [[headers]]
-  for = "/assets/js/*"
+  for = "/assets/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, must-revalidate"
+
+# ============================================================
+# HEADERS: Assets Gerais (JS, CSS, Fontes gerados pelo Vite com hash)
+# Cache forte (1 ano) e imutável pois os arquivos usam hash único
+# ============================================================
+[[headers]]
+  for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-[[headers]]
-  for = "/assets/css/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-# ============================================================
-# FONTES → Cache forte (1 ano, immutable)
-# Fontes nunca mudam. Cache máximo para melhor performance.
-# ============================================================
 [[headers]]
   for = "*.woff2"
   [headers.values]
@@ -159,23 +115,7 @@
     Cache-Control = "public, max-age=31536000, immutable"
 
 # ============================================================
-# IMAGENS → Cache moderado (7 dias)
-# ============================================================
-[[headers]]
-  for = "/assets/images/*"
-  [headers.values]
-    Cache-Control = "public, max-age=604800, must-revalidate"
-
-# ============================================================
-# Outros assets (gerados pelo Vite com hash)
-# ============================================================
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-# ============================================================
-# Favicon → Cache médio (1 dia)
+# HEADERS: Favicon → Cache curto (1 dia)
 # ============================================================
 [[headers]]
   for = "/favicon.ico"
@@ -183,17 +123,17 @@
     Cache-Control = "public, max-age=86400"
 
 # ============================================================
-# REDIRECIONAMENTOS — Páginas Principais (Clean URLs)
-# status = 200 = rewrite (URL do navegador NÃO muda)
+# REDIRECIONAMENTOS: Páginas Principais (Clean URLs / Rewrites)
+# Mapeia rotas limpas do site para seus respectivos arquivos físicos
 # ============================================================
 
-# --- Página raiz ---
+# Rota raiz de login
 [[redirects]]
   from = "/login"
   to = "/index.html"
   status = 200
 
-# --- Páginas do app ---
+# Páginas do Painel
 [[redirects]]
   from = "/admin-placar"
   to = "/pages/admin-placar.html"
@@ -244,7 +184,7 @@
   to = "/placar-ao-vivo.html"
   status = 200
 
-# --- Páginas de Recuperação de Senha ---
+# Recuperação de Senha
 [[redirects]]
   from = "/esqueci-senha"
   to = "/pages/forgot-password.html"
@@ -255,7 +195,7 @@
   to = "/pages/reset-password.html"
   status = 200
 
-# --- Mini Torneio (Clean URLs) ---
+# Mini Torneio (Rotas limpas)
 [[redirects]]
   from = "/mini-torneio"
   to = "/mini-torneio/index-pagina-principal.html"
@@ -297,22 +237,8 @@
   status = 200
 
 # ============================================================
-# HTTPS: Forçar HTTPS em todos os acessos
-# ============================================================
-[[redirects]]
-  from = "http://fut-resenha.netlify.app/*"
-  to = "https://fut-resenha.netlify.app/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
-  from = "http://futebol-milhao.netlify.app/*"
-  to = "https://futebol-milhao.netlify.app/:splat"
-  status = 301
-  force = true
-
-# ============================================================
-# PÁGINA 404 CUSTOMIZADA
+# REDIRECIONAMENTOS: Fallback para Single Page Application (SPA)
+# Qualquer rota não correspondida cai no index.html
 # ============================================================
 [[redirects]]
   from = "/*"
@@ -323,7 +249,7 @@
 # CONTEXTOS: Configurações por ambiente
 # ============================================================
 
-# Deploy Preview (branch != main)
+# Deploy Preview (Branch de teste)
 [context.deploy-preview]
   command = "npm run build"
   [context.deploy-preview.environment]

@@ -455,6 +455,87 @@
     color: var(--text-secondary);
 }
 
+/* ===== Status Pills (Badges de Status no Header) ===== */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full, 12px);
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid transparent;
+}
+
+.status-pill.status-agendada {
+    background: rgba(249, 200, 70, 0.1);
+    color: var(--accent-gold, #f59e0b);
+    border-color: rgba(249, 200, 70, 0.2);
+}
+
+.status-pill.status-confirmada {
+    background: rgba(0, 255, 135, 0.1);
+    color: var(--accent-primary, #00ff87);
+    border-color: rgba(0, 255, 135, 0.2);
+}
+
+.status-pill.status-encerrada {
+    background: rgba(148, 163, 184, 0.1);
+    color: #94a3b8;
+    border-color: rgba(148, 163, 184, 0.2);
+}
+
+/* ===== Card de Partida Encerrada ===== */
+.match-card.status-encerrada {
+    opacity: 0.75;
+    filter: grayscale(15%);
+    border-color: rgba(255, 255, 255, 0.05);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.2) 100%);
+}
+
+.match-card.status-encerrada:hover {
+    opacity: 0.9;
+    filter: grayscale(0%);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+/* Oculta a pill padrão no header se for encerrada, já que teremos o selo grande */
+.match-card.status-encerrada .match-card-header .status-pill {
+    display: none;
+}
+
+/* Selo Grande "ENCERRADA" (Estilo Carimbo) */
+.match-stamp-closed {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    transform: rotate(-10deg);
+    color: #ef4444;
+    border: 3px double #ef4444;
+    font-family: var(--font-family-display, sans-serif);
+    font-size: 0.95rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    letter-spacing: 2px;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 6px;
+    background: rgba(15, 23, 42, 0.95);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+[data-theme="light"] .match-stamp-closed {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 /* =================================================================== */
 /* ===== RESPONSIVIDADE E OTIMIZAÇÃO MOBILE ===== */
 /* =================================================================== */
@@ -478,6 +559,13 @@
 @media (max-width: 480px) {
     .match-card-inner {
         padding: 14px;
+    }
+    
+    .match-stamp-closed {
+        font-size: 0.8rem;
+        padding: 3px 8px;
+        top: 14px;
+        right: 14px;
     }
     
     .match-card-header {

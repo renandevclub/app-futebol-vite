@@ -2,16 +2,35 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <meta name="theme-color" content="#0f172a" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
     <meta name="apple-mobile-web-app-title" content="FutMilhão" />
-    <meta name="description" content="Plataforma de organização de futebol - Futebol Milhão" />
+    <meta
+      name="description"
+      content="Plataforma de organização de futebol - Futebol Milhão"
+    />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/emblema-castor.png" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/emblema-castor.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/assets/images/emblema-castor.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="512x512"
+      href="/assets/images/emblema-castor.png"
+    />
     <link rel="apple-touch-icon" href="/assets/images/emblema-castor.png" />
     <title>Pagamento Pix - Futebol Milh&atilde;o</title>
     <link rel="stylesheet" href="/src/styles/core.css" />
@@ -26,7 +45,11 @@
         class="header-logo-large"
       />
       <nav class="main-nav" aria-label="Menu principal">
-        <a href="../mini-torneio/index-pagina-principal.html" class="btn-header-tournament" title="Mini Torneio">
+        <a
+          href="../mini-torneio/index-pagina-principal.html"
+          class="btn-header-tournament"
+          title="Mini Torneio"
+        >
           <span class="tournament-emoji">🏆</span>
           <span class="tournament-text">Torneio</span>
         </a>
@@ -75,16 +98,19 @@
           <p>Fala, rapaziada! &#128075;</p>
         </div>
 
-        <div class="payment-alert" id="payment-alert" role="status">
-          Garanta por R$ 10,00 at&eacute; o prazo!
-        </div>
+        <!-- <div class="payment-alert" id="payment-alert" role="status">
+          Garanta por R$ 20,00 at&eacute; o prazo!
+        </div>-->
 
-        <div class="event-grid" aria-label="Informa&ccedil;&otilde;es do evento">
+        <div
+          class="event-grid"
+          aria-label="Informa&ccedil;&otilde;es do evento"
+        >
           <article class="event-item">
             <span class="event-icon">&#128197;</span>
             <div>
               <span class="event-label">Data</span>
-              <strong>18/05/2026 &agrave;s 23h</strong>
+              <strong>03/06/2026 &agrave;s 23h</strong>
             </div>
           </article>
           <article class="event-item">
@@ -99,22 +125,22 @@
         <div class="price-panel" aria-label="Valores do pagamento">
           <div class="price-row price-row-featured">
             <div>
-              <span class="price-label">Pagamento antecipado</span>
-              <strong>R$ 10,00</strong>
+              <span class="price-label">Pagamento</span>
+              <strong>R$ 20,00</strong>
             </div>
-            <span class="price-chip">at&eacute; 17/05</span>
+            <span class="price-chip">at&eacute; 03/06</span>
           </div>
-          <div class="price-row">
+          <!-- <div class="price-row">
             <div>
               <span class="price-label">Na hora do futebol</span>
               <strong>R$ 15,00</strong>
             </div>
             <span class="price-chip price-chip-muted">ap&oacute;s o prazo</span>
-          </div>
+          </div> -->
         </div>
 
         <div class="countdown-box" aria-label="Contador regressivo">
-          <span class="countdown-title">Tempo para pagar R$ 10,00</span>
+          <span class="countdown-title">Tempo para pagar R$ 20,00</span>
           <div class="countdown-grid" id="countdown">
             <div class="countdown-item">
               <strong id="countdown-days">00</strong>
@@ -143,36 +169,89 @@
           <span class="pix-badge">Seguro e r&aacute;pido</span>
         </div>
 
-        <div class="pix-buttons-container" style="display:flex; flex-direction:column; gap:12px; margin-top:18px;">
+        <div
+          class="pix-buttons-container"
+          style="
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 18px;
+          "
+        >
           <!-- Botão 1: Antecipado -->
           <a
             id="btn-pix-early"
             class="btn btn-primary pix-button"
             href="#"
             rel="noopener noreferrer"
-            style="margin-top:0; min-height:64px; flex-direction:row; justify-content:flex-start; padding:0 20px; gap:15px; text-align:left;"
+            style="
+              margin-top: 0;
+              min-height: 64px;
+              flex-direction: row;
+              justify-content: flex-start;
+              padding: 0 20px;
+              gap: 15px;
+              text-align: left;
+            "
           >
-            <span class="pix-button-icon" style="font-size:1.4rem;">&#128176;</span>
-            <div style="display:flex; flex-direction:column;">
-              <span class="pix-button-text" style="font-size:1rem;">Jogador (Antecipado) &mdash; R$ 10,00</span>
-              <span style="font-size:0.75rem; opacity:0.8; margin-top:2px; text-transform:uppercase; font-weight:700;">Até o prazo</span>
+            <span class="pix-button-icon" style="font-size: 1.4rem"
+              >&#128176;</span
+            >
+            <div style="display: flex; flex-direction: column">
+              <span class="pix-button-text" style="font-size: 1rem"
+                >Jogador &mdash; R$ 20,00</span
+              >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  opacity: 0.8;
+                  margin-top: 2px;
+                  text-transform: uppercase;
+                  font-weight: 700;
+                "
+                >Valor Fixo</span
+              >
             </div>
           </a>
 
           <!-- Botão 2: Normal -->
-          <a
+          <!--<a
             id="btn-pix-regular"
             class="btn btn-primary pix-button"
             href="#"
             rel="noopener noreferrer"
-            style="margin-top:0; min-height:64px; flex-direction:row; justify-content:flex-start; padding:0 20px; gap:15px; text-align:left; background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.3); color:var(--text-main);"
+            style="
+              margin-top: 0;
+              min-height: 64px;
+              flex-direction: row;
+              justify-content: flex-start;
+              padding: 0 20px;
+              gap: 15px;
+              text-align: left;
+              background: rgba(59, 130, 246, 0.15);
+              border: 1px solid rgba(59, 130, 246, 0.3);
+              color: var(--text-main);
+            "
           >
-            <span class="pix-button-icon" style="font-size:1.4rem;">&#9917;</span>
-            <div style="display:flex; flex-direction:column;">
-              <span class="pix-button-text" style="font-size:1rem;">Jogador (Normal) &mdash; R$ 15,00</span>
-              <span style="font-size:0.75rem; opacity:0.6; margin-top:2px; text-transform:uppercase; font-weight:700;">Após o prazo</span>
+            <span class="pix-button-icon" style="font-size: 1.4rem"
+              >&#9917;</span
+            >
+            <div style="display: flex; flex-direction: column">
+              <span class="pix-button-text" style="font-size: 1rem"
+                >Jogador (Normal) &mdash; R$ 20,00</span
+              >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  opacity: 0.6;
+                  margin-top: 2px;
+                  text-transform: uppercase;
+                  font-weight: 700;
+                "
+                >Após o prazo</span
+              >
             </div>
-          </a>
+          </a> -->
 
           <!-- Botão 3: Goleiro -->
           <a
@@ -180,18 +259,45 @@
             class="btn btn-primary pix-button"
             href="#"
             rel="noopener noreferrer"
-            style="margin-top:0; min-height:64px; flex-direction:row; justify-content:flex-start; padding:0 20px; gap:15px; text-align:left; background:rgba(139,92,246,0.15); border:1px solid rgba(139,92,246,0.3); color:var(--text-main);"
+            style="
+              margin-top: 0;
+              min-height: 64px;
+              flex-direction: row;
+              justify-content: flex-start;
+              padding: 0 20px;
+              gap: 15px;
+              text-align: left;
+              background: rgba(139, 92, 246, 0.15);
+              border: 1px solid rgba(139, 92, 246, 0.3);
+              color: var(--text-main);
+            "
           >
-            <span class="pix-button-icon" style="font-size:1.4rem;">&#129492;</span>
-            <div style="display:flex; flex-direction:column;">
-              <span class="pix-button-text" style="font-size:1rem;">Goleiro &mdash; R$ 5,00</span>
-              <span style="font-size:0.75rem; opacity:0.6; margin-top:2px; text-transform:uppercase; font-weight:700;">Valor Fixo</span>
+            <span class="pix-button-icon" style="font-size: 1.4rem"
+              >&#129492;</span
+            >
+            <div style="display: flex; flex-direction: column">
+              <span class="pix-button-text" style="font-size: 1rem"
+                >Goleiro &mdash; R$ 5,00</span
+              >
+              <span
+                style="
+                  font-size: 0.75rem;
+                  opacity: 0.6;
+                  margin-top: 2px;
+                  text-transform: uppercase;
+                  font-weight: 700;
+                "
+                >Valor Fixo</span
+              >
             </div>
           </a>
         </div>
 
         <footer class="payment-note">
-          <p>Quem puder j&aacute; vai pagando pra ajudar na organiza&ccedil;&atilde;o &#128591;&#9917;</p>
+          <p>
+            Quem puder j&aacute; vai pagando pra ajudar na
+            organiza&ccedil;&atilde;o &#128591;&#9917;
+          </p>
           <strong>Tamo junto! &#128293;</strong>
         </footer>
       </section>
@@ -201,4 +307,3 @@
     <script type="module" src="/src/entries/payment.js"></script>
   </body>
 </html>
-
