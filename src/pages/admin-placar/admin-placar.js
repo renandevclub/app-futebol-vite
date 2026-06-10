@@ -91,6 +91,14 @@ class PlacarAdmin {
             btnPlayPause: document.getElementById('adm-btn-play-pause'),
             btnReset: document.getElementById('adm-btn-reset'),
 
+            // Configurações da Partida Ao Vivo
+            configMinutos: document.getElementById('adm-config-minutos'),
+            configSegundos: document.getElementById('adm-config-segundos'),
+            btnAplicarTempo: document.getElementById('adm-btn-aplicar-tempo'),
+            configTempoLimite: document.getElementById('adm-config-tempo-limite'),
+            btnSalvarTempoLimite: document.getElementById('adm-btn-salvar-tempo-limite'),
+            configRegraGols: document.getElementById('adm-config-regra-gols'),
+
             // Período
             periodoBtn1T: document.getElementById('adm-periodo-1t'),
             periodoBtn2T: document.getElementById('adm-periodo-2t'),
@@ -209,6 +217,11 @@ class PlacarAdmin {
         // Cronômetro
         this.ui.btnPlayPause.addEventListener('click', () => this.toggleCronometro());
         this.ui.btnReset.addEventListener('click', () => this.resetCronometro());
+
+        // Configurações da Partida
+        this.ui.btnAplicarTempo?.addEventListener('click', () => this.aplicarTempoCronometro());
+        this.ui.btnSalvarTempoLimite?.addEventListener('click', () => this.salvarTempoLimite());
+        this.ui.configRegraGols?.addEventListener('change', () => this.salvarRegraDoisGols());
 
         // Placar
         this.ui.btnPlusT1.addEventListener('click', () => this.ajustarPlacar('time1', 1));
@@ -382,6 +395,7 @@ class PlacarAdmin {
         this.renderCartoes();
         this.renderSubstituicoes();
         this.renderEventos();
+        this.renderConfiguracoesPartida();
     }
 
     // === INICIAR PARTIDA ===
@@ -735,7 +749,8 @@ class PlacarAdmin {
                     this.atualizarStatus();
                     
                     // Finaliza a partida quando o cronômetro chega a zero
-                    FMModal.warning('Fim de jogo! Tempo esgotado (7 minutos). A partida será finalizada agora.');
+                    const limite = this.partidaAtual.tempo_limite || 7;
+                    FMModal.warning(`Fim de jogo! Tempo esgotado (${limite} minutos). A partida será finalizada agora.`);
                     await this.finalizarPartida(true); // pass true to skip confirmation
                     return;
                 }
@@ -769,14 +784,19 @@ class PlacarAdmin {
     async resetCronometro() {
         if (!this.partidaAtual) return;
         clearInterval(this.cronometroInterval);
-        this.partidaAtual.cronometro_state = { minutos: 7, segundos: 0, rodando: false };
-        await this.salvarCronometro(7, 0, false);
+        const limite = this.partidaAtual.tempo_limite || 7;
+        this.partidaAtual.cronometro_state = { minutos: limite, segundos: 0, rodando: false };
+        await this.salvarCronometro(limite, 0, false);
         this.atualizarStatus();
         this.gerenciarCronometro();
     }
 
     exibirCronometro(min, seg) {
         this.ui.cronometro.textContent = `${String(min).padStart(2, '0')}:${String(seg).padStart(2, '0')}`;
+        if (document.activeElement !== this.ui.configMinutos && document.activeElement !== this.ui.configSegundos) {
+            if (this.ui.configMinutos) this.ui.configMinutos.value = min;
+            if (this.ui.configSegundos) this.ui.configSegundos.value = seg;
+        }
     }
 
     async salvarCronometro(minutos, segundos, rodando) {
@@ -784,6 +804,90 @@ class PlacarAdmin {
         if (!client || !this.partidaAtual) return;
 
         await updateLiveScoreMatch(this.partidaAtual.id, { cronometro_state: { minutos, segundos, rodando } }, client);
+    }
+
+    async aplicarTempoCronometro() {
+        if (!this.partidaAtual) return;
+        
+        const minVal = parseInt(this.ui.configMinutos.value, 10);
+        const segVal = parseInt(this.ui.configSegundos.value, 10);
+
+        if (isNaN(minVal) || minVal < 0 || minVal > 99 || isNaN(segVal) || segVal < 0 || segVal > 59) {
+            FMModal.warning('Insira valores validos para minutos (0-99) e segundos (0-59).');
+            return;
+        }
+
+        const rodando = this.partidaAtual.cronometro_state.rodando;
+        clearInterval(this.cronometroInterval);
+
+        this.partidaAtual.cronometro_state.minutos = minVal;
+        this.partidaAtual.cronometro_state.segundos = segVal;
+
+        await this.salvarCronometro(minVal, segVal, rodando);
+        this.gerenciarCronometro();
+        FMModal.success(`Tempo do cronometro atualizado para ${String(minVal).padStart(2, '0')}:${String(segVal).padStart(2, '0')}!`);
+    }
+
+    async salvarTempoLimite() {
+        if (!this.partidaAtual) return;
+
+        const limite = parseInt(this.ui.configTempoLimite.value, 10);
+        if (isNaN(limite) || limite < 1 || limite > 90) {
+            FMModal.warning('O tempo limite da partida deve ser entre 1 e 90 minutos.');
+            return;
+        }
+
+        this.partidaAtual.tempo_limite = limite;
+        
+        const client = this.getClient();
+        if (!client) return;
+
+        const { error } = await updateLiveScoreMatch(this.partidaAtual.id, { tempo_limite: limite }, client);
+        if (error) {
+            FMModal.error('Erro ao salvar o tempo limite da partida.');
+        } else {
+            FMModal.success(`Tempo limite da partida configurado para ${limite} minutos!`);
+        }
+    }
+
+    async salvarRegraDoisGols() {
+        if (!this.partidaAtual) return;
+
+        const ativa = this.ui.configRegraGols.checked;
+        const desativada = !ativa;
+        this.partidaAtual.regra_dois_gols_desativada = desativada;
+
+        const client = this.getClient();
+        if (!client) return;
+
+        const { error } = await updateLiveScoreMatch(this.partidaAtual.id, { regra_dois_gols_desativada: desativada }, client);
+        if (error) {
+            FMModal.error('Erro ao salvar configuracao da regra de gols.');
+            this.ui.configRegraGols.checked = ativa; // Reverte o checkbox
+        } else {
+            const statusMsg = ativa ? 'ativada' : 'desativada';
+            FMModal.success(`Regra de fim de jogo com 2 gols ${statusMsg}!`);
+        }
+    }
+
+    renderConfiguracoesPartida() {
+        if (!this.partidaAtual) return;
+        const p = this.partidaAtual;
+        
+        if (this.ui.configTempoLimite) {
+            this.ui.configTempoLimite.value = p.tempo_limite || 7;
+        }
+
+        if (this.ui.configRegraGols) {
+            this.ui.configRegraGols.checked = !p.regra_dois_gols_desativada;
+        }
+
+        if (this.ui.configMinutos && this.ui.configSegundos && p.cronometro_state) {
+            if (document.activeElement !== this.ui.configMinutos && document.activeElement !== this.ui.configSegundos) {
+                this.ui.configMinutos.value = p.cronometro_state.minutos;
+                this.ui.configSegundos.value = p.cronometro_state.segundos;
+            }
+        }
     }
 
     // === PLACAR ===
@@ -806,8 +910,8 @@ class PlacarAdmin {
             const el = timeKey === 'time1' ? this.ui.placarTime1 : this.ui.placarTime2;
             el.textContent = novo;
 
-            // Finaliza a partida se um dos times atingir 2 gols
-            if (novo >= 2) {
+            // Finaliza a partida se um dos times atingir 2 gols e a regra não estiver desativada
+            if (novo >= 2 && !this.partidaAtual.regra_dois_gols_desativada) {
                 const teamName = timeKey === 'time1' ? this.partidaAtual.time1_nome : this.partidaAtual.time2_nome;
                 FMModal.success(`Fim de jogo! O time ${teamName} atingiu 2 gols. A partida será finalizada agora.`);
                 await this.finalizarPartida(true); // skip confirmation
@@ -1021,6 +1125,8 @@ class PlacarAdmin {
                         const eventosMudaram = JSON.stringify(this.partidaAtual.eventos_personalizados) !== JSON.stringify(payload.new.eventos_personalizados);
                         const escalacaoMudou = JSON.stringify(this.partidaAtual.escalacao) !== JSON.stringify(payload.new.escalacao);
                         const periodoMudou = this.partidaAtual.periodo !== payload.new.periodo;
+                        const configTempoLimiteMudou = this.partidaAtual.tempo_limite !== payload.new.tempo_limite;
+                        const regraGolsMudou = this.partidaAtual.regra_dois_gols_desativada !== payload.new.regra_dois_gols_desativada;
                         
                         // Atualiza dados locais
                         this.partidaAtual = { ...this.partidaAtual, ...payload.new };
@@ -1037,6 +1143,9 @@ class PlacarAdmin {
                         if (escalacaoMudou) this.renderEscalacao();
                         if (periodoMudou) this.atualizarPeriodo(this.partidaAtual.periodo);
                         if (cronometroMudou) this.gerenciarCronometro();
+                        if (configTempoLimiteMudou || regraGolsMudou || cronometroMudou) {
+                            this.renderConfiguracoesPartida();
+                        }
                         this.atualizarStatus();
                     }
 

@@ -422,3 +422,395 @@
 [data-theme="light"] .pix-panel {
   background: rgba(139, 92, 246, 0.07);
 }
+
+/* =================================================================== */
+/* ===== ADMIN PANEL - PAYMENT CONTROL - FUTEBOL MILHAO ===== */
+/* =================================================================== */
+
+/* Abas do Administrador */
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 12px;
+}
+
+.tab-btn {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.tab-btn.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.1);
+}
+
+/* Painel Geral */
+.admin-panel-header {
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.admin-panel-header h2 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 6px;
+}
+
+.admin-panel-header p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* Seções Administrativas */
+.admin-section {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-top: 18px;
+}
+
+.admin-section-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #3b82f6; /* Azul de Destaque */
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Formulários Admin */
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.form-group input {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.form-row-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.admin-btn {
+  margin-top: 8px;
+  min-height: 44px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+/* Barra de Estatísticas */
+.admin-stats-bar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.stat-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 6px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-align: center;
+  border: 1px solid var(--border-subtle);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.stat-badge strong {
+  margin-top: 4px;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  font-weight: 800;
+}
+
+.stat-badge.paid {
+  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.stat-badge.paid strong {
+  color: #10b981;
+}
+
+.stat-badge.pending {
+  border-color: rgba(245, 158, 11, 0.2);
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.stat-badge.pending strong {
+  color: #f59e0b;
+}
+
+/* Campo de busca */
+.player-search-box {
+  margin-bottom: 12px;
+}
+
+.player-search-box input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.16);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  padding: 8px 12px;
+  font-size: 0.88rem;
+  transition: all 0.2s ease;
+}
+
+.player-search-box input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Lista de Jogadores */
+.admin-player-list {
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: rgba(0, 0, 0, 0.12);
+  padding: 4px;
+}
+
+/* Scrollbar Estilizada */
+.admin-player-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-player-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.admin-player-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+}
+
+.admin-empty-text {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  padding: 24px 12px;
+}
+
+/* Linha do Jogador */
+.admin-player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.admin-player-row:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.admin-player-row:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.player-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.player-avatar-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.player-details-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.player-details-name {
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-details-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  width: max-content;
+  margin-top: 2px;
+  text-transform: uppercase;
+}
+
+.player-details-badge.badge-paid {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.player-details-badge.badge-pending {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* Switch / Toggle Button */
+.payment-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.payment-toggle-btn:hover {
+  transform: scale(1.1);
+}
+
+.payment-toggle-btn svg {
+  width: 24px;
+  height: 24px;
+  transition: color 0.2s ease;
+}
+
+/* =================================================================== */
+/* ===== LIGHT THEME FOR ADMIN PANEL ===== */
+/* =================================================================== */
+[data-theme="light"] .tab-btn {
+  background: rgba(15, 23, 42, 0.02);
+  color: var(--text-secondary);
+}
+
+[data-theme="light"] .tab-btn:hover {
+  background: rgba(15, 23, 42, 0.05);
+  color: var(--text-main);
+}
+
+[data-theme="light"] .admin-section {
+  background: rgba(0, 0, 0, 0.01);
+}
+
+[data-theme="light"] .form-group input {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+}
+
+[data-theme="light"] .form-group input:focus {
+  background: #ffffff;
+  border-color: #3b82f6;
+}
+
+[data-theme="light"] .stat-badge {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .player-search-box input {
+  background: #ffffff;
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+}
+
+[data-theme="light"] .admin-player-list {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+[data-theme="light"] .admin-player-row:not(:last-child) {
+  border-bottom-color: rgba(15, 23, 42, 0.06);
+}
+
+[data-theme="light"] .admin-player-row:hover {
+  background: rgba(0, 0, 0, 0.01);
+}
+
+[data-theme="light"] .player-avatar-circle {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.15);
+}
+

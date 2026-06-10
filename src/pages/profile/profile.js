@@ -23,6 +23,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     const historyContainer = document.getElementById('match-history-list');
     const achievementsContainer = document.getElementById('achievements-container');
 
+    // Estado de Edição de Perfil
+    let isEditing = false;
+    const btnEditProfile = document.getElementById('btn-edit-profile');
+
+    if (btnEditProfile) {
+        btnEditProfile.addEventListener('click', () => {
+            isEditing = !isEditing;
+            updateEditButtonState();
+            renderPersonalInfo();
+        });
+    }
+
+    function updateEditButtonState() {
+        if (btnEditProfile) {
+            btnEditProfile.innerHTML = isEditing 
+                ? '<i class="fas fa-times"></i> Cancelar' 
+                : '<i class="fas fa-edit"></i> Editar';
+            btnEditProfile.className = isEditing 
+                ? 'btn-edit-profile editing' 
+                : 'btn-edit-profile';
+        }
+    }
+
     // Renderização rápida inicial com dados em cache da sessão para UX premium instantânea
     renderHeroCard([]);
     renderPersonalInfo();
@@ -131,22 +154,148 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderPersonalInfo() {
-        const infoItems = [
-            { icon: 'fas fa-id-card', label: 'Nome Completo', value: currentUser.full_name || '—' },
-            { icon: 'fas fa-user-tag', label: 'Apelido', value: currentUser.username || '—' },
-            { icon: 'fas fa-envelope', label: 'E-mail', value: currentUser.email || '—' },
-            { icon: 'fas fa-mobile-alt', label: 'Celular', value: formatBrazilianPhone(currentUser.phone) || 'Não informado' }
-        ];
+        if (isEditing) {
+            profileInfoGrid.innerHTML = `
+                <div class="profile-info-row-edit">
+                    <label class="profile-info-label" for="edit-fullname">
+                        <span class="info-icon-span"><i class="fas fa-id-card"></i></span>
+                        Nome Completo
+                    </label>
+                    <input type="text" id="edit-fullname" class="profile-edit-input" value="${currentUser.full_name || ''}" placeholder="Seu nome completo" />
+                </div>
+                <div class="profile-info-row-edit">
+                    <label class="profile-info-label" for="edit-username">
+                        <span class="info-icon-span"><i class="fas fa-user-tag"></i></span>
+                        Apelido (exibido no jogo)
+                    </label>
+                    <input type="text" id="edit-username" class="profile-edit-input" value="${currentUser.username || ''}" placeholder="Seu apelido no grupo" />
+                </div>
+                <div class="profile-info-row-edit">
+                    <span class="profile-info-label">
+                        <span class="info-icon-span"><i class="fas fa-envelope"></i></span>
+                        E-mail
+                    </span>
+                    <span class="profile-info-value-static">${currentUser.email || '—'}</span>
+                </div>
+                <div class="profile-info-row-edit">
+                    <label class="profile-info-label" for="edit-phone">
+                        <span class="info-icon-span"><i class="fas fa-mobile-alt"></i></span>
+                        Celular
+                    </label>
+                    <input type="tel" id="edit-phone" class="profile-edit-input" value="${formatBrazilianPhone(currentUser.phone) || ''}" placeholder="(00) 00000-0000" />
+                </div>
+                <div class="profile-edit-actions">
+                    <button id="btn-save-profile" class="btn btn-primary btn-save">
+                        <i class="fas fa-save"></i> Salvar Alterações
+                    </button>
+                </div>
+            `;
 
-        profileInfoGrid.innerHTML = infoItems.map(item => `
-            <div class="profile-info-row">
-                <span class="profile-info-label">
-                    <span class="info-icon-span"><i class="${item.icon}"></i></span>
-                    ${item.label}
-                </span>
-                <span class="profile-info-value">${item.value}</span>
-            </div>
-        `).join('');
+            // Máscara dinâmica de telefone
+            const phoneInput = document.getElementById('edit-phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', (e) => {
+                    e.target.value = formatBrazilianPhone(e.target.value);
+                });
+            }
+
+            // Escutador do botão salvar
+            const btnSave = document.getElementById('btn-save-profile');
+            if (btnSave) {
+                btnSave.addEventListener('click', handleSaveProfile);
+            }
+        } else {
+            const infoItems = [
+                { icon: 'fas fa-id-card', label: 'Nome Completo', value: currentUser.full_name || '—' },
+                { icon: 'fas fa-user-tag', label: 'Apelido', value: currentUser.username || '—' },
+                { icon: 'fas fa-envelope', label: 'E-mail', value: currentUser.email || '—' },
+                { icon: 'fas fa-mobile-alt', label: 'Celular', value: formatBrazilianPhone(currentUser.phone) || 'Não informado' }
+            ];
+
+            profileInfoGrid.innerHTML = infoItems.map(item => `
+                <div class="profile-info-row">
+                    <span class="profile-info-label">
+                        <span class="info-icon-span"><i class="${item.icon}"></i></span>
+                        ${item.label}
+                    </span>
+                    <span class="profile-info-value">${item.value}</span>
+                </div>
+            `).join('');
+        }
+    }
+
+    async function handleSaveProfile() {
+        const editFullNameInput = document.getElementById('edit-fullname');
+        const editUsernameInput = document.getElementById('edit-username');
+        const editPhoneInput = document.getElementById('edit-phone');
+
+        if (!editFullNameInput || !editUsernameInput || !editPhoneInput) return;
+
+        const newFullName = editFullNameInput.value.trim();
+        const newUsername = editUsernameInput.value.trim();
+        const newPhoneRaw = editPhoneInput.value.trim();
+        const newPhone = newPhoneRaw.replace(/\D/g, '');
+
+        if (!newUsername) {
+            FMModal.warning('O apelido é obrigatório.');
+            return;
+        }
+
+        if (newUsername.length < 3 || newUsername.length > 20) {
+            FMModal.warning('O apelido deve ter entre 3 e 20 caracteres.');
+            return;
+        }
+
+        if (!/^[a-zA-Z0-9._]+$/.test(newUsername)) {
+            FMModal.warning('O apelido pode conter apenas letras, números, pontos (.) e sublinhados (_). Sem espaços ou acentos.');
+            return;
+        }
+
+        const btnSave = document.getElementById('btn-save-profile');
+        const originalHtml = btnSave.innerHTML;
+        btnSave.disabled = true;
+        btnSave.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Salvando...';
+
+        try {
+            const client = typeof getSupabaseClient === 'function' ? getSupabaseClient() : null;
+            if (!client) {
+                throw new Error('Supabase client não inicializado.');
+            }
+
+            const { error } = await client.rpc('update_user_nickname', {
+                p_new_username: newUsername,
+                p_new_full_name: newFullName || null,
+                p_new_phone: newPhone || null
+            });
+
+            if (error) {
+                throw error;
+            }
+
+            // Atualiza sessão
+            currentUser.username = newUsername;
+            currentUser.full_name = newFullName || null;
+            currentUser.phone = newPhone || null;
+            currentUser.username_customized = true;
+            setStoredUser(currentUser);
+
+            FMModal.success('Perfil atualizado com sucesso!');
+            
+            isEditing = false;
+            updateEditButtonState();
+            
+            // Recarrega o perfil com os novos dados
+            await loadProfile();
+
+        } catch (err) {
+            console.error('Erro ao salvar perfil:', err);
+            FMModal.error(err.message || 'Ocorreu um erro ao atualizar seu perfil. Tente novamente.');
+        } finally {
+            if (btnSave) {
+                btnSave.disabled = false;
+                btnSave.innerHTML = originalHtml;
+            }
+        }
     }
 
     function renderStats(playerMatches, allMatches, totalGols) {

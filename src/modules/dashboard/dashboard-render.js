@@ -61,9 +61,35 @@ function buildCountdownHtml({ match, matchDateTime, now }) {
 
   if (matchDateTime.getTime() <= now || match.status === 'CANCELADA') return '';
 
+  const urgentClass = isUrgent ? 'countdown-urgent' : '';
+
   return `
-    <div class="match-countdown-wrap">
-      <span class="countdown-badge ${isUrgent ? 'urgent' : ''}" id="countdown-${escapeHtml(match.id)}"><i class="far fa-hourglass-half mr-1"></i> Calculando...</span>
+    <div class="match-countdown-section ${urgentClass}" id="countdown-section-${escapeHtml(match.id)}">
+      <div class="countdown-header">
+        <i class="fas ${isUrgent ? 'fa-fire-alt' : 'fa-hourglass-half'} countdown-header-icon"></i>
+        <span class="countdown-header-label">${isUrgent ? 'Faltam poucas horas!' : 'Começa em'}</span>
+      </div>
+      <div class="countdown-grid" id="countdown-${escapeHtml(match.id)}">
+        <div class="countdown-unit">
+          <span class="countdown-value" data-unit="days">--</span>
+          <span class="countdown-label">Dias</span>
+        </div>
+        <div class="countdown-separator">:</div>
+        <div class="countdown-unit">
+          <span class="countdown-value" data-unit="hours">--</span>
+          <span class="countdown-label">Horas</span>
+        </div>
+        <div class="countdown-separator">:</div>
+        <div class="countdown-unit">
+          <span class="countdown-value" data-unit="minutes">--</span>
+          <span class="countdown-label">Min</span>
+        </div>
+        <div class="countdown-separator">:</div>
+        <div class="countdown-unit">
+          <span class="countdown-value" data-unit="seconds">--</span>
+          <span class="countdown-label">Seg</span>
+        </div>
+      </div>
     </div>`;
 }
 
@@ -92,13 +118,52 @@ export function buildDashboardMatchCardHtml({
     : '';
 
   const isEncerrada = match.status === 'ENCERRADA';
-  const stampHtml = isEncerrada
-    ? `<div class="match-stamp-closed"><i class="fas fa-flag-checkered mr-1"></i> ENCERRADA</div>`
-    : '';
+
+  if (isEncerrada) {
+    const titleText = match.title || `Partida em ${match.location}`;
+    return `
+      <div class="match-accordion-header">
+        <div class="match-accordion-header-left">
+          <i class="fas fa-chevron-down accordion-icon"></i>
+          <h3>${escapeHtml(titleText)}</h3>
+        </div>
+        <div class="status-pill status-encerrada" style="display: inline-flex !important;">
+          <i class="fas fa-flag-checkered mr-1"></i> ENCERRADA
+        </div>
+      </div>
+      <div class="match-accordion-content">
+        <div class="match-card-inner" style="padding-top: 0;">
+          <div class="match-card-header" style="margin-top: 12px;">
+            <span class="match-date">${escapeHtml(formattedDate)}</span>
+          </div>
+          <div class="match-card-body">
+            <div class="match-info-grid">
+              <span class="match-info-item"><i class="fas fa-map-marker-alt text-accent"></i> <span><strong>${escapeHtml(match.location)}</strong>${locationIconHtml}</span></span>
+              <span class="match-info-item"><i class="far fa-clock text-accent"></i> <span>${escapeHtml(match.time)}h</span></span>
+              <span class="match-info-item"><i class="fas fa-wallet text-accent"></i> <span>${formatCurrencyBRL(match.playerFee)}</span></span>
+              <span class="match-info-item"><i class="fas fa-users text-accent"></i> <span>${(match.players || []).length} confirmados</span></span>
+            </div>
+            ${buildTeamsPreviewHtml(match)}
+          </div>
+        </div>
+        <div class="match-card-footer">
+          ${isAdmin ? `
+            <div class="match-admin-actions">
+              ${editButtonHtml}
+              ${deleteButtonHtml}
+            </div>
+          ` : ''}
+          <div class="match-user-actions">
+            ${whatsappButtonHtml}
+            <button class="btn btn-primary details-button has-ripple" data-match-id="${escapeHtml(match.id)}"><i class="fas fa-info-circle"></i> Detalhes</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 
   return `
     <div class="match-card-inner">
-      ${stampHtml}
       <div class="match-card-header">
         <span class="match-date">${escapeHtml(formattedDate)}</span>
         <span class="status-pill ${statusClass}">${escapeHtml(match.status)}</span>
@@ -113,23 +178,24 @@ export function buildDashboardMatchCardHtml({
         </div>
         ${buildTeamsPreviewHtml(match)}
       </div>
-      ${buildCountdownHtml({ match, matchDateTime, now })}
-      <div class="match-card-footer">
-        ${isAdmin ? `
-          <div class="match-admin-actions">
-            ${editButtonHtml}
-            ${deleteButtonHtml}
-          </div>
-        ` : ''}
-        <div class="match-user-actions">
-          ${whatsappButtonHtml}
-          <button class="btn btn-primary details-button has-ripple" data-match-id="${escapeHtml(match.id)}"><i class="fas fa-info-circle"></i> Detalhes</button>
+    </div>
+    ${buildCountdownHtml({ match, matchDateTime, now })}
+    <div class="match-card-footer">
+      ${isAdmin ? `
+        <div class="match-admin-actions">
+          ${editButtonHtml}
+          ${deleteButtonHtml}
         </div>
-        ${paymentButtonHtml ? `
-          <div class="match-payment-action">
-            ${paymentButtonHtml}
-          </div>
-        ` : ''}
+      ` : ''}
+      <div class="match-user-actions">
+        ${whatsappButtonHtml}
+        <button class="btn btn-primary details-button has-ripple" data-match-id="${escapeHtml(match.id)}"><i class="fas fa-info-circle"></i> Detalhes</button>
       </div>
+      ${paymentButtonHtml ? `
+        <div class="match-payment-action">
+          ${paymentButtonHtml}
+        </div>
+      ` : ''}
     </div>`;
 }
+

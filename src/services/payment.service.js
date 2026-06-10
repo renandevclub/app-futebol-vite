@@ -7,7 +7,15 @@ export async function getPaymentLinks() {
         const { data, error } = await client
             .from('configuracoes')
             .select('key, value')
-            .in('key', ['payment_link_early_player', 'payment_link_regular_player', 'payment_link_goalkeeper', 'payment_early_enabled_until']);
+            .in('key', [
+                'payment_link_early_player',
+                'payment_link_regular_player',
+                'payment_link_goalkeeper',
+                'payment_early_enabled_until',
+                'payment_text_early_player',
+                'payment_text_regular_player',
+                'payment_text_goalkeeper'
+            ]);
 
         if (error) throw error;
         

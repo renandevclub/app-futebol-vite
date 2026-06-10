@@ -44,6 +44,12 @@ import {
     return;
   }
 
+  // OneSignal só funciona no domínio de produção configurado no dashboard.
+  // Em localhost/dev, pular a inicialização para evitar erros.
+  const IS_PRODUCTION = window.location.hostname !== 'localhost'
+    && !window.location.hostname.startsWith('127.')
+    && !window.location.hostname.startsWith('192.168.');
+
   const SUPABASE_FUNCTIONS_URL =
     (typeof import.meta !== 'undefined' && import.meta.env?.VITE_SUPABASE_FUNCTIONS_URL) || '';
 
@@ -124,6 +130,10 @@ import {
   /* ==================== */
 
   async function initOneSignal() {
+    if (!IS_PRODUCTION) {
+      console.log('[FM Notifications] Ambiente de desenvolvimento detectado. OneSignal desativado.');
+      return null;
+    }
     if (isInitialized) return oneSignalInstance;
     if (initPromise) return initPromise;
 
@@ -147,9 +157,8 @@ import {
 
     const os = await waitForOneSignal(INIT_TIMEOUT);
     if (!os) {
-      console.warn('[FM Notifications] SDK nao carregou. Retentativa em 10s...');
+      console.warn('[FM Notifications] SDK nao carregou a tempo.');
       initPromise = null;
-      setTimeout(initOneSignal, 10000);
       return null;
     }
 
@@ -206,7 +215,7 @@ import {
       }
       console.error('[FM Notifications] Erro na inicializacao:', error);
       initPromise = null;
-      setTimeout(initOneSignal, RETRY_DELAY);
+      // Não faz retry automático — evita loop de erros no console
       return null;
     }
   }

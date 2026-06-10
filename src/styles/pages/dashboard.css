@@ -133,31 +133,212 @@
     transform: scale(1.1);
 }
 
-/* ===== Countdown ===== */
-.match-countdown-wrap {
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px dashed var(--border-subtle);
+/* ===== Countdown Premium Section ===== */
+.match-countdown-section {
+    margin: 0;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, rgba(0, 210, 255, 0.06) 0%, rgba(0, 255, 135, 0.04) 100%);
+    border-top: 1px solid rgba(0, 210, 255, 0.12);
+    border-bottom: 1px solid rgba(0, 210, 255, 0.08);
+    position: relative;
+    overflow: hidden;
 }
 
-.countdown-badge {
-    display: inline-flex;
+.match-countdown-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 210, 255, 0.4), rgba(0, 255, 135, 0.4), transparent);
+}
+
+.countdown-header {
+    display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 4px 12px;
-    border-radius: var(--radius-full);
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid var(--border-subtle);
-    color: var(--text-secondary);
-    font-size: 0.72rem;
-    font-weight: 700;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
-.countdown-badge.urgent {
-    background: rgba(255, 51, 102, 0.1);
-    border-color: rgba(255, 51, 102, 0.3);
-    color: var(--accent-danger);
-    animation: animate-pulse 2s infinite;
+.countdown-header-icon {
+    font-size: 0.85rem;
+    color: var(--accent-primary, #00ff87);
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.countdown-header-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary, #94a3b8);
+}
+
+.countdown-grid {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.countdown-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 52px;
+    padding: 8px 6px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.countdown-value {
+    font-family: var(--font-family-display, 'Inter', monospace);
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--text-main, #f8fafc);
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+}
+
+.countdown-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted, #64748b);
+}
+
+.countdown-separator {
+    font-family: var(--font-family-display, 'Inter', monospace);
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--accent-primary, #00ff87);
+    line-height: 1;
+    padding-bottom: 16px;
+    opacity: 0.7;
+    animation: blink-separator 1s step-end infinite;
+}
+
+/* === Urgent State (< 24 hours) === */
+.match-countdown-section.countdown-urgent {
+    background: linear-gradient(135deg, rgba(255, 51, 102, 0.08) 0%, rgba(255, 140, 0, 0.06) 100%);
+    border-top-color: rgba(255, 51, 102, 0.2);
+    border-bottom-color: rgba(255, 51, 102, 0.15);
+}
+
+.match-countdown-section.countdown-urgent::before {
+    background: linear-gradient(90deg, transparent, rgba(255, 51, 102, 0.5), rgba(255, 140, 0, 0.5), transparent);
+    animation: shimmer-line 2s linear infinite;
+}
+
+.match-countdown-section.countdown-urgent .countdown-header-icon {
+    color: var(--accent-danger, #ff3366);
+    animation: pulse-fire 0.8s ease-in-out infinite alternate;
+}
+
+.match-countdown-section.countdown-urgent .countdown-header-label {
+    color: var(--accent-danger, #ff3366);
+}
+
+.match-countdown-section.countdown-urgent .countdown-value {
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 51, 102, 0.4);
+}
+
+.match-countdown-section.countdown-urgent .countdown-separator {
+    color: var(--accent-danger, #ff3366);
+}
+
+.match-countdown-section.countdown-urgent .countdown-unit {
+    background: rgba(255, 51, 102, 0.06);
+    border-color: rgba(255, 51, 102, 0.12);
+}
+
+/* === Live State (partida em andamento) === */
+.match-countdown-section.countdown-live {
+    background: linear-gradient(135deg, rgba(0, 255, 135, 0.08) 0%, rgba(0, 210, 255, 0.06) 100%);
+    border-top-color: rgba(0, 255, 135, 0.25);
+}
+
+.match-countdown-section.countdown-live .countdown-header-icon {
+    color: var(--accent-primary, #00ff87);
+    animation: spin-ball 1.5s linear infinite;
+}
+
+.match-countdown-section.countdown-live .countdown-header-label {
+    color: var(--accent-primary, #00ff87);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+}
+
+.match-countdown-section.countdown-live .countdown-value {
+    color: var(--text-muted, #64748b);
+    text-shadow: none;
+    font-size: 1.2rem;
+}
+
+.match-countdown-section.countdown-live .countdown-separator {
+    animation: none;
+    opacity: 0.3;
+}
+
+/* === Animations === */
+@keyframes blink-separator {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 0.2; }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+@keyframes pulse-fire {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.15); }
+}
+
+@keyframes shimmer-line {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+@keyframes spin-ball {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* === Light Theme === */
+[data-theme="light"] .match-countdown-section {
+    background: linear-gradient(135deg, rgba(0, 120, 255, 0.04) 0%, rgba(0, 180, 100, 0.03) 100%);
+    border-top-color: rgba(0, 120, 255, 0.1);
+    border-bottom-color: rgba(0, 120, 255, 0.06);
+}
+
+[data-theme="light"] .match-countdown-section::before {
+    background: linear-gradient(90deg, transparent, rgba(0, 120, 255, 0.3), rgba(0, 180, 100, 0.3), transparent);
+}
+
+[data-theme="light"] .countdown-unit {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="light"] .countdown-value {
+    color: #1e293b;
+    text-shadow: none;
+}
+
+[data-theme="light"] .countdown-separator {
+    color: #0ea5e9;
 }
 
 /* ===== Team Preview & Chips ===== */
@@ -450,10 +631,7 @@
 [data-theme="light"] .match-card-footer {
     background: rgba(0, 0, 0, 0.02);
 }
-[data-theme="light"] .countdown-badge {
-    background: rgba(0, 0, 0, 0.02);
-    color: var(--text-secondary);
-}
+
 
 /* ===== Status Pills (Badges de Status no Header) ===== */
 .status-pill {
@@ -487,53 +665,98 @@
     border-color: rgba(148, 163, 184, 0.2);
 }
 
-/* ===== Card de Partida Encerrada ===== */
+/* ===== Card de Partida Encerrada em Formato de Acordeão ===== */
 .match-card.status-encerrada {
-    opacity: 0.75;
-    filter: grayscale(15%);
+    opacity: 0.85;
     border-color: rgba(255, 255, 255, 0.05);
     background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(15, 23, 42, 0.2) 100%);
+    transition: all var(--transition-normal);
 }
 
 .match-card.status-encerrada:hover {
-    opacity: 0.9;
-    filter: grayscale(0%);
+    opacity: 1;
     border-color: rgba(255, 255, 255, 0.15);
     transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
-/* Oculta a pill padrão no header se for encerrada, já que teremos o selo grande */
+/* Cabeçalho do Acordeão */
+.match-accordion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color var(--transition-fast);
+}
+
+.match-accordion-header:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.match-accordion-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+}
+
+.match-accordion-header-left h3 {
+    margin: 0;
+    font-family: var(--font-family-display, inherit);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-main, #f8fafc);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border-left: 3px solid rgba(148, 163, 184, 0.6);
+    padding-left: 10px;
+    line-height: 1.2;
+}
+
+.accordion-icon {
+    font-size: 0.85rem;
+    color: var(--text-muted, #64748b);
+    transition: transform var(--transition-normal), color var(--transition-normal);
+}
+
+/* Conteúdo Colapsável */
+.match-accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+/* Estado Aberto/Expandido do Acordeão */
+.match-card.status-encerrada.is-open .match-accordion-content {
+    max-height: 600px; /* Suficiente para expandir todo o conteúdo */
+}
+
+.match-card.status-encerrada.is-open .accordion-icon {
+    transform: rotate(180deg);
+    color: var(--accent-primary, #00ff87);
+}
+
+.match-card.status-encerrada.is-open .match-accordion-header-left h3 {
+    border-left-color: var(--accent-primary, #00ff87);
+}
+
+/* Oculta a pill padrão no header se for encerrada, caso exista */
 .match-card.status-encerrada .match-card-header .status-pill {
     display: none;
 }
 
-/* Selo Grande "ENCERRADA" (Estilo Carimbo) */
-.match-stamp-closed {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    transform: rotate(-10deg);
-    color: #ef4444;
-    border: 3px double #ef4444;
-    font-family: var(--font-family-display, sans-serif);
-    font-size: 0.95rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    padding: 5px 12px;
-    letter-spacing: 2px;
-    pointer-events: none;
-    z-index: 10;
-    border-radius: 6px;
-    background: rgba(15, 23, 42, 0.95);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+/* Light Theme overrides */
+[data-theme="light"] .match-card.status-encerrada {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+    border-color: rgba(0, 0, 0, 0.06);
 }
 
-[data-theme="light"] .match-stamp-closed {
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+[data-theme="light"] .match-accordion-header:hover {
+    background: rgba(0, 0, 0, 0.02);
 }
 
 /* =================================================================== */
@@ -687,5 +910,45 @@
     .dash-standings-table th:nth-child(9), /* GC */
     .dash-standings-table td:nth-child(9) {
         display: none !important;
+    }
+    
+    /* === Countdown Premium Mobile === */
+    .match-countdown-section {
+        padding: 14px 16px;
+    }
+    
+    .countdown-header {
+        margin-bottom: 10px;
+    }
+    
+    .countdown-header-icon {
+        font-size: 0.8rem;
+    }
+    
+    .countdown-header-label {
+        font-size: 0.72rem;
+    }
+    
+    .countdown-grid {
+        gap: 4px;
+    }
+    
+    .countdown-unit {
+        min-width: 46px;
+        padding: 6px 4px;
+        border-radius: 8px;
+    }
+    
+    .countdown-value {
+        font-size: 1.35rem;
+    }
+    
+    .countdown-label {
+        font-size: 0.55rem;
+    }
+    
+    .countdown-separator {
+        font-size: 1.1rem;
+        padding-bottom: 14px;
     }
 }

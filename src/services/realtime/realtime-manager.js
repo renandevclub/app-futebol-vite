@@ -19,6 +19,7 @@
  */
 
 import { getSupabaseClient } from '../../services/impl/supabase-client.service.js';
+import { setSupabaseUnavailable } from '../../services/impl/supabase-client.impl.js';
 
 // --- Constantes ---
 const HEARTBEAT_INTERVAL = 30_000; // 30 segundos
@@ -111,7 +112,9 @@ class RealtimeManager {
       return { channel: null, unsubscribe: () => this._cleanupChannel(channelName) };
     }
 
-    const channel = client.channel(channelName);
+    // Gera um nome único para o canal físico para evitar reutilização de canais já subscritos
+    const uniqueChannelName = `${channelName}_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+    const channel = client.channel(uniqueChannelName);
 
     // Registrar subscriptions
     const cleanupFns = [];
@@ -140,6 +143,9 @@ class RealtimeManager {
       if (status === 'SUBSCRIBED') {
         this._status = ConnectionStatus.CONNECTED;
         this._reconnectAttempts = 0;
+        try {
+          setSupabaseUnavailable(false);
+        } catch (_) {}
       } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
         this._scheduleReconnect(channelName);
       } else if (status === 'TIMED_OUT') {

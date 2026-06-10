@@ -167,7 +167,7 @@ export default defineConfig({
       srcDir: "src",
       filename: "sw.js",
       injectManifest: {
-        swSrc: "sw.js",
+        swSrc: "src/sw.js",
       },
       devOptions: {
         enabled: true,

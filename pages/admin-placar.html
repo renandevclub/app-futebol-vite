@@ -208,6 +208,57 @@
         <!-- Accordion de Funcionalidades do Jogo (da Escalação para baixo) -->
         <div class="adm-accordion-group" id="adm-live-accordion">
           
+          <!-- Configurações e Regras -->
+          <div class="adm-section adm-accordion-item" id="adm-configuracoes-section">
+            <div class="adm-section-title adm-accordion-header">
+              <span>
+                <i class="fas fa-cog" style="color: var(--accent-blue)"></i>
+                Configurações da Partida
+              </span>
+              <i class="fas fa-chevron-down adm-accordion-chevron"></i>
+            </div>
+            <div class="adm-accordion-body">
+              <div class="adm-form-grid" style="grid-template-columns: 1fr; gap: 16px; width: 100%;">
+                
+                <!-- Ajustar Cronômetro Atual -->
+                <div class="adm-form-group">
+                  <label class="adm-label">Alterar tempo atual (Minutos : Segundos)</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="number" id="adm-config-minutos" class="adm-input" min="0" max="99" placeholder="Min" style="flex: 1; text-align: center;" />
+                    <span style="align-self: center; font-weight: bold; color: var(--text-secondary);">:</span>
+                    <input type="number" id="adm-config-segundos" class="adm-input" min="0" max="59" placeholder="Seg" style="flex: 1; text-align: center;" />
+                    <button id="adm-btn-aplicar-tempo" class="adm-btn adm-btn-blue" style="padding: 10px 16px;">
+                      <i class="fas fa-check"></i> Aplicar
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Tempo limite padrão -->
+                <div class="adm-form-group">
+                  <label class="adm-label">Tempo total da partida (minutos)</label>
+                  <div style="display: flex; gap: 8px;">
+                    <input type="number" id="adm-config-tempo-limite" class="adm-input" min="1" max="90" value="7" style="flex: 1;" />
+                    <button id="adm-btn-salvar-tempo-limite" class="adm-btn adm-btn-gray" style="padding: 10px 16px;">
+                      <i class="fas fa-save"></i> Salvar
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Regra dos 2 Gols -->
+                <div class="adm-form-group" style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px solid var(--border-subtle);">
+                  <div>
+                    <label class="adm-label" style="margin-bottom: 2px; cursor: pointer;" for="adm-config-regra-gols">Regra de Fim com 2 Gols</label>
+                    <span style="font-size: 0.75rem; color: var(--text-secondary);">Se ativado, a partida encerra quando um time faz 2 gols.</span>
+                  </div>
+                  <div class="adm-switch-wrap">
+                    <input type="checkbox" id="adm-config-regra-gols" checked style="width: 20px; height: 20px; cursor: pointer;" />
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          
           <!-- Escalação -->
           <div class="adm-section adm-accordion-item" id="adm-escalacao-section">
             <div class="adm-section-title adm-accordion-header">

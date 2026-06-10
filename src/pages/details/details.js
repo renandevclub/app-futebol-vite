@@ -1,6 +1,6 @@
 import { getSelectedMatchId, getStoredUser, setEditMatchId } from '../../stores/session-store.js';
 import { isAdminRole, isVisitorRole } from '../../shared/constants/roles.js';
-import { normalizeTeams, normalizeTeamDraws } from '../../services/impl/match-normalizer.js';
+import { normalizeTeams, normalizeTeamDraws, normalizeTeamKey } from '../../services/impl/match-normalizer.js';
 import {
   formatDateBR,
   formatDateDayMonthBR,
@@ -53,6 +53,7 @@ import {
   getTeamById as selectTeamById,
   isScratchCardEnabled as selectIsScratchCardEnabled,
   playerCanDrawAgain as selectPlayerCanDrawAgain,
+  getAvailableSlotsByType,
 } from '../../modules/details/details-state.js';
 import { getStandingsByMatch } from '../../services/live-score.service.js';
 
@@ -76,9 +77,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       matchRealtimeChannel &&
       typeof matchRealtimeChannel.unsubscribe === "function"
     ) {
-      matchRealtimeChannel.unsubscribe().catch((error) => {
+      try {
+        const result = matchRealtimeChannel.unsubscribe();
+        if (result && typeof result.catch === "function") {
+          result.catch((error) => {
+            console.warn("Erro ao cancelar inscrição realtime:", error);
+          });
+        }
+      } catch (error) {
         console.warn("Erro ao cancelar inscrição realtime:", error);
-      });
+      }
     }
     matchRealtimeChannel = null;
   }
@@ -164,6 +172,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   async function loadAndRenderPage() {
     try {
       currentMatch = await getMatchById(selectedMatchId);
+      if (!currentMatch) {
+        throw new Error("Partida não encontrada localmente nem no servidor.");
+      }
       currentMatch.teams = normalizeTeams(currentMatch.teams || []);
       currentMatch.teamDraws = normalizeTeamDraws(
         currentMatch.teamDraws || currentMatch.team_draws || {},
@@ -184,24 +195,28 @@ document.addEventListener("DOMContentLoaded", async () => {
           ? getSupabaseClient()
           : window.supabaseClient;
       if (client) {
-        const { data: voteData, error: voteError } = await client
-          .from("fm_votos_partidas")
-          .select("category, voter_username, candidate_username")
-          .eq("match_id", currentMatch.id);
+        try {
+          const { data: voteData, error: voteError } = await client
+            .from("fm_votos_partidas")
+            .select("category, voter_username, candidate_username")
+            .eq("match_id", currentMatch.id);
 
-        if (!voteError && voteData) {
-          currentMatch.votes.best_player = voteData
-            .filter((v) => v.category === "best_player")
-            .map((v) => ({
-              voter: v.voter_username,
-              candidate: v.candidate_username,
-            }));
-          currentMatch.votes.worst_player = voteData
-            .filter((v) => v.category === "worst_player")
-            .map((v) => ({
-              voter: v.voter_username,
-              candidate: v.candidate_username,
-            }));
+          if (!voteError && voteData) {
+            currentMatch.votes.best_player = voteData
+              .filter((v) => v.category === "best_player")
+              .map((v) => ({
+                voter: v.voter_username,
+                candidate: v.candidate_username,
+              }));
+            currentMatch.votes.worst_player = voteData
+              .filter((v) => v.category === "worst_player")
+              .map((v) => ({
+                voter: v.voter_username,
+                candidate: v.candidate_username,
+              }));
+          }
+        } catch (voteErr) {
+          console.warn("Erro ao buscar votos em tempo real no Supabase:", voteErr);
         }
       }
 
@@ -533,22 +548,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const teams = getMatchTeams();
     if (teams.length < 3) return false;
 
-    const first3Teams = teams.slice(0, 3);
-    const players = Array.isArray(currentMatch.players)
-      ? currentMatch.players
-      : [];
+    const availableLinha = getAvailableSlotsByType(currentMatch, 'linha');
+    const availableGoleiro = getAvailableSlotsByType(currentMatch, 'goleiro');
 
-    let allFull = true;
-    for (const team of first3Teams) {
-      const count = players.filter(
-        (p) => p.teamId === team.id || p.teamName === team.name,
-      ).length;
-      if (count < 7) {
-        allFull = false;
-        break;
-      }
-    }
-    return allFull;
+    return availableLinha === 0 && availableGoleiro === 0;
   }
 
   function createScratchCard() {
@@ -635,13 +638,41 @@ document.addEventListener("DOMContentLoaded", async () => {
     const drawTeams = teams.slice(0, 3);
 
     const allSlots = createScratchSlots(drawTeams, getScratchColor);
+    const availableLinha = getAvailableSlotsByType(currentMatch, 'linha');
+    const availableGoleiro = getAvailableSlotsByType(currentMatch, 'goleiro');
+
+    let defaultDrawType = 'linha';
+    if (availableLinha === 0 && availableGoleiro > 0) {
+      defaultDrawType = 'goleiro';
+    }
+
     container.innerHTML = buildScratchCardsHtml({
       drawTeams,
       slots: allSlots,
+      availableLinha,
+      availableGoleiro,
+      selectedType: defaultDrawType
     });
 
     // Adiciona interatividade
-    scratchCardState = { hasChosen: false, chosenIndex: -1 };
+    scratchCardState = { hasChosen: false, chosenIndex: -1, drawType: defaultDrawType };
+
+    // Adiciona escutadores para os botões do seletor de posição
+    setTimeout(() => {
+      const typeSelector = container.querySelector("#scratch-draw-type-selector");
+      if (typeSelector) {
+        const buttons = typeSelector.querySelectorAll(".draw-type-btn");
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (scratchCardState.hasChosen) return;
+            buttons.forEach((b) => b.classList.remove("active"));
+            btn.classList.add("active");
+            scratchCardState.drawType = btn.dataset.type;
+          });
+        });
+      }
+    }, 0);
+
     container.querySelectorAll(".scratch-card.covered").forEach((card) => {
       card.addEventListener("click", handleScratchReveal);
       card.addEventListener("mouseenter", () => {
@@ -727,7 +758,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     try {
       // Chama a RPC SEGURA no backend (NUNCA faz sorteio no frontend)
-      const result = await playerDrawTeam(currentMatch.id);
+      const result = await playerDrawTeam(currentMatch.id, null, scratchCardState.drawType);
 
       if (result && result.assignment) {
         assignedTeamName = result.assignment.teamName || assignedTeamName;

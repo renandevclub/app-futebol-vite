@@ -1286,3 +1286,18 @@ body.admin-placar-page {
   margin-left: 0;
 }
 
+/* ===== CONFIGURAÇÕES DA PARTIDA (ACORDEÃO) ===== */
+#adm-configuracoes-section input[type="number"] {
+  -moz-appearance: textfield;
+  text-align: center;
+}
+#adm-configuracoes-section input[type="number"]::-webkit-outer-spin-button,
+#adm-configuracoes-section input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+#adm-configuracoes-section .adm-form-group {
+  margin-bottom: 4px;
+}
+
+

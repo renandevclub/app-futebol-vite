@@ -76,6 +76,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         matchListDiv.appendChild(card);
 
+        if (match.status === "ENCERRADA") {
+          const accordionHeader = card.querySelector(".match-accordion-header");
+          if (accordionHeader) {
+            accordionHeader.addEventListener("click", () => {
+              card.classList.toggle("is-open");
+            });
+          }
+        }
+
         if (matchDateTimestamp > Date.now() && match.status !== "CANCELADA") {
           startCountdown(match.id, matchDateTimestamp);
         }
@@ -164,39 +173,59 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function startCountdown(matchId, matchDateTime) {
-    const countdownEl = document.getElementById(`countdown-${matchId}`);
-    if (!countdownEl) return;
+    const countdownGrid = document.getElementById(`countdown-${matchId}`);
+    const countdownSection = document.getElementById(`countdown-section-${matchId}`);
+    if (!countdownGrid) return;
     const oneDayMs = 24 * 60 * 60 * 1000;
+
+    const daysEl = countdownGrid.querySelector('[data-unit="days"]');
+    const hoursEl = countdownGrid.querySelector('[data-unit="hours"]');
+    const minutesEl = countdownGrid.querySelector('[data-unit="minutes"]');
+    const secondsEl = countdownGrid.querySelector('[data-unit="seconds"]');
 
     const update = () => {
       const now = new Date().getTime();
       const distance = matchDateTime - now;
 
       if (distance < 0) {
-        countdownEl.textContent = "Em andamento!";
-        countdownEl.classList.remove('urgent');
+        if (daysEl) daysEl.textContent = '00';
+        if (hoursEl) hoursEl.textContent = '00';
+        if (minutesEl) minutesEl.textContent = '00';
+        if (secondsEl) secondsEl.textContent = '00';
+        if (countdownSection) {
+          const headerLabel = countdownSection.querySelector('.countdown-header-label');
+          const headerIcon = countdownSection.querySelector('.countdown-header-icon');
+          if (headerLabel) headerLabel.textContent = '⚽ Partida em andamento!';
+          if (headerIcon) {
+            headerIcon.className = 'fas fa-futbol countdown-header-icon';
+          }
+          countdownSection.classList.add('countdown-live');
+          countdownSection.classList.remove('countdown-urgent');
+        }
         return;
       }
 
       const days = Math.floor(distance / oneDayMs);
       const hours = Math.floor((distance % oneDayMs) / (1000 * 60 * 60));
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      if (days > 0) {
-        countdownEl.textContent = `${days}d ${hours}h`;
-      } else if (hours > 0) {
-        countdownEl.textContent = `${hours}h ${minutes}m`;
-      } else {
-        countdownEl.textContent = `${minutes}m`;
-      }
+      if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+      if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+      if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+      if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
 
-      if (distance < oneDayMs && !countdownEl.classList.contains('urgent')) {
-        countdownEl.classList.add('urgent');
+      if (distance < oneDayMs && countdownSection) {
+        countdownSection.classList.add('countdown-urgent');
+        const headerLabel = countdownSection.querySelector('.countdown-header-label');
+        const headerIcon = countdownSection.querySelector('.countdown-header-icon');
+        if (headerLabel) headerLabel.textContent = 'Faltam poucas horas!';
+        if (headerIcon) headerIcon.className = 'fas fa-fire-alt countdown-header-icon';
       }
     };
 
     update();
-    const interval = setInterval(update, 30000);
+    const interval = setInterval(update, 1000);
     countdownIntervals.push(interval);
   }
 

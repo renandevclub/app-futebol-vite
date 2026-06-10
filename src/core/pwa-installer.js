@@ -1,7 +1,5 @@
 import {
   SERVICE_WORKER_PATH,
-  checkServiceWorkerScript,
-  unregisterServiceWorkersForScript,
 } from './service-worker-support.js';
 
 /**
@@ -10,33 +8,21 @@ import {
  */
 (function () {
   let deferredPrompt = null;
-  let updateAvailable = false;
+  let refreshing = false;
   const INSTALL_DISMISSED_KEY = 'fm_pwa_install_dismissed';
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', async () => {
-      const swCheck = await checkServiceWorkerScript(SERVICE_WORKER_PATH);
-
-      if (!swCheck.ok) {
-        if (swCheck.reason !== 'fetch-error') {
-          await unregisterServiceWorkersForScript(SERVICE_WORKER_PATH);
-        }
-        console.info('[FM PWA] Service worker indisponivel; registro ignorado.', swCheck);
-        return;
-      }
-
+      // Registro nativo robusto e simples direto pelo navegador
       const registration = await navigator.serviceWorker
         .register(SERVICE_WORKER_PATH, { scope: '/' })
-        .catch(() => null);
+        .catch((err) => {
+          console.error('[FM PWA] Erro ao registrar Service Worker:', err);
+          return null;
+        });
 
       if (registration) {
         watchForServiceWorkerUpdates(registration);
-      }
-    });
-
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (updateAvailable) {
-        showUpdateToast();
       }
     });
   }
@@ -100,8 +86,11 @@ import {
     });
   }
 
-  function showUpdateToast() {
+  function showUpdateToast(worker) {
+    if (document.getElementById('pwa-update-toast')) return;
+
     const toast = document.createElement('div');
+    toast.id = 'pwa-update-toast';
     toast.style.cssText = `
       position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
       z-index: 9999; background: linear-gradient(135deg,#10b981,#059669);
@@ -122,28 +111,22 @@ import {
     document.body.appendChild(toast);
 
     document.getElementById('pwa-reload-btn').addEventListener('click', () => {
-      navigator.serviceWorker.ready.then((reg) => {
-        if (reg.waiting) {
-          reg.waiting.postMessage('skipWaiting');
-        }
-      });
-      window.location.reload();
+      if (worker) {
+        worker.postMessage('skipWaiting');
+      } else {
+        navigator.serviceWorker.ready.then((reg) => {
+          if (reg.waiting) {
+            reg.waiting.postMessage('skipWaiting');
+          } else {
+            window.location.reload();
+          }
+        });
+      }
     });
   }
 
   function watchForServiceWorkerUpdates(registration) {
-    if (registration.waiting) {
-      updateAvailable = true;
-    }
-    registration.addEventListener('updatefound', () => {
-      const newWorker = registration.installing;
-      if (!newWorker) return;
-      newWorker.addEventListener('statechange', () => {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          updateAvailable = true;
-        }
-      });
-    });
+    // Atualização silenciosa em segundo plano: desativado o toast de atualização visual para evitar loops irritantes.
   }
 
   function removeInstallBanner() {

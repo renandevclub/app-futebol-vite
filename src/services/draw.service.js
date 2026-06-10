@@ -34,7 +34,7 @@ export function generateDrawIdempotencyKey(matchId) {
     return `draw_${matchId}_${normalizeTeamKey(username)}_${timeWindow}_${random}`;
 }
 
-export async function playerDrawTeam(matchId, forceTeamId = null) {
+export async function playerDrawTeam(matchId, forceTeamId = null, drawType = 'linha') {
     await initDB();
 
     const client = getSupabaseClient();
@@ -47,7 +47,8 @@ export async function playerDrawTeam(matchId, forceTeamId = null) {
     try {
         const params = {
             p_match_id: matchId,
-            p_idempotency_key: idempotencyKey
+            p_idempotency_key: idempotencyKey,
+            p_draw_type: drawType
         };
         if (forceTeamId) {
             params.p_force_team_id = forceTeamId;

@@ -78,5 +78,7 @@ export function buildLiveScoreMatchPayload({ linkedMatch, selectedTeams }) {
     eventos_personalizados: [],
     observacoes: '',
     cronometro_state: { minutos: 7, segundos: 0, rodando: false },
+    tempo_limite: 7,
+    regra_dois_gols_desativada: false,
   };
 }

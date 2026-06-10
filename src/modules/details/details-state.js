@@ -95,3 +95,32 @@ export function createTeamOptions(match, selectedTeamId = '') {
 
   return options.join('');
 }
+
+export function getTeamLinePlayerCount(match, teamId) {
+  const players = match?.players || [];
+  return players.filter(p => p.teamId === teamId && (p.drawType === 'linha' || !p.drawType || p.drawType === '')).length;
+}
+
+export function getTeamGoalkeeperCount(match, teamId) {
+  const players = match?.players || [];
+  return players.filter(p => p.teamId === teamId && p.drawType === 'goleiro').length;
+}
+
+export function getAvailableSlotsByType(match, type) {
+  const teams = getMatchTeams(match).slice(0, 3); // Apenas os 3 primeiros times
+  if (teams.length === 0) return 0;
+
+  let totalSlots = 0;
+  if (type === 'goleiro') {
+    teams.forEach(team => {
+      const currentGoleiros = getTeamGoalkeeperCount(match, team.id);
+      totalSlots += Math.max(0, 1 - currentGoleiros);
+    });
+  } else {
+    teams.forEach(team => {
+      const currentLinha = getTeamLinePlayerCount(match, team.id);
+      totalSlots += Math.max(0, 6 - currentLinha);
+    });
+  }
+  return totalSlots;
+}

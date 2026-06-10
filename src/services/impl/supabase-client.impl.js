@@ -79,3 +79,10 @@ export function setSupabaseUnavailable(status) {
 export function isSupabaseUnavailable() {
     return supabaseUnavailable;
 }
+
+if (typeof window !== 'undefined') {
+    window.addEventListener('online', () => {
+        console.log('[SupabaseClient] Rede restabelecida. Resetando flag de indisponibilidade.');
+        supabaseUnavailable = false;
+    });
+}

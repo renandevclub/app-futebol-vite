@@ -72,13 +72,20 @@ export function buildTeamAccordionHeaderHtml({
   teamPlayers,
   metaHtml,
 }) {
+  let countTextHtml = `${teamPlayers.length}`;
+  if (teamLabel !== TEAMLESS_LABEL) {
+    const linhaCount = teamPlayers.filter((p) => p.drawType === 'linha' || !p.drawType || p.drawType === '').length;
+    const goleiroCount = teamPlayers.filter((p) => p.drawType === 'goleiro').length;
+    countTextHtml = `<span class="team-acc-counts-split">${linhaCount}L &bull; ${goleiroCount}G</span>`;
+  }
+
   return `
     <div class="team-acc-info">
       <div class="team-acc-name">${escapeHtml(teamLabel)}</div>
       <div class="team-acc-meta">${metaHtml}</div>
     </div>
     <div class="team-acc-right">
-      <div class="team-acc-count">${teamPlayers.length}</div>
+      <div class="team-acc-count">${countTextHtml}</div>
       <div class="team-acc-chevron">${ACCORDION_CHEVRON_SVG}</div>
     </div>
   `;
@@ -391,6 +398,9 @@ export function buildPlayerItemHtml({
   const receiptStatusHtml = player.receiptSent
     ? '<span class="receipt-status" title="Comprovante de pagamento enviado"><i class="fas fa-file-invoice-dollar"></i></span>'
     : '';
+  const positionBadgeHtml = player.drawType === 'goleiro'
+    ? '<span class="player-position-badge goalkeeper" title="Goleiro"><span class="position-icon">🧤</span>Goleiro</span>'
+    : '';
   const paidValueHtml = isWithdrawn
     ? ''
     : formatCurrencyBRL(finalFee);
@@ -409,6 +419,7 @@ export function buildPlayerItemHtml({
   return `
     <div class="player-info">
       <span class="player-name${isWithdrawn ? ' withdrawn-name' : ''}">${safeUsername}</span>
+      ${positionBadgeHtml}
       ${statusBadgeHtml}
       ${teamBadge}
       ${receiptStatusHtml}

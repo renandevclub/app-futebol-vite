@@ -101,3 +101,14 @@ export function resetSupabaseClient() {
   isUnavailable = false;
   initPromise = null;
 }
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('online', () => {
+    console.log('[SupabaseClientService] Rede restabelecida. Resetando flag de indisponibilidade.');
+    isUnavailable = false;
+    initPromise = null;
+    initSupabaseClient().catch(err => {
+      console.warn('[SupabaseClientService] Erro ao re-inicializar cliente no online:', err);
+    });
+  });
+}

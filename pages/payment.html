@@ -92,214 +92,322 @@
 
     <main class="payment-shell">
       <section class="payment-card" aria-labelledby="payment-title">
-        <div class="payment-hero">
-          <span class="payment-kicker">Pix Nubank</span>
-          <h1 id="payment-title">&#9917; Futebol Milh&atilde;o</h1>
-          <p>Fala, rapaziada! &#128075;</p>
+        <!-- Abas de Navegação (Somente Admin) -->
+        <div class="admin-tabs" id="admin-tabs" style="display: none;">
+          <button class="tab-btn active" data-tab="player" type="button">
+            <span>⚽</span> Jogador
+          </button>
+          <button class="tab-btn" data-tab="admin" type="button">
+            <span>🔧</span> Painel Admin
+          </button>
         </div>
 
-        <!-- <div class="payment-alert" id="payment-alert" role="status">
-          Garanta por R$ 20,00 at&eacute; o prazo!
-        </div>-->
-
-        <div
-          class="event-grid"
-          aria-label="Informa&ccedil;&otilde;es do evento"
-        >
-          <article class="event-item">
-            <span class="event-icon">&#128197;</span>
-            <div>
-              <span class="event-label">Data</span>
-              <strong>03/06/2026 &agrave;s 23h</strong>
-            </div>
-          </article>
-          <article class="event-item">
-            <span class="event-icon">&#9917;</span>
-            <div>
-              <span class="event-label">Local</span>
-              <strong>Prime Fut 7</strong>
-            </div>
-          </article>
-        </div>
-
-        <div class="price-panel" aria-label="Valores do pagamento">
-          <div class="price-row price-row-featured">
-            <div>
-              <span class="price-label">Pagamento</span>
-              <strong>R$ 20,00</strong>
-            </div>
-            <span class="price-chip">at&eacute; 03/06</span>
+        <!-- VIEW DO JOGADOR -->
+        <div id="player-view-container">
+          <div class="payment-hero">
+            <span class="payment-kicker">Pix Nubank</span>
+            <h1 id="payment-title">&#9917; Futebol Milh&atilde;o</h1>
+            <p>Fala, rapaziada! &#128075;</p>
           </div>
-          <!-- <div class="price-row">
+
+          <!-- <div class="payment-alert" id="payment-alert" role="status">
+            Garanta por R$ 20,00 at&eacute; o prazo!
+          </div>-->
+
+          <div
+            class="event-grid"
+            aria-label="Informa&ccedil;&otilde;es do evento"
+          >
+            <article class="event-item">
+              <span class="event-icon">&#128197;</span>
+              <div>
+                <span class="event-label">Data</span>
+                <strong>03/06/2026 &agrave;s 23h</strong>
+              </div>
+            </article>
+            <article class="event-item">
+              <span class="event-icon">&#9917;</span>
+              <div>
+                <span class="event-label">Local</span>
+                <strong>Prime Fut 7</strong>
+              </div>
+            </article>
+          </div>
+
+          <div class="price-panel" aria-label="Valores do pagamento">
+            <div class="price-row price-row-featured">
+              <div>
+                <span class="price-label">Pagamento</span>
+                <strong>R$ 20,00</strong>
+              </div>
+              <span class="price-chip">at&eacute; 03/06</span>
+            </div>
+            <!-- <div class="price-row">
+              <div>
+                <span class="price-label">Na hora do futebol</span>
+                <strong>R$ 15,00</strong>
+              </div>
+              <span class="price-chip price-chip-muted">ap&oacute;s o prazo</span>
+            </div> -->
+          </div>
+
+          <div class="countdown-box" aria-label="Contador regressivo">
+            <span class="countdown-title">Tempo para pagar R$ 20,00</span>
+            <div class="countdown-grid" id="countdown">
+              <div class="countdown-item">
+                <strong id="countdown-days">00</strong>
+                <span>dias</span>
+              </div>
+              <div class="countdown-item">
+                <strong id="countdown-hours">00</strong>
+                <span>horas</span>
+              </div>
+              <div class="countdown-item">
+                <strong id="countdown-minutes">00</strong>
+                <span>min</span>
+              </div>
+              <div class="countdown-item">
+                <strong id="countdown-seconds">00</strong>
+                <span>seg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pix-panel">
             <div>
-              <span class="price-label">Na hora do futebol</span>
-              <strong>R$ 15,00</strong>
+              <span class="pix-label">Pagamento</span>
+              <strong>Via Pix Nubank</strong>
             </div>
-            <span class="price-chip price-chip-muted">ap&oacute;s o prazo</span>
-          </div> -->
-        </div>
-
-        <div class="countdown-box" aria-label="Contador regressivo">
-          <span class="countdown-title">Tempo para pagar R$ 20,00</span>
-          <div class="countdown-grid" id="countdown">
-            <div class="countdown-item">
-              <strong id="countdown-days">00</strong>
-              <span>dias</span>
-            </div>
-            <div class="countdown-item">
-              <strong id="countdown-hours">00</strong>
-              <span>horas</span>
-            </div>
-            <div class="countdown-item">
-              <strong id="countdown-minutes">00</strong>
-              <span>min</span>
-            </div>
-            <div class="countdown-item">
-              <strong id="countdown-seconds">00</strong>
-              <span>seg</span>
-            </div>
+            <span class="pix-badge">Seguro e r&aacute;pido</span>
           </div>
-        </div>
 
-        <div class="pix-panel">
-          <div>
-            <span class="pix-label">Pagamento</span>
-            <strong>Via Pix Nubank</strong>
-          </div>
-          <span class="pix-badge">Seguro e r&aacute;pido</span>
-        </div>
-
-        <div
-          class="pix-buttons-container"
-          style="
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 18px;
-          "
-        >
-          <!-- Botão 1: Antecipado -->
-          <a
-            id="btn-pix-early"
-            class="btn btn-primary pix-button"
-            href="#"
-            rel="noopener noreferrer"
+          <div
+            class="pix-buttons-container"
             style="
-              margin-top: 0;
-              min-height: 64px;
-              flex-direction: row;
-              justify-content: flex-start;
-              padding: 0 20px;
-              gap: 15px;
-              text-align: left;
+              display: flex;
+              flex-direction: column;
+              gap: 12px;
+              margin-top: 18px;
             "
           >
-            <span class="pix-button-icon" style="font-size: 1.4rem"
-              >&#128176;</span
+            <!-- Botão 1: Antecipado -->
+            <a
+              id="btn-pix-early"
+              class="btn btn-primary pix-button"
+              href="#"
+              rel="noopener noreferrer"
+              style="
+                margin-top: 0;
+                min-height: 64px;
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 0 20px;
+                gap: 15px;
+                text-align: left;
+              "
             >
-            <div style="display: flex; flex-direction: column">
-              <span class="pix-button-text" style="font-size: 1rem"
-                >Jogador &mdash; R$ 20,00</span
+              <span class="pix-button-icon" style="font-size: 1.4rem"
+                >&#128176;</span
               >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  opacity: 0.8;
-                  margin-top: 2px;
-                  text-transform: uppercase;
-                  font-weight: 700;
-                "
-                >Valor Fixo</span
-              >
-            </div>
-          </a>
+              <div style="display: flex; flex-direction: column">
+                <span class="pix-button-text" style="font-size: 1rem"
+                  >Jogador &mdash; R$ 20,00</span
+                >
+                <span
+                  style="
+                    font-size: 0.75rem;
+                    opacity: 0.8;
+                    margin-top: 2px;
+                    text-transform: uppercase;
+                    font-weight: 700;
+                  "
+                  >Valor Fixo</span
+                >
+              </div>
+            </a>
 
-          <!-- Botão 2: Normal -->
-          <!--<a
-            id="btn-pix-regular"
-            class="btn btn-primary pix-button"
-            href="#"
-            rel="noopener noreferrer"
-            style="
-              margin-top: 0;
-              min-height: 64px;
-              flex-direction: row;
-              justify-content: flex-start;
-              padding: 0 20px;
-              gap: 15px;
-              text-align: left;
-              background: rgba(59, 130, 246, 0.15);
-              border: 1px solid rgba(59, 130, 246, 0.3);
-              color: var(--text-main);
-            "
-          >
-            <span class="pix-button-icon" style="font-size: 1.4rem"
-              >&#9917;</span
+            <!-- Botão 2: Normal -->
+            <a
+              id="btn-pix-regular"
+              class="btn btn-primary pix-button"
+              href="#"
+              rel="noopener noreferrer"
+              style="
+                margin-top: 0;
+                min-height: 64px;
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 0 20px;
+                gap: 15px;
+                text-align: left;
+                background: rgba(59, 130, 246, 0.15);
+                border: 1px solid rgba(59, 130, 246, 0.3);
+                color: var(--text-main);
+              "
             >
-            <div style="display: flex; flex-direction: column">
-              <span class="pix-button-text" style="font-size: 1rem"
-                >Jogador (Normal) &mdash; R$ 20,00</span
+              <span class="pix-button-icon" style="font-size: 1.4rem"
+                >&#9917;</span
               >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  opacity: 0.6;
-                  margin-top: 2px;
-                  text-transform: uppercase;
-                  font-weight: 700;
-                "
-                >Após o prazo</span
-              >
-            </div>
-          </a> -->
+              <div style="display: flex; flex-direction: column">
+                <span class="pix-button-text" style="font-size: 1rem"
+                  >Jogador (Normal) &mdash; R$ 20,00</span
+                >
+                <span
+                  style="
+                    font-size: 0.75rem;
+                    opacity: 0.6;
+                    margin-top: 2px;
+                    text-transform: uppercase;
+                    font-weight: 700;
+                  "
+                  >Após o prazo</span
+                >
+              </div>
+            </a>
 
-          <!-- Botão 3: Goleiro -->
-          <a
-            id="btn-pix-goalkeeper"
-            class="btn btn-primary pix-button"
-            href="#"
-            rel="noopener noreferrer"
-            style="
-              margin-top: 0;
-              min-height: 64px;
-              flex-direction: row;
-              justify-content: flex-start;
-              padding: 0 20px;
-              gap: 15px;
-              text-align: left;
-              background: rgba(139, 92, 246, 0.15);
-              border: 1px solid rgba(139, 92, 246, 0.3);
-              color: var(--text-main);
-            "
-          >
-            <span class="pix-button-icon" style="font-size: 1.4rem"
-              >&#129492;</span
+            <!-- Botão 3: Goleiro -->
+            <a
+              id="btn-pix-goalkeeper"
+              class="btn btn-primary pix-button"
+              href="#"
+              rel="noopener noreferrer"
+              style="
+                margin-top: 0;
+                min-height: 64px;
+                flex-direction: row;
+                justify-content: flex-start;
+                padding: 0 20px;
+                gap: 15px;
+                text-align: left;
+                background: rgba(139, 92, 246, 0.15);
+                border: 1px solid rgba(139, 92, 246, 0.3);
+                color: var(--text-main);
+              "
             >
-            <div style="display: flex; flex-direction: column">
-              <span class="pix-button-text" style="font-size: 1rem"
-                >Goleiro &mdash; R$ 5,00</span
+              <span class="pix-button-icon" style="font-size: 1.4rem"
+                >&#129492;</span
               >
-              <span
-                style="
-                  font-size: 0.75rem;
-                  opacity: 0.6;
-                  margin-top: 2px;
-                  text-transform: uppercase;
-                  font-weight: 700;
-                "
-                >Valor Fixo</span
-              >
-            </div>
-          </a>
+              <div style="display: flex; flex-direction: column">
+                <span class="pix-button-text" style="font-size: 1rem"
+                  >Goleiro &mdash; R$ 5,00</span
+                >
+                <span
+                  style="
+                    font-size: 0.75rem;
+                    opacity: 0.6;
+                    margin-top: 2px;
+                    text-transform: uppercase;
+                    font-weight: 700;
+                  "
+                  >Valor Fixo</span
+                >
+              </div>
+            </a>
+          </div>
+
+          <footer class="payment-note">
+            <p>
+              Quem puder j&aacute; vai pagando pra ajudar na
+              organiza&ccedil;&atilde;o &#128591;&#9917;
+            </p>
+            <strong>Tamo junto! &#128293;</strong>
+          </footer>
         </div>
 
-        <footer class="payment-note">
-          <p>
-            Quem puder j&aacute; vai pagando pra ajudar na
-            organiza&ccedil;&atilde;o &#128591;&#9917;
-          </p>
-          <strong>Tamo junto! &#128293;</strong>
-        </footer>
+        <!-- VIEW DO ADMINISTRADOR -->
+        <div id="admin-view-container" style="display: none;">
+          <div class="admin-panel-header">
+            <h2>🔧 Painel de Pagamentos</h2>
+            <p>Gerencie links Pix, prazos e controle os pagamentos dos atletas.</p>
+          </div>
+
+          <!-- Seção 1: Configurações Gerais Pix -->
+          <div class="admin-section">
+            <h3 class="admin-section-title">🔗 Links Pix & Prazos</h3>
+            <form id="form-pix-config" class="admin-form">
+              <div class="form-group">
+                <label for="admin-input-early">Pix Jogador Antecipado (Link)</label>
+                <input type="url" id="admin-input-early" placeholder="https://pix.nubank.com.br/..." required />
+              </div>
+              <div class="form-group">
+                <label for="admin-input-early-text">Texto Botão Antecipado</label>
+                <input type="text" id="admin-input-early-text" placeholder="Jogador — R$ 20,00" required />
+              </div>
+              
+              <div class="form-group">
+                <label for="admin-input-regular">Pix Jogador Normal (Link)</label>
+                <input type="url" id="admin-input-regular" placeholder="https://pix.nubank.com.br/..." required />
+              </div>
+              <div class="form-group">
+                <label for="admin-input-regular-text">Texto Botão Normal</label>
+                <input type="text" id="admin-input-regular-text" placeholder="Jogador (Normal) — R$ 20,00" required />
+              </div>
+
+              <div class="form-group">
+                <label for="admin-input-goalkeeper">Pix Goleiro (Link)</label>
+                <input type="url" id="admin-input-goalkeeper" placeholder="https://pix.nubank.com.br/..." required />
+              </div>
+              <div class="form-group">
+                <label for="admin-input-goalkeeper-text">Texto Botão Goleiro</label>
+                <input type="text" id="admin-input-goalkeeper-text" placeholder="Goleiro — R$ 5,00" required />
+              </div>
+
+              <div class="form-group">
+                <label for="admin-input-deadline">Prazo Limite para Antecipado</label>
+                <input type="datetime-local" id="admin-input-deadline" required />
+              </div>
+              <div class="form-group">
+                <label for="admin-input-whatsapp">WhatsApp do Admin (Suporte)</label>
+                <input type="text" id="admin-input-whatsapp" placeholder="Ex: 5511999999999" required />
+              </div>
+              <button type="submit" class="btn btn-primary admin-btn">Salvar Configurações Pix</button>
+            </form>
+          </div>
+
+          <!-- Seção 2: Dados da Partida Ativa -->
+          <div class="admin-section">
+            <h3 class="admin-section-title">📅 Dados da Partida Ativa</h3>
+            <form id="form-match-config" class="admin-form">
+              <div class="form-group">
+                <label for="admin-match-location">Local</label>
+                <input type="text" id="admin-match-location" required />
+              </div>
+              <div class="form-row-grid">
+                <div class="form-group">
+                  <label for="admin-match-date">Data</label>
+                  <input type="date" id="admin-match-date" required />
+                </div>
+                <div class="form-group">
+                  <label for="admin-match-time">Horário</label>
+                  <input type="time" id="admin-match-time" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="admin-match-fee">Taxa da Partida (R$)</label>
+                <input type="number" id="admin-match-fee" step="0.01" min="0" required />
+              </div>
+              <button type="submit" class="btn btn-secondary admin-btn">Atualizar Dados da Partida</button>
+            </form>
+          </div>
+
+          <!-- Seção 3: Controle de Pagamentos de Jogadores -->
+          <div class="admin-section">
+            <h3 class="admin-section-title">👥 Status dos Jogadores</h3>
+            <div class="admin-stats-bar">
+              <div class="stat-badge total">Confirmados: <strong id="admin-stat-confirmed">0</strong></div>
+              <div class="stat-badge paid">Pagos: <strong id="admin-stat-paid">0</strong></div>
+              <div class="stat-badge pending">Pendentes: <strong id="admin-stat-pending">0</strong></div>
+            </div>
+            
+            <div class="player-search-box">
+              <input type="text" id="player-list-search" placeholder="🔍 Buscar jogador..." />
+            </div>
+
+            <div class="admin-player-list" id="admin-player-list">
+              <p class="admin-empty-text">Nenhum jogador confirmado nesta partida.</p>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
 

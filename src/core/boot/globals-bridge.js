@@ -6,7 +6,8 @@
  */
 import { initDB, getSupabaseClient, runSupabaseQuery } from '../../services/supabase.service.js';
 import { getAllMatches, deleteMatch, getMatchById, addMatch, updateMatchRoster, playerUpdateMatchData, playerWithdrawFromMatch } from '../../services/match.service.js';
-import { getPlayerPaymentStatus, updatePlayerPaymentStatus, getPaymentLinks } from '../../services/payment.service.js';
+import { getPlayerPaymentStatus, updatePlayerPaymentStatus, updatePlayerPaymentStatusByUsername, getPaymentLinks } from '../../services/payment.service.js';
+import { clearPlayerStats } from '../../services/player.service.js';
 import { getConfig } from '../../services/config.service.js';
 import { playerDrawTeam, getPlayerDrawStatus, releasePlayerDraw } from '../../services/draw.service.js';
 import { getStoredUser } from '../../stores/session-store.js';
@@ -43,3 +44,7 @@ window.releasePlayerDraw = releasePlayerDraw;
 
 // Payment updates
 window.updatePlayerPaymentStatus = updatePlayerPaymentStatus;
+window.updatePlayerPaymentStatusByUsername = updatePlayerPaymentStatusByUsername;
+
+// Player service
+window.clearPlayerStats = clearPlayerStats;

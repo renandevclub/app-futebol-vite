@@ -779,3 +779,116 @@
     color: var(--accent-danger);
 }
 
+/* ===== ESTILOS PARA EDIÇÃO DE PERFIL ===== */
+
+.btn-edit-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: rgba(0, 255, 135, 0.06);
+    color: var(--accent-primary);
+    border: 1px solid rgba(0, 255, 135, 0.2);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast) ease;
+}
+
+.btn-edit-profile:hover {
+    background: rgba(0, 255, 135, 0.12);
+    border-color: rgba(0, 255, 135, 0.4);
+    box-shadow: 0 0 12px rgba(0, 255, 135, 0.15);
+    transform: translateY(-1px);
+}
+
+.btn-edit-profile.editing {
+    background: rgba(239, 68, 68, 0.06);
+    color: var(--accent-danger);
+    border-color: rgba(239, 68, 68, 0.2);
+}
+
+.btn-edit-profile.editing:hover {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.15);
+}
+
+.profile-info-row-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.profile-info-row-edit:last-of-type {
+    border-bottom: none;
+}
+
+.profile-edit-input {
+    background: rgba(6, 9, 19, 0.6);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--text-main);
+    padding: 12px 16px;
+    font-size: 0.92rem;
+    font-family: var(--font-family-sans);
+    transition: all var(--transition-fast) ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.profile-edit-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    background: rgba(6, 9, 19, 0.85);
+    box-shadow: 0 0 12px rgba(0, 255, 135, 0.1);
+}
+
+.profile-info-value-static {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    padding: 12px 16px 12px 0px;
+    font-weight: 500;
+}
+
+.profile-edit-actions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.profile-edit-actions .btn-save {
+    padding: 14px 28px;
+    font-weight: 800;
+    font-size: 0.92rem;
+    letter-spacing: 0.02em;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-blue));
+    border: none;
+    color: #000;
+    box-shadow: 0 8px 20px rgba(0, 255, 135, 0.2);
+    transition: all var(--transition-normal);
+}
+
+.profile-edit-actions .btn-save:hover {
+    box-shadow: 0 12px 24px rgba(0, 255, 135, 0.35);
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.profile-edit-actions .btn-save:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+

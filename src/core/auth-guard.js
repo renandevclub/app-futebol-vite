@@ -6,24 +6,25 @@ import { getPlayerPaymentStatus } from '../services/payment.service.js';
 
 async function getUserProfile(userId) {
   const client = getSupabaseClient();
-  if (!client) return { role: USER_ROLES.player, username: null, full_name: null, phone: null, avatar_url: null };
+  if (!client) return { role: USER_ROLES.player, username: null, full_name: null, phone: null, avatar_url: null, username_customized: false };
 
   const { data, error } = await client
     .from("fm_perfis")
-    .select("role, username, full_name, phone, avatar_url")
+    .select("role, username, full_name, phone, avatar_url, username_customized")
     .eq("auth_id", userId)
     .single();
 
   if (error || !data) {
       console.error("Erro ao buscar perfil:", error);
-      return { role: USER_ROLES.player, username: null, full_name: null, phone: null, avatar_url: null };
+      return { role: USER_ROLES.player, username: null, full_name: null, phone: null, avatar_url: null, username_customized: false };
   }
   return { 
     role: data.role, 
     username: data.username, 
     full_name: data.full_name, 
     phone: data.phone || null,
-    avatar_url: data.avatar_url || null
+    avatar_url: data.avatar_url || null,
+    username_customized: data.username_customized || false
   };
 }
 
@@ -167,7 +168,8 @@ async function checkAccess(requiredRole) {
     full_name: profile.full_name || user.user_metadata?.name || 'Jogador',
     phone: profile.phone || null,
     role: profile.role,
-    avatar_url: profile.avatar_url || null
+    avatar_url: profile.avatar_url || null,
+    username_customized: profile.username_customized || false
   };
   setStoredUser(currentUserData);
   return currentUserData;

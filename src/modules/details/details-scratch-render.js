@@ -86,11 +86,27 @@ export function createScratchSlots(drawTeams = [], getScratchColor) {
   return [...teamSlots, ...neutralSlots].sort(() => Math.random() - 0.5);
 }
 
-export function buildScratchCardsHtml({ drawTeams = [], slots = [] }) {
+export function buildScratchCardsHtml({ drawTeams = [], slots = [], availableLinha = 18, availableGoleiro = 3, selectedType = 'linha' }) {
+  const disableLinha = availableLinha === 0;
+  const disableGoleiro = availableGoleiro === 0;
+
   return `
     <div class="scratch-header">
       <h3 class="scratch-title">Sorteio de Times</h3>
-      <p class="scratch-subtitle">Encontre seu time entre os <strong>9 cart&otilde;es</strong>!</p>
+      <p class="scratch-subtitle">Escolha sua posi&ccedil;&atilde;o antes de sortear:</p>
+      
+      <div class="draw-type-selector" id="scratch-draw-type-selector">
+        <button type="button" class="draw-type-btn ${selectedType === 'linha' ? 'active' : ''}" data-type="linha" ${disableLinha ? 'disabled' : ''}>
+          <span class="draw-type-icon">⚽</span>
+          <span class="draw-type-label">Jogador de Linha</span>
+          <span class="draw-type-badge">${availableLinha} vaga${availableLinha !== 1 ? 's' : ''}</span>
+        </button>
+        <button type="button" class="draw-type-btn ${selectedType === 'goleiro' ? 'active' : ''}" data-type="goleiro" ${disableGoleiro ? 'disabled' : ''}>
+          <span class="draw-type-icon">🧤</span>
+          <span class="draw-type-label">Goleiro</span>
+          <span class="draw-type-badge">${availableGoleiro} vaga${availableGoleiro !== 1 ? 's' : ''}</span>
+        </button>
+      </div>
     </div>
     <div class="scratch-cards-grid scratch-grid-9">
       ${slots.map((slot, index) => {

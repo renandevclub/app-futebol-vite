@@ -6,7 +6,15 @@
  */
 
 import { precacheAndRoute } from 'workbox-precaching';
-importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
+
+// OneSignal SW só carrega em produção (importScripts não funciona em módulos ES do Vite dev)
+try {
+  if (typeof importScripts === 'function' && self.location.hostname !== 'localhost' && !self.location.hostname.startsWith('127.')) {
+    importScripts("https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js");
+  }
+} catch (e) {
+  console.warn('[SW] OneSignal SW não carregado:', e.message);
+}
 
 precacheAndRoute(self.__WB_MANIFEST || []);
 
@@ -30,12 +38,12 @@ const STATIC_CACHE_PATTERNS = [
 ];
 
 self.addEventListener("install", (event) => {
+  self.skipWaiting();
   event.waitUntil(
     caches
       .open(CACHE_NAME)
       .then((cache) => cache.addAll(CRITICAL_ASSETS).catch(() => {})),
   );
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
