@@ -39,10 +39,33 @@ async function _doInit() {
       throw new Error('Supabase config ausente');
     }
 
-    client = window.supabase.createClient(url, publishableKey);
+    client = window.supabase.createClient(url, publishableKey, {
+      auth: {
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        persistSession: true,
+      },
+    });
     
     // Expõe globalmente para compatibilidade com código legado
     window.supabaseClient = client;
+
+    // Listener global para capturar redirecionamento de recuperação de senha (PASSWORD_RECOVERY)
+    if (typeof window !== 'undefined') {
+      client.auth.onAuthStateChange((event, session) => {
+        console.log('[Supabase Client] Evento Auth:', event);
+        if (event === 'PASSWORD_RECOVERY') {
+          const path = window.location.pathname;
+          if (!path.endsWith('reset-password.html') && !path.endsWith('redefinir-senha')) {
+            console.log('[Supabase Client] PASSWORD_RECOVERY fora da página de reset. Redirecionando...');
+            const targetUrl = new URL('/pages/reset-password.html', window.location.origin);
+            targetUrl.search = window.location.search;
+            targetUrl.hash = window.location.hash;
+            window.location.replace(targetUrl.toString());
+          }
+        }
+      });
+    }
 
     return client;
   } catch (error) {

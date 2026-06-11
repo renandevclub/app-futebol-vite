@@ -2,6 +2,24 @@ import { setStoredUser } from '../../stores/session-store.js';
 import { USER_ROLES, isAdminRole } from '../../shared/constants/roles.js';
 import { initDB, getSupabaseClient } from '../../services/supabase.service.js';
 
+// Redireciona fluxos de recuperação de senha (?code= ou #type=recovery) para a página correta
+// antes que o cliente do Supabase na home tente consumir o código de uso único
+(function handlePasswordRecoveryRedirect() {
+    if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href);
+        const hasCode = url.searchParams.has('code');
+        const hasRecoveryHash = url.hash.includes('type=recovery');
+
+        if (hasCode || hasRecoveryHash) {
+            console.log('[Login] Detectado link de recuperação de senha. Redirecionando...');
+            const targetUrl = new URL('pages/reset-password.html', window.location.origin);
+            targetUrl.search = window.location.search;
+            targetUrl.hash = window.location.hash;
+            window.location.replace(targetUrl.toString());
+        }
+    }
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const usernameInput = document.getElementById('login-username');

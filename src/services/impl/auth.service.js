@@ -40,6 +40,62 @@ export async function loginWithPassword(email, password) {
 }
 
 /**
+ * Envia o email de recuperação de senha pelo Supabase Auth.
+ * @param {string} email
+ * @param {string} redirectTo
+ * @returns {Promise<boolean>}
+ */
+export async function requestPasswordReset(email, redirectTo) {
+  await initSupabaseClient();
+  const client = getSupabaseClient();
+
+  if (!client) {
+    throw new Error('Supabase não está disponível. Recarregue a página.');
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  if (!normalizedEmail) {
+    throw new Error('Informe um e-mail válido.');
+  }
+
+  const { error } = await client.auth.resetPasswordForEmail(normalizedEmail, {
+    redirectTo,
+  });
+
+  if (error) {
+    throw new Error(error.message || 'Não foi possível enviar o e-mail de recuperação.');
+  }
+
+  return true;
+}
+
+/**
+ * Atualiza a senha do usuário autenticado pela sessão atual.
+ * No fluxo de recuperação, essa sessão é criada pelo link enviado por email.
+ * @param {string} newPassword
+ * @returns {Promise<any>}
+ */
+export async function updateCurrentUserPassword(newPassword) {
+  await initSupabaseClient();
+  const client = getSupabaseClient();
+
+  if (!client) {
+    throw new Error('Supabase não está disponível. Recarregue a página.');
+  }
+
+  const { data, error } = await client.auth.updateUser({ password: newPassword });
+  if (error) {
+    throw new Error(error.message || 'Falha ao atualizar a senha. Tente novamente.');
+  }
+
+  if (!data?.user) {
+    throw new Error('Não foi possível atualizar a senha. Tente novamente.');
+  }
+
+  return data.user;
+}
+
+/**
  * Faz logout
  * @returns {Promise<boolean>}
  */

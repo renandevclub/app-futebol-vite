@@ -52,8 +52,29 @@ export function getSupabaseClient() {
     }
 
     if (!futebolSupabaseClient && window.supabase?.createClient) {
-        futebolSupabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+        futebolSupabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: {
+                autoRefreshToken: true,
+                detectSessionInUrl: true,
+                persistSession: true,
+            },
+        });
         window.supabaseClient = futebolSupabaseClient; // Expose globally for auth and scripts
+
+        // Listener global para capturar redirecionamento de recuperação de senha (PASSWORD_RECOVERY)
+        futebolSupabaseClient.auth.onAuthStateChange((event, session) => {
+            console.log('[Supabase Client Impl] Evento Auth:', event);
+            if (event === 'PASSWORD_RECOVERY') {
+                const path = window.location.pathname;
+                if (!path.endsWith('reset-password.html') && !path.endsWith('redefinir-senha')) {
+                    console.log('[Supabase Client Impl] PASSWORD_RECOVERY fora da página de reset. Redirecionando...');
+                    const targetUrl = new URL('/pages/reset-password.html', window.location.origin);
+                    targetUrl.search = window.location.search;
+                    targetUrl.hash = window.location.hash;
+                    window.location.replace(targetUrl.toString());
+                }
+            }
+        });
     }
 
     return futebolSupabaseClient;
