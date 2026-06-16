@@ -87,7 +87,7 @@
  * @property {Date} [confirmed_at] - Data de confirmação
  * @property {Date} [paid_at] - Data de pagamento
  * 
- * NOTA: No banco, pagamentos são parte de fm_profiles (confirmed, payment_status).
+ * NOTA: No banco, pagamentos são parte de fm_perfis (confirmed, payment_status).
  * O DTO mapeia isso para a entidade FMPaymentStatus usada no código.
  */
 

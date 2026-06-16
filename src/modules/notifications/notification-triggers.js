@@ -285,7 +285,7 @@ import { isAdminRole, isVisitorRole } from '../../shared/constants/roles.js';
    */
   async function checkPaymentReminder() {
     const user = getCurrentUserSafe();
-    if (!user || isVisitorRole(user.role) || isAdminRole(user.role)) return;
+    if (!user || isVisitorRole(user.role) || isAdminRole(user.role) || user.is_player_session) return;
 
     try {
       const client = getClient();

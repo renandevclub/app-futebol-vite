@@ -1,7 +1,7 @@
 /**
  * @file src/core/dto/notification.dto.js
  * @description DTO e transformação para Notification (Log de push do OneSignal)
- * Schema real: fm_notifications — log de notificações push enviadas via OneSignal
+ * Schema real: fm_notificacoes — log de notificações push enviadas via OneSignal
  */
 
 /**

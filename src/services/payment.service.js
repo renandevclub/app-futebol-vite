@@ -1,4 +1,5 @@
 import { getSupabaseClient, initDB, runSupabaseQuery } from './impl/supabase-client.impl.js';
+import { getStoredUser } from '../stores/session-store.js';
 
 export async function getPaymentLinks() {
     await initDB();
@@ -35,6 +36,11 @@ export async function getPaymentLinks() {
 export async function getPlayerPaymentStatus(authUserId) {
     await initDB();
 
+    const currentUser = getStoredUser();
+    if (currentUser && currentUser.is_player_session) {
+        return null;
+    }
+
     const remotePlayer = await runSupabaseQuery(async (client) => {
         const { data, error } = await client
             .from('fm_perfis')
@@ -52,6 +58,12 @@ export async function getPlayerPaymentStatus(authUserId) {
 
 export async function updatePlayerPaymentStatus(authId, updates) {
     await initDB();
+
+    const currentUser = getStoredUser();
+    if (currentUser && currentUser.is_player_session) {
+        return false;
+    }
+
     const client = getSupabaseClient();
     if (!client) return false;
 

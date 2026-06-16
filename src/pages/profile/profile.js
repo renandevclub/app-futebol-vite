@@ -1,4 +1,7 @@
 import { getStoredUser, setStoredUser } from '../../stores/session-store.js';
+import { getPlayerStats } from '../../services/player.service.js';
+import { initDB } from '../../services/supabase.service.js';
+import { getAllMatches } from '../../services/match.service.js';
 import { formatDateBR } from '../../utils/date.js';
 import { formatBrazilianPhone } from '../../utils/phone.js';
 import { isAdminRole } from '../../shared/constants/roles.js';
@@ -20,6 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const profileMemberSince = document.getElementById('profile-member-since');
     const profileInfoGrid = document.getElementById('profile-info-grid');
     const statsContainer = document.getElementById('player-stats-container');
+    const rankingContainer = document.getElementById('player-ranking-container');
     const historyContainer = document.getElementById('match-history-list');
     const achievementsContainer = document.getElementById('achievements-container');
 
@@ -62,7 +66,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                         .eq('username', currentUser.username)
                         .maybeSingle();
                     if (dbUser) {
+                        const authUserId = currentUser.auth_id || currentUser.id;
                         Object.assign(currentUser, dbUser);
+                        currentUser.id = dbUser.auth_id || authUserId || currentUser.id;
                         setStoredUser(currentUser);
                     }
                 } catch (e) {
@@ -100,9 +106,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
             }
 
+            let persistedStats = null;
+            try {
+                if (currentUser.username) {
+                    persistedStats = await getPlayerStats(currentUser.username);
+                }
+            } catch (statsError) {
+                console.warn('Não foi possível obter as estatísticas persistidas do jogador:', statsError);
+            }
+
             renderHeroCard(playerMatches);
             renderPersonalInfo();
-            renderStats(playerMatches, allMatches, totalGols);
+            renderStats(playerMatches, allMatches, totalGols, persistedStats);
+            renderBestPlayersRanking(endedMatches);
             renderAchievementsScreen(playerMatches, totalGols);
             renderHistory(playerMatches);
 
@@ -298,7 +314,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    function renderStats(playerMatches, allMatches, totalGols) {
+    function renderStats(playerMatches, allMatches, totalGols, persistedStats = null) {
         statsContainer.innerHTML = '';
 
         const bestPlayerWins = countTrophies(playerMatches, 'best_player');
@@ -313,6 +329,28 @@ document.addEventListener('DOMContentLoaded', async () => {
             { icon: '<i class="fas fa-running"></i>', iconClass: 'matches', title: 'Partidas Jogadas', value: `${playerMatches.length}` }
         ];
 
+        if (persistedStats) {
+            const financialTitle = persistedStats.status === 'DISCOUNT'
+                ? 'Desconto Ativo'
+                : persistedStats.status === 'PENALTY'
+                ? 'Penalidade Aplicada'
+                : 'Status Financeiro';
+
+            stats.push({
+                icon: '<i class="fas fa-wallet"></i>',
+                iconClass: 'money',
+                title: financialTitle,
+                value: `R$ ${formatCurrencyBRL(Number(persistedStats.value || 0))}`
+            });
+        } else {
+            stats.push({
+                icon: '<i class="fas fa-wallet"></i>',
+                iconClass: 'money',
+                title: 'Situação Financeira',
+                value: 'Sem pendências'
+            });
+        }
+
         stats.forEach(stat => {
             const card = document.createElement('div');
             card.className = 'stat-card';
@@ -325,6 +363,98 @@ document.addEventListener('DOMContentLoaded', async () => {
             `;
             statsContainer.appendChild(card);
         });
+    }
+
+    function formatCurrencyBRL(amount) {
+        return amount.toFixed(2).replace('.', ',');
+    }
+
+    function renderBestPlayersRanking(matches) {
+        if (!rankingContainer) return;
+
+        const ranking = buildBestPlayersRanking(matches);
+        rankingContainer.innerHTML = '';
+
+        if (ranking.length === 0) {
+            rankingContainer.innerHTML = '<p class="ranking-empty">Ainda não há votos de melhor jogador registrados nas partidas.</p>';
+            return;
+        }
+
+        const topItems = ranking.slice(0, 5);
+        const currentUserEntry = ranking.find(item => item.username.toLowerCase() === currentUser.username.toLowerCase());
+
+        const header = document.createElement('div');
+        header.className = 'ranking-header';
+        header.innerHTML = `
+            <div class="ranking-title">Top ${topItems.length} jogadores eleitos Craque</div>
+            ${currentUserEntry ? `<div class="ranking-current-position">Sua posição: <strong>#${currentUserEntry.rank}</strong> • ${currentUserEntry.votes} voto${currentUserEntry.votes === 1 ? '' : 's'}</div>` : ''}
+        `;
+
+        const list = document.createElement('div');
+        list.className = 'ranking-list';
+
+        topItems.forEach((item, index) => {
+            const rankIcon = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${item.rank}`;
+            const itemEl = document.createElement('div');
+            itemEl.className = `ranking-item${item.username.toLowerCase() === currentUser.username.toLowerCase() ? ' ranking-current' : ''}`;
+            itemEl.innerHTML = `
+                <div class="ranking-item-left">
+                    <span class="ranking-position">${rankIcon}</span>
+                    <div>
+                        <div class="ranking-player-name">${item.username}</div>
+                        <div class="ranking-player-meta">${item.matches} partida${item.matches === 1 ? '' : 's'} como Craque</div>
+                    </div>
+                </div>
+                <div class="ranking-votes">${item.votes} voto${item.votes === 1 ? '' : 's'}</div>
+            `;
+            list.appendChild(itemEl);
+        });
+
+        rankingContainer.appendChild(header);
+        rankingContainer.appendChild(list);
+    }
+
+    function buildBestPlayersRanking(matches) {
+        const voteTotals = {};
+        const matchCounts = {};
+
+        matches.forEach(match => {
+            const bestVotes = Array.isArray(match.votes?.best_player) ? match.votes.best_player : [];
+            const uniqueCandidates = new Set();
+
+            bestVotes.forEach(vote => {
+                const candidate = getVoteCandidateUsername(vote);
+                if (!candidate) return;
+                const username = candidate.trim();
+                if (!username) return;
+
+                voteTotals[username] = (voteTotals[username] || 0) + 1;
+                uniqueCandidates.add(username);
+            });
+
+            uniqueCandidates.forEach(username => {
+                matchCounts[username] = (matchCounts[username] || 0) + 1;
+            });
+        });
+
+        const ranking = Object.keys(voteTotals).map(username => ({
+            username,
+            votes: voteTotals[username],
+            matches: matchCounts[username] || 0
+        }));
+
+        ranking.sort((a, b) => {
+            if (b.votes !== a.votes) return b.votes - a.votes;
+            if (b.matches !== a.matches) return b.matches - a.matches;
+            return a.username.localeCompare(b.username);
+        });
+
+        return ranking.map((item, index) => ({ ...item, rank: index + 1 }));
+    }
+
+    function getVoteCandidateUsername(vote) {
+        if (!vote) return '';
+        return String(vote.candidate || vote.candidate_username || vote.username || vote?.player || vote || '').trim();
     }
 
     function renderAchievementsScreen(playerMatches, totalGols) {
@@ -442,7 +572,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // 2. Fazer o upload para o bucket avatars no Supabase Storage
                 const fileExt = file.name.split('.').pop() || 'png';
-                const filename = `${currentUser.username}_${Date.now()}.${fileExt}`;
+                const ownerId = currentUser.auth_id || currentUser.id;
+                if (!ownerId) {
+                    throw new Error('Sessão inválida para upload de avatar.');
+                }
+                const safeExt = fileExt.toLowerCase().replace(/[^a-z0-9]/g, '') || 'png';
+                const filename = `${ownerId}/${Date.now()}.${safeExt}`;
 
                 const { data: uploadData, error: uploadError } = await client.storage
                     .from('avatars')

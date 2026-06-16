@@ -175,6 +175,27 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (!currentMatch) {
         throw new Error("Partida não encontrada localmente nem no servidor.");
       }
+
+      // Registra o acesso do usuário à partida na tabela de auditoria e garante perfil salvo
+      if (currentUser) {
+        const client = typeof getSupabaseClient === 'function' ? getSupabaseClient() : window.supabaseClient;
+        if (client) {
+          (async () => {
+            try {
+              await client.rpc('register_player_access', {
+                p_username: currentUser.username,
+                p_phone: currentUser.phone || null,
+                p_match_id: currentMatch.id,
+                p_action: 'match_access',
+                p_user_agent: navigator.userAgent
+              });
+            } catch (err) {
+              console.warn('Erro ao registrar auditoria de acesso à partida:', err);
+            }
+          })();
+        }
+      }
+
       currentMatch.teams = normalizeTeams(currentMatch.teams || []);
       currentMatch.teamDraws = normalizeTeamDraws(
         currentMatch.teamDraws || currentMatch.team_draws || {},
@@ -190,11 +211,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       currentMatch.votes.worst_player = currentMatch.votes.worst_player || [];
 
       // Busca votos em tempo real da tabela segura (fm_match_votes) para evitar Race Conditions
+      // Apenas para usuários autenticados via Supabase Auth (como Admin) - evita erro 401 para jogadores na sessão simplificada
       const client =
         typeof getSupabaseClient === "function"
           ? getSupabaseClient()
           : window.supabaseClient;
-      if (client) {
+      const canFetchSecureVotes = client && currentUser && !currentUser.is_player_session;
+      if (canFetchSecureVotes) {
         try {
           const { data: voteData, error: voteError } = await client
             .from("fm_votos_partidas")

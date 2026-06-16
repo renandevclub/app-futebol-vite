@@ -80,15 +80,13 @@ export default defineConfig({
         // Páginas em /pages/
         dashboard: resolve(__dirname, "pages/dashboard.html"),
         welcome: resolve(__dirname, "pages/welcome.html"),
-        register: resolve(__dirname, "pages/register.html"),
-        forgotPassword: resolve(__dirname, "pages/forgot-password.html"),
-        resetPassword: resolve(__dirname, "pages/reset-password.html"),
         details: resolve(__dirname, "pages/details.html"),
         schedule: resolve(__dirname, "pages/schedule.html"),
         adminPlacar: resolve(__dirname, "pages/admin-placar.html"),
         financials: resolve(__dirname, "pages/financials.html"),
         profile: resolve(__dirname, "pages/profile.html"),
         payment: resolve(__dirname, "pages/payment.html"),
+        rankingIndividual: resolve(__dirname, "pages/ranking-individual.html"),
 
         // Páginas em /mini-torneio/
         mtPaginaPrincipal: resolve(

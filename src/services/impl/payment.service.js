@@ -1,7 +1,7 @@
 /**
  * @file src/services/impl/payment.service.js
  * @description Serviço de Pagamento — gerencia status de pagamento dos jogadores
- * Schema real: fm_profiles.confirmed + fm_profiles.payment_status
+ * Schema real: fm_perfis.confirmed + fm_perfis.payment_status
  * NÃO existe tabela fm_payment_status separada.
  */
 
@@ -11,7 +11,7 @@ import { getStoredUser } from '../../stores/session-store.js';
 
 /**
  * Obtém o status de pagamento de um usuário
- * No banco: fm_profiles.confirmed + fm_profiles.payment_status
+ * No banco: fm_perfis.confirmed + fm_perfis.payment_status
  * @param {string} [playerId] - auth_id do usuário (se omitido, usa logado)
  * @returns {Promise<import('../../core/types').FMPaymentStatus|null>}
  */
@@ -42,7 +42,7 @@ export async function getPaymentStatus(playerId) {
 
 /**
  * Atualiza o status de pagamento de um jogador
- * No banco: atualiza fm_profiles
+ * No banco: atualiza fm_perfis
  * @param {'pending'|'paid'} status
  * @param {string} [playerId] - auth_id
  * @returns {Promise<import('../../core/types').FMPaymentStatus|null>}

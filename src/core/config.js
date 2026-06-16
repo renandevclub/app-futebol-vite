@@ -25,7 +25,7 @@ export const FM_CONFIG = {
     publishableKey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || ''
   },
 
-  // Valores padrao (fallback) - os valores reais vem do banco (fm_app_config)
+  // Valores padrao (fallback) - os valores reais vem do banco (configuracoes)
   defaults: {
     adminWhatsapp: '',
     whatsappGroupLink: ''

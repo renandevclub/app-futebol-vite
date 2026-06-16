@@ -2,7 +2,7 @@
  * @file src/core/dto/match.dto.js
  * @description DTO e transformação para Match
  * Desacopla dados brutos do Supabase da lógica de negócio
- * Schema real: fm_matches — inclui teams, team_draws, votes, financial_summary, etc.
+ * Schema real: fm_partidas — inclui teams, team_draws, votes, financial_summary, etc.
  */
 
 /**

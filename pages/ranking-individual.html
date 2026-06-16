@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ranking Individual - Futebol Milhão</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="/src/styles/core.css" />
+  <link rel="stylesheet" href="/src/styles/navigation.css" />
+  <link rel="stylesheet" href="/src/styles/pages/ranking-individual.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header class="main-header">
+      <img
+        src="/assets/images/logo-menu.png"
+        alt="Logo Magazan Lider"
+        class="header-logo-large"
+      />
+      <nav class="main-nav" aria-label="Menu principal">
+        <a
+          href="../mini-torneio/index-pagina-principal.html"
+          class="btn-header-tournament"
+          title="Mini Torneio"
+        >
+          <span class="tournament-emoji">🏆</span>
+          <span class="tournament-text">Torneio</span>
+        </a>
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-label="Abrir menu"
+          aria-expanded="false"
+        >
+          <span class="nav-toggle-bar"></span>
+        </button>
+        <div class="nav-buttons-container">
+          <a href="welcome.html" class="nav-button nav-home">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">Início</span>
+          </a>
+          <a href="dashboard.html" class="nav-button nav-dashboard">
+            <span class="nav-icon">⚽</span>
+            <span class="nav-text">Partidas</span>
+          </a>
+
+          <a href="ranking-individual.html" class="nav-button nav-ranking">
+            <span class="nav-icon">🏅</span>
+            <span class="nav-text">Ranking</span>
+          </a>
+
+          <a href="profile.html" class="nav-button nav-profile">
+            <span class="nav-icon">👤</span>
+            <span class="nav-text">Meu Perfil</span>
+          </a>
+
+          <a
+            href="admin-placar.html"
+            class="nav-button nav-schedule"
+            data-admin-only
+          >
+            <span class="nav-icon">🔴</span>
+            <span class="nav-text">Placar Ao Vivo</span>
+          </a>
+
+          <a
+            href="../mini-torneio/index-pagina-principal.html"
+            class="nav-button nav-tournament"
+          >
+            <span class="nav-icon">🏆</span>
+            <span class="nav-text">Mini Torneio</span>
+          </a>
+
+          <a href="#" target="_blank" class="nav-button nav-whatsapp">
+            <span class="nav-icon">💬</span>
+            <span class="nav-text">WhatsApp Admin</span>
+          </a>
+          <a href="../index.html" class="nav-button nav-logout">
+            <span class="nav-icon">🚪</span>
+            <span class="nav-text">Sair</span>
+          </a>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container-fluid">
+        <!-- Hero Section -->
+        <section class="ranking-hero" data-animate>
+          <div class="hero-content">
+            <h1 class="hero-title">
+              <i class="bi bi-trophy"></i>
+              Ranking Individual
+            </h1>
+            <p class="hero-subtitle">
+              Acompanhe a pontuação e desempenho de todos os jogadores
+            </p>
+          </div>
+
+          <!-- Stats Cards -->
+          <div class="stats-grid" id="ranking-stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="stat-total-players">0</div>
+                <div class="stat-label">Jogadores</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="bi bi-lightning-fill"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="stat-highest-score">0</div>
+                <div class="stat-label">Maior Pontuação</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="bi bi-calculator-fill"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="stat-avg-score">0</div>
+                <div class="stat-label">Pontuação Média</div>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="bi bi-soccer"></i>
+              </div>
+              <div class="stat-content">
+                <div class="stat-value" id="stat-total-gols">0</div>
+                <div class="stat-label">Gols Marcados</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Search & Filters -->
+        <section class="ranking-controls">
+          <div class="search-container">
+            <i class="bi bi-search"></i>
+            <input 
+              type="text" 
+              id="ranking-search" 
+              placeholder="Buscar jogador..." 
+              class="search-input"
+            />
+          </div>
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">
+              <i class="bi bi-list"></i> Todos
+            </button>
+            <button class="filter-btn" data-filter="top10">
+              <i class="bi bi-star-fill"></i> Top 10
+            </button>
+            <button class="filter-btn" data-filter="my-position" style="display: none;">
+              <i class="bi bi-person-fill"></i> Minha Posição
+            </button>
+          </div>
+        </section>
+
+        <!-- Ranking Table -->
+        <section class="ranking-section">
+          <div class="ranking-header">
+            <h2>Pontuação Geral</h2>
+            <div class="ranking-legend">
+              <div class="legend-item">
+                <span class="badge badge-craque">Craque</span>
+                <small>+10</small>
+              </div>
+              <div class="legend-item">
+                <span class="badge badge-gol">Gol</span>
+                <small>+5</small>
+              </div>
+              <div class="legend-item">
+                <span class="badge badge-partida">Partida</span>
+                <small>+2</small>
+              </div>
+              <div class="legend-item">
+                <span class="badge badge-pau">Perna de Pau</span>
+                <small>-5</small>
+              </div>
+              <div class="legend-item">
+                <span class="badge badge-pagamento">Pagamento</span>
+                <small>-10</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="ranking-table-container">
+            <table class="ranking-table" id="ranking-table">
+              <thead>
+                <tr>
+                  <th class="col-position">Posição</th>
+                  <th class="col-player">Jogador</th>
+                  <th class="col-stats">
+                    <span title="Craque">🥇</span>
+                    <span title="Gols">⚽</span>
+                    <span title="Partidas">🎯</span>
+                    <span title="Perna de Pau">🪵</span>
+                  </th>
+                  <th class="col-points">Pontos</th>
+                </tr>
+              </thead>
+              <tbody id="ranking-tbody">
+                <!-- Preenchido por JavaScript -->
+              </tbody>
+            </table>
+
+            <!-- Loading State -->
+            <div id="ranking-loading" class="loading-container" style="display: none;">
+              <div class="spinner"></div>
+              <p>Carregando ranking...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="ranking-empty" class="empty-container" style="display: none;">
+              <i class="bi bi-inbox"></i>
+              <p>Nenhum jogador encontrado</p>
+              <small>As pontuações aparecerão após as primeiras partidas serem finalizadas</small>
+            </div>
+          </div>
+        </section>
+
+        <!-- My Position (if logged in) -->
+        <section class="my-position-section" id="my-position-section" style="display: none;">
+          <h2>Minha Posição</h2>
+          <div class="my-position-card" id="my-position-card">
+            <!-- Preenchido por JavaScript -->
+          </div>
+        </section>
+
+        <!-- Pontuação Formula Section -->
+        <section class="formula-section">
+          <h2>Como Funciona a Pontuação</h2>
+          <div class="formula-grid">
+            <div class="formula-item">
+              <div class="formula-icon craque">
+                <i class="bi bi-star-fill"></i>
+              </div>
+              <h3>Craque</h3>
+              <p class="formula-description">Eleito melhor jogador da partida</p>
+              <div class="formula-points">+10 pontos</div>
+            </div>
+            <div class="formula-item">
+              <div class="formula-icon gol">
+                <i class="bi bi-soccer"></i>
+              </div>
+              <h3>Gol Marcado</h3>
+              <p class="formula-description">Cada gol que você marca</p>
+              <div class="formula-points">+5 pontos</div>
+            </div>
+            <div class="formula-item">
+              <div class="formula-icon partida">
+                <i class="bi bi-play-fill"></i>
+              </div>
+              <h3>Partida Jogada</h3>
+              <p class="formula-description">Apenas por participar</p>
+              <div class="formula-points">+2 pontos</div>
+            </div>
+            <div class="formula-item">
+              <div class="formula-icon pau">
+                <i class="bi bi-x-circle"></i>
+              </div>
+              <h3>Perna de Pau</h3>
+              <p class="formula-description">Eleito pior jogador da partida</p>
+              <div class="formula-points">-5 pontos</div>
+            </div>
+            <div class="formula-item">
+              <div class="formula-icon pagamento">
+                <i class="bi bi-exclamation-circle"></i>
+              </div>
+              <h3>Pagamento Pendente</h3>
+              <p class="formula-description">Não pagou a coleta da partida</p>
+              <div class="formula-points">-10 pontos</div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      <div class="footer-content">
+        <img
+          src="/assets/images/emblema-castor.png"
+          alt="Logo Jogador"
+          class="footer-logo-player"
+        />
+        <p>
+          &copy; 2026 Futebol Milhão. Desenvolvido por Renan para facilitar
+          nossa resenha!
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script type="module" src="/src/entries/ranking-individual.js"></script>
+</body>
+</html>

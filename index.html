@@ -51,25 +51,35 @@
 
         <form id="login-form">
           <div class="input-group">
-            <label for="login-username">Apelido (Usuário)</label>
+            <label id="login-username-label" for="login-username">Nome</label>
             <input
               type="text"
               id="login-username"
               name="login-username"
-              placeholder="Seu apelido no grupo"
+              placeholder="Digite seu nome"
               required
-              autocomplete="username"
+              autocomplete="name"
             />
           </div>
 
-          <div class="input-group">
+          <div class="input-group" id="phone-group">
+            <label for="login-phone">WhatsApp <span style="color: var(--text-muted, #64748b); font-weight:400;">(opcional)</span></label>
+            <input
+              type="tel"
+              id="login-phone"
+              name="login-phone"
+              placeholder="(99) 99999-9999"
+              autocomplete="tel"
+            />
+          </div>
+
+          <div class="input-group" id="password-group" style="display: none;">
             <label for="login-password">Senha</label>
             <input
               type="password"
               id="login-password"
               name="login-password"
               placeholder="Sua senha secreta"
-              required
               autocomplete="current-password"
             />
           </div>
@@ -89,6 +99,7 @@
           <div id="error-message" class="error-message"></div>
         </form>
 
+        <!-- Links comentados na refatoração de autenticação simplificada
         <div class="login-footer-links">
           <a href="pages/register.html" class="footer-link">Criar Conta</a>
           <span class="link-dot">•</span>
@@ -116,7 +127,6 @@
           </button>
         </div>
 
-        <!-- Modal de visitante -->
         <div id="visitor-modal" class="visitor-modal-overlay" style="display: none;">
           <div class="visitor-modal-card">
             <h3>👋 Acesso como Visitante</h3>
@@ -140,6 +150,7 @@
             </form>
           </div>
         </div>
+        -->
 
         <div class="live-match-link">
           <a href="placar-ao-vivo.html" class="btn-live" id="btn-placar-ao-vivo">

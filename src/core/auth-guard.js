@@ -109,14 +109,56 @@ const ADMIN_ONLY_PAGES = [
 ];
 
 async function checkAccess(requiredRole) {
-  const client = getSupabaseClient();
-  if (!client) return null;
-
-  const { data: { user }, error } = await client.auth.getUser();
-
   const isNestedPage = window.location.pathname.includes('/pages/');
   const loginPath = isNestedPage ? "../index.html" : "index.html";
   const welcomePath = isNestedPage ? "welcome.html" : "pages/welcome.html";
+  const currentPage = window.location.pathname.split('/').pop() || '';
+
+  // 1. Verificar se existe a sessão local de Jogador (sem Supabase Auth)
+  const playerSessionRaw = sessionStorage.getItem('player_session');
+  if (playerSessionRaw) {
+    try {
+      const player = JSON.parse(playerSessionRaw);
+      const currentUserData = {
+        id: player.nome,
+        username: player.nome,
+        full_name: player.nome,
+        phone: player.telefone || null,
+        role: USER_ROLES.player, // 'user'
+        avatar_url: null,
+        is_player_session: true,
+        username_customized: true
+      };
+      
+      // Salva no store para compatibilidade com getCurrentUser()
+      setStoredUser(currentUserData);
+
+      // Bloquear se tentar acessar página de Admin
+      const isAdminPage = ADMIN_ONLY_PAGES.some(p => currentPage.includes(p));
+      if (isAdminPage || requiredRole === 'admin') {
+        await FMModal.admin({
+          title: 'Acesso negado',
+          message: 'Você não tem permissão para acessar esta área.',
+          priority: 90
+        });
+        window.location.href = welcomePath;
+        return null;
+      }
+
+      return currentUserData;
+    } catch (e) {
+      console.error('Erro ao processar player_session:', e);
+    }
+  }
+
+  // 2. Fluxo do Administrador via Supabase Auth
+  const client = getSupabaseClient();
+  if (!client) {
+    window.location.href = loginPath;
+    return null;
+  }
+
+  const { data: { user }, error } = await client.auth.getUser();
 
   if (!user || error) {
     window.location.href = loginPath;
@@ -125,39 +167,26 @@ async function checkAccess(requiredRole) {
 
   const profile = await getUserProfile(user.id);
 
-  if (requiredRole && profile.role !== requiredRole) {
-    // Se for visitante tentando acessar área admin, redireciona gentilmente
-    if (isVisitorRole(profile.role)) {
-      await FMModal.admin({
-        title: 'Acesso restrito',
-        message: 'Esta área é exclusiva para jogadores cadastrados. Crie uma conta para ter acesso completo.',
-        priority: 90
-      });
-    } else {
-      await FMModal.admin({
-        title: 'Acesso negado',
-        message: 'Voce nao tem permissao para acessar esta area.',
-        priority: 90
-      });
-    }
+  // Se o usuário logado no Supabase NÃO for admin e tentar acessar página admin
+  const isAdminPage = ADMIN_ONLY_PAGES.some(p => currentPage.includes(p));
+  if ((isAdminPage || requiredRole === 'admin') && profile.role !== 'admin') {
+    await FMModal.admin({
+      title: 'Acesso negado',
+      message: 'Você não tem permissão para acessar esta área.',
+      priority: 90
+    });
     window.location.href = welcomePath;
     return null;
   }
 
-  // Verificar se visitante está em página permitida
-  if (isVisitorRole(profile.role)) {
-    const currentPage = window.location.pathname.split('/').pop() || '';
-    const isAllowed = ROUTE_VISITOR_ALLOWED_PAGES.some(p => currentPage.includes(p));
-    
-    if (!isAllowed) {
-      await FMModal.admin({
-        title: 'Acesso restrito',
-        message: 'Visitantes não têm acesso a esta área. Cadastre-se para ter acesso completo.',
-        priority: 90
-      });
-      window.location.href = welcomePath;
-      return null;
-    }
+  if (requiredRole && profile.role !== requiredRole) {
+    await FMModal.admin({
+      title: 'Acesso negado',
+      message: 'Você não tem permissão para acessar esta área.',
+      priority: 90
+    });
+    window.location.href = welcomePath;
+    return null;
   }
 
   // Salvar dados completos do perfil no sessionStorage

@@ -1,7 +1,7 @@
 /**
  * @file src/core/dto/standing.dto.js
  * @description DTO e transformação para Standing (Classificação de TIMES por competição)
- * Schema real: fm_standings — cada match_id tem sua própria tabela de classificação
+ * Schema real: fm_classificacao — cada match_id tem sua própria tabela de classificação
  */
 
 /**

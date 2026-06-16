@@ -87,8 +87,14 @@ export async function runSupabaseQuery(operation, fallbackValue) {
     try {
         return await operation(client);
     } catch (error) {
-        console.warn('Supabase indisponivel, usando fallback local:', error);
-        supabaseUnavailable = true;
+        console.warn('Operação do Supabase falhou:', error);
+        
+        // Marca como indisponível apenas se for erro de rede real (Failed to fetch ou TypeError)
+        const isNetworkError = error?.message?.includes('Failed to fetch') || error?.name === 'TypeError';
+        if (isNetworkError) {
+            console.warn('[SupabaseClient] Erro de rede detectado, ativando fallback offline.');
+            supabaseUnavailable = true;
+        }
         return fallbackValue;
     }
 }

@@ -43,6 +43,7 @@ export async function playerDrawTeam(matchId, forceTeamId = null, drawType = 'li
     }
 
     const idempotencyKey = generateDrawIdempotencyKey(matchId);
+    const currentUser = getCurrentUser();
 
     try {
         const params = {
@@ -52,6 +53,11 @@ export async function playerDrawTeam(matchId, forceTeamId = null, drawType = 'li
         };
         if (forceTeamId) {
             params.p_force_team_id = forceTeamId;
+        }
+
+        // Se for sessão de jogador simplificada (sem auth.uid), passamos o username
+        if (currentUser && currentUser.is_player_session) {
+            params.p_player_username = currentUser.username;
         }
 
         const { data, error } = await client.rpc('player_draw_team', params);
@@ -90,10 +96,17 @@ export async function getPlayerDrawStatus(matchId) {
         return { authenticated: false, error: 'offline' };
     }
 
+    const currentUser = getCurrentUser();
+    const params = {
+        p_match_id: matchId
+    };
+
+    if (currentUser && currentUser.is_player_session) {
+        params.p_player_username = currentUser.username;
+    }
+
     try {
-        const { data, error } = await client.rpc('get_player_draw_status', {
-            p_match_id: matchId
-        });
+        const { data, error } = await client.rpc('get_player_draw_status', params);
 
         if (error) {
             console.warn('Erro ao consultar status do sorteio:', error);

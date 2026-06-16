@@ -192,8 +192,8 @@ import { formatDateBR, getTimeRemainingLabel } from '../../utils/date.js';
             return;
         }
 
-        // Visitantes não recebem notificação de votação
-        if (isVisitorRole(currentUser.role)) return;
+        // Visitantes ou jogadores locais (player_session) não recebem notificação de votação
+        if (isVisitorRole(currentUser.role) || currentUser.is_player_session) return;
 
         // Verificar votações abertas
         const openVotings = await checkOpenVotings();

@@ -1,7 +1,7 @@
 /**
  * @file src/services/impl/draw.service.js
  * @description Serviço de Sorteio (Player Draw) — CRUD gerenciado
- * Schema real: fm_player_draws — usa player_username (não player_id)
+ * Schema real: fm_sorteios_jogadores — usa player_username (não player_id)
  */
 
 import { drawFromSupabase, drawToSupabase, validateDraw } from '../../core/dto/draw.dto.js';

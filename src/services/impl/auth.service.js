@@ -100,6 +100,7 @@ export async function updateCurrentUserPassword(newPassword) {
  * @returns {Promise<boolean>}
  */
 export async function logout() {
+  sessionStorage.removeItem('player_session');
   const client = getSupabaseClient();
 
   if (!client) {
@@ -169,6 +170,35 @@ export function clearCurrentUser() {
  * @returns {Promise<any|null>}
  */
 export async function checkAccess(requiredRole = null) {
+  // 1. Verificar se existe a sessão local de Jogador (sem Supabase Auth)
+  const playerSessionRaw = sessionStorage.getItem('player_session');
+  if (playerSessionRaw) {
+    try {
+      const player = JSON.parse(playerSessionRaw);
+      const currentUserData = {
+        id: player.nome,
+        username: player.nome,
+        full_name: player.nome,
+        phone: player.telefone || null,
+        role: 'user', // USER_ROLES.player é 'user' (que mapeia para a role comum de jogador)
+        avatar_url: null,
+        is_player_session: true,
+        username_customized: true
+      };
+      
+      setCurrentUser(currentUserData);
+
+      if (requiredRole === 'admin') {
+        return null;
+      }
+
+      return currentUserData;
+    } catch (e) {
+      console.error('Erro ao processar player_session no AuthService:', e);
+    }
+  }
+
+  // 2. Fluxo do Administrador via Supabase Auth
   await initSupabaseClient();
   const client = getSupabaseClient();
 
@@ -219,7 +249,7 @@ export async function checkAccess(requiredRole = null) {
  * @returns {boolean}
  */
 export function shouldRedirectToLogin() {
-  return !getCurrentUser();
+  return !sessionStorage.getItem('player_session') && !getCurrentUser();
 }
 
 /**

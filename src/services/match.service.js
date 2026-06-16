@@ -154,11 +154,18 @@ export async function playerUpdateMatchData(matchId, players, votes) {
     const client = getSupabaseClient();
     if (client && !isSupabaseUnavailable()) {
         try {
-            const { error } = await client.rpc('player_update_match', {
+            const currentUser = getCurrentUser();
+            const params = {
                 match_id: matchId,
                 new_players: players,
                 new_votes: votes
-            });
+            };
+
+            if (currentUser && currentUser.is_player_session) {
+                params.p_player_username = currentUser.username;
+            }
+
+            const { error } = await client.rpc('player_update_match', params);
             if (error) throw error;
             return;
         } catch (error) {
@@ -195,10 +202,17 @@ export async function playerWithdrawFromMatch(matchId, reason = '') {
     }
 
     try {
-        const { data, error } = await client.rpc('player_withdraw_from_match', {
+        const currentUser = getCurrentUser();
+        const params = {
             p_match_id: matchId,
             p_reason: reason
-        });
+        };
+
+        if (currentUser && currentUser.is_player_session) {
+            params.p_player_username = currentUser.username;
+        }
+
+        const { data, error } = await client.rpc('player_withdraw_from_match', params);
 
         if (error) {
             console.error('Erro na RPC de desistência:', error);

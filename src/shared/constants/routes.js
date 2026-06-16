@@ -8,6 +8,7 @@ export const ROUTES = Object.freeze({
   profile: 'profile.html',
   payment: 'payment.html',
   publicScoreboard: 'placar-ao-vivo.html',
+  rankingIndividual: 'ranking-individual.html',
 });
 
 export const VISITOR_ALLOWED_PAGES = Object.freeze([
@@ -15,6 +16,7 @@ export const VISITOR_ALLOWED_PAGES = Object.freeze([
   ROUTES.dashboard,
   ROUTES.details,
   ROUTES.publicScoreboard,
+  ROUTES.rankingIndividual,
 ]);
 
 export const ADMIN_ONLY_PAGES = Object.freeze([

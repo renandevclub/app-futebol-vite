@@ -1,7 +1,7 @@
 /**
  * @file src/core/dto/draw.dto.js
  * @description DTO e transformação para Player Draw (Sorteio)
- * Schema real: fm_player_draws — player_username (não player_id)
+ * Schema real: fm_sorteios_jogadores — player_username (não player_id)
  */
 
 /**

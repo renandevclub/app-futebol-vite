@@ -1,7 +1,7 @@
 /**
  * @file src/services/impl/notification.service.js
  * @description Serviço de Notificações — acesso ao log de push OneSignal
- * Schema real: fm_notifications — log de notificações push via OneSignal
+ * Schema real: fm_notificacoes — log de notificações push via OneSignal
  */
 
 import { notificationFromSupabase, notificationToSupabase, NOTIFICATION_TYPES, getNotificationTypeLabel } from '../../core/dto/notification.dto.js';

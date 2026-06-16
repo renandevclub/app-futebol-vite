@@ -21,6 +21,14 @@ import { initDB, getSupabaseClient } from '../../services/supabase.service.js';
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Limpa sessões anteriores ao carregar a página de login para evitar conflito de cache
+    sessionStorage.removeItem('player_session');
+    try {
+        clearStoredUser();
+    } catch (e) {
+        console.warn('Erro ao limpar dados locais do usuário:', e);
+    }
+
     const loginForm = document.getElementById('login-form');
     const usernameInput = document.getElementById('login-username');
     const passwordInput = document.getElementById('login-password');
@@ -28,6 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginButton = document.getElementById('login-button');
     const btnText = document.getElementById('btn-text');
     const errorMessageDiv = document.getElementById('error-message');
+    const phoneInput = document.getElementById('login-phone');
+    const phoneGroup = document.getElementById('phone-group');
+    const passwordGroup = document.getElementById('password-group');
+    const usernameLabel = document.getElementById('login-username-label');
 
     if (!loginForm || !usernameInput || !passwordInput || !roleSelect || !loginButton || !errorMessageDiv) {
         return;
@@ -57,6 +69,31 @@ document.addEventListener('DOMContentLoaded', () => {
     roleSelect.addEventListener('change', () => {
         const isAdmin = roleSelect.value === 'Administrador';
         btnText.textContent = isAdmin ? 'Acesso Administrativo' : 'Entrar no Jogo';
+        
+        if (isAdmin) {
+            if (phoneGroup) phoneGroup.style.display = 'none';
+            if (passwordGroup) passwordGroup.style.display = 'block';
+            if (passwordInput) passwordInput.required = true;
+            if (usernameLabel) usernameLabel.textContent = 'E-mail';
+            if (usernameInput) {
+                usernameInput.placeholder = 'Seu e-mail';
+                usernameInput.type = 'email';
+                usernameInput.autocomplete = 'email';
+            }
+        } else {
+            if (phoneGroup) phoneGroup.style.display = 'block';
+            if (passwordGroup) passwordGroup.style.display = 'none';
+            if (passwordInput) {
+                passwordInput.required = false;
+                passwordInput.value = '';
+            }
+            if (usernameLabel) usernameLabel.textContent = 'Nome';
+            if (usernameInput) {
+                usernameInput.placeholder = 'Digite seu nome';
+                usernameInput.type = 'text';
+                usernameInput.autocomplete = 'name';
+            }
+        }
     });
 
     loginForm.addEventListener('submit', async (event) => {
@@ -71,8 +108,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const role = roleSelect.value;
         const username = usernameInput.value.trim();
+        const phoneVal = phoneInput ? phoneInput.value.trim().replace(/\D/g, '') : '';
         const password = passwordInput.value;
 
+        // FLUXO DO JOGADOR: Salva sessão local simplificada e redireciona
+        if (role === 'Jogador') {
+            if (!username || username.length < 2) {
+                showError('Por favor, preencha o seu nome (mínimo de 2 caracteres).');
+                return;
+            }
+
+            try {
+                // Limpa qualquer sessão de administrador anterior
+                try {
+                    clearStoredUser();
+                } catch (e) {}
+
+                // Registra o usuário no Supabase se o cliente estiver disponível
+                const client = typeof getSupabaseClient === 'function' ? getSupabaseClient() : null;
+                if (client) {
+                    // Garante que o Supabase Auth anterior esteja limpo
+                    await client.auth.signOut().catch(() => {});
+                    btnText.textContent = 'Registrando acesso...';
+                    const { error } = await client.rpc('register_player_access', {
+                        p_username: username,
+                        p_phone: phoneVal || null,
+                        p_match_id: null,
+                        p_action: 'user_access',
+                        p_user_agent: navigator.userAgent
+                    });
+                    if (error) {
+                        console.warn('Erro ao registrar perfil de acesso no servidor:', error);
+                    }
+                }
+
+                sessionStorage.setItem('player_session', JSON.stringify({
+                    nome: username,
+                    telefone: phoneVal || '',
+                    tipo: 'jogador'
+                }));
+
+                btnText.textContent = 'Entrando...';
+                window.location.href = 'pages/welcome.html';
+            } catch (err) {
+                console.error(err);
+                showError('Erro ao criar sessão local de jogador.');
+            }
+            return;
+        }
+
+        // FLUXO DO ADMINISTRADOR: Usa Supabase Auth
         if (!username || !password) {
             showError('Por favor, preencha todos os campos.');
             return;
@@ -84,27 +169,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Erro de conexão com servidor. Recarregue a página.');
             }
             
-            // 1. Buscar o e-mail vinculado ao username via RPC
-            const { data: email, error: rpcError } = await client.rpc('get_email_by_username', { p_username: username });
-
-            if (rpcError) {
-                console.error("RPC erro:", rpcError);
-                throw new Error('Erro ao buscar dados do usuário. Tente novamente.');
-            }
-
-            if (!email) {
-                throw new Error('Usuário não encontrado. Verifique seu apelido ou cadastre-se.');
-            }
-
-            // 2. Autenticar no Supabase Auth com o e-mail encontrado
-            const { data, error } = await client.auth.signInWithPassword({ email, password });
+            // Limpa qualquer sessão local de jogador anterior
+            sessionStorage.removeItem('player_session');
+            
+            // Administrador loga com email e senha no Supabase Auth
+            const { data, error } = await client.auth.signInWithPassword({ email: username.toLowerCase(), password });
             
             if (error || !data.user) {
                 console.error("Login erro:", error);
-                throw new Error('Senha incorreta. Tente novamente.');
+                throw new Error('Senha incorreta ou usuário não encontrado.');
             }
 
-            // 3. Buscar a role e dados do perfil no banco
+            // Buscar a role e dados do perfil no banco
             const { data: profileData, error: profileError } = await client
                 .from('fm_perfis')
                 .select('role, full_name, username, phone, avatar_url')
@@ -115,18 +191,18 @@ document.addEventListener('DOMContentLoaded', () => {
             let userFullName = profileData ? profileData.full_name : data.user.user_metadata?.name || 'Jogador';
             let userName = profileData ? profileData.username : username;
 
-            // 4. Validação de Admin
+            // Validação de Admin
             if (role === 'Administrador' && !isAdminRole(userRole)) {
                 await client.auth.signOut();
                 throw new Error('Acesso negado. Esta conta não possui privilégios de administrador.');
             }
 
-            // 5. Sucesso -> Salvar fallback local e redirecionar
+            // Sucesso -> Salvar fallback local e redirecionar
             setStoredUser({
                 id: data.user.id,
                 username: userName,
                 full_name: userFullName,
-                email: email,
+                email: username.toLowerCase(),
                 phone: profileData?.phone || null,
                 role: userRole,
                 avatar_url: profileData?.avatar_url || null
@@ -137,11 +213,11 @@ document.addEventListener('DOMContentLoaded', () => {
               detail: { username: userName, role: userRole }
             }));
 
-            // Redireciona para o painel principal (onde tem o vídeo stealth)
+            // Redireciona para o painel principal
             window.location.href = 'pages/welcome.html';
             
         } catch (error) {
-            console.error('Erro no fluxo de login:', error);
+            console.error('Erro no fluxo de login administrativo:', error);
             showError(error.message || 'Não foi possível completar o login. Tente novamente.');
         }
 
