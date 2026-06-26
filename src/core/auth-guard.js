@@ -120,7 +120,7 @@ async function checkAccess(requiredRole) {
     try {
       const player = JSON.parse(playerSessionRaw);
       const currentUserData = {
-        id: player.nome,
+        id: player.id || player.nome,
         username: player.nome,
         full_name: player.nome,
         phone: player.telefone || null,

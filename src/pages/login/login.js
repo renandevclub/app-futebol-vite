@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (phoneGroup) phoneGroup.style.display = 'none';
             if (passwordGroup) passwordGroup.style.display = 'block';
             if (passwordInput) passwordInput.required = true;
+            if (phoneInput) phoneInput.required = false;
             if (usernameLabel) usernameLabel.textContent = 'E-mail';
             if (usernameInput) {
                 usernameInput.placeholder = 'Seu e-mail';
@@ -87,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 passwordInput.required = false;
                 passwordInput.value = '';
             }
+            if (phoneInput) phoneInput.required = true;
             if (usernameLabel) usernameLabel.textContent = 'Nome';
             if (usernameInput) {
                 usernameInput.placeholder = 'Digite seu nome';
@@ -117,6 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 showError('Por favor, preencha o seu nome (mínimo de 2 caracteres).');
                 return;
             }
+            if (!phoneVal) {
+                showError('Por favor, preencha o seu número de WhatsApp.');
+                return;
+            }
 
             try {
                 // Limpa qualquer sessão de administrador anterior
@@ -124,27 +130,37 @@ document.addEventListener('DOMContentLoaded', () => {
                     clearStoredUser();
                 } catch (e) {}
 
+                let profileId = null;
+                let finalUsername = username;
+
                 // Registra o usuário no Supabase se o cliente estiver disponível
                 const client = typeof getSupabaseClient === 'function' ? getSupabaseClient() : null;
                 if (client) {
                     // Garante que o Supabase Auth anterior esteja limpo
                     await client.auth.signOut().catch(() => {});
-                    btnText.textContent = 'Registrando acesso...';
-                    const { error } = await client.rpc('register_player_access', {
+                    btnText.textContent = 'Validando acesso...';
+                    const { data, error } = await client.rpc('register_player_access', {
                         p_username: username,
-                        p_phone: phoneVal || null,
+                        p_phone: phoneVal,
                         p_match_id: null,
                         p_action: 'user_access',
                         p_user_agent: navigator.userAgent
                     });
                     if (error) {
-                        console.warn('Erro ao registrar perfil de acesso no servidor:', error);
+                        console.error('Erro ao registrar perfil de acesso no servidor:', error);
+                        showError(error.message || 'Erro ao validar acesso do jogador.');
+                        return;
+                    }
+                    if (data) {
+                        profileId = data.profile_id;
+                        finalUsername = data.username || username;
                     }
                 }
 
                 sessionStorage.setItem('player_session', JSON.stringify({
-                    nome: username,
-                    telefone: phoneVal || '',
+                    id: profileId,
+                    nome: finalUsername,
+                    telefone: phoneVal,
                     tipo: 'jogador'
                 }));
 
