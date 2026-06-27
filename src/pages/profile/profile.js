@@ -322,11 +322,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         const paymentRate = calculatePaymentRate(playerMatches);
 
         const stats = [
-            { icon: '<i class="fas fa-trophy"></i>', iconClass: 'star', title: 'Craque da Partida', value: `${bestPlayerWins} ${bestPlayerWins === 1 ? 'vez' : 'vezes'}` },
-            { icon: '<i class="fas fa-futbol"></i>', iconClass: 'goal', title: 'Gols Marcados', value: `${totalGols} ${totalGols === 1 ? 'gol' : 'gols'}` },
-            { icon: '<i class="fas fa-award text-danger"></i>', iconClass: 'wood', title: 'Perna de Pau', value: `${worstPlayerWins} ${worstPlayerWins === 1 ? 'vez' : 'vezes'}` },
-            { icon: '<i class="fas fa-file-signature"></i>', iconClass: 'check', title: 'Pagamentos em Dia', value: `${paymentRate}%` },
-            { icon: '<i class="fas fa-running"></i>', iconClass: 'matches', title: 'Partidas Jogadas', value: `${playerMatches.length}` }
+            { icon: '<i class="fas fa-trophy"></i>', iconClass: 'star', title: 'Craque da Partida', value: `${bestPlayerWins} ${bestPlayerWins === 1 ? 'vez' : 'vezes'}`, desc: 'Eleito o melhor em campo' },
+            { icon: '<i class="fas fa-futbol"></i>', iconClass: 'goal', title: 'Gols Marcados', value: `${totalGols} ${totalGols === 1 ? 'gol' : 'gols'}`, desc: 'Registrados no ao vivo' },
+            { icon: '<i class="fas fa-award text-danger"></i>', iconClass: 'wood', title: 'Perna de Pau', value: `${worstPlayerWins} ${worstPlayerWins === 1 ? 'vez' : 'vezes'}`, desc: 'Votos de pior da rodada' },
+            { icon: '<i class="fas fa-file-signature"></i>', iconClass: 'check', title: 'Pagamentos em Dia', value: `${paymentRate}%`, desc: 'Assiduidade financeira' },
+            { icon: '<i class="fas fa-running"></i>', iconClass: 'matches', title: 'Partidas Jogadas', value: `${playerMatches.length}`, desc: 'Presenças confirmadas' }
         ];
 
         if (persistedStats) {
@@ -334,20 +334,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                 ? 'Desconto Ativo'
                 : persistedStats.status === 'PENALTY'
                 ? 'Penalidade Aplicada'
-                : 'Status Financeiro';
+                : 'Situação Financeira';
 
             stats.push({
                 icon: '<i class="fas fa-wallet"></i>',
                 iconClass: 'money',
                 title: financialTitle,
-                value: `R$ ${formatCurrencyBRL(Number(persistedStats.value || 0))}`
+                value: `R$ ${formatCurrencyBRL(Number(persistedStats.value || 0))}`,
+                desc: 'Mensalidade atual'
             });
         } else {
             stats.push({
                 icon: '<i class="fas fa-wallet"></i>',
                 iconClass: 'money',
                 title: 'Situação Financeira',
-                value: 'Sem pendências'
+                value: 'Sem pendências',
+                desc: 'Tudo regularizado'
             });
         }
 
@@ -355,10 +357,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             const card = document.createElement('div');
             card.className = 'stat-card';
             card.innerHTML = `
-                <div class="stat-icon ${stat.iconClass}">${stat.icon}</div>
-                <div class="stat-text">
-                    <p class="stat-title">${stat.title}</p>
+                <div class="stat-card-header">
+                    <span class="stat-title">${stat.title}</span>
+                    <span class="stat-mini-icon ${stat.iconClass}">${stat.icon}</span>
+                </div>
+                <div class="stat-card-body">
                     <p class="stat-value">${stat.value}</p>
+                    <p class="stat-desc">${stat.desc}</p>
                 </div>
             `;
             statsContainer.appendChild(card);
@@ -458,7 +463,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function renderAchievementsScreen(playerMatches, totalGols) {
-        if (!achievementsContainer || typeof FMAchievements === 'undefined') return;
+        if (!achievementsContainer || !window.FMAchievements) return;
 
         const bestPlayerWins = countTrophies(playerMatches, 'best_player');
         const paymentRate = calculatePaymentRate(playerMatches);
@@ -470,8 +475,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             paymentRate
         };
 
-        const achievements = FMAchievements.calculateAchievements(data);
-        FMAchievements.renderAchievements(achievements, achievementsContainer);
+        const achievements = window.FMAchievements.calculateAchievements(data);
+        window.FMAchievements.renderAchievements(achievements, achievementsContainer);
     }
 
     function renderHistory(matches) {

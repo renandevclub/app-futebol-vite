@@ -67,34 +67,46 @@
 
     container.innerHTML = '';
 
+    const unlockedCount = achievements.filter(a => a.isUnlocked).length;
+    const percent = Math.round((unlockedCount / achievements.length) * 100);
+
+    // Barra de progresso premium
+    const progressContainer = document.createElement('div');
+    progressContainer.className = 'achievements-progress-container';
+    progressContainer.innerHTML = `
+      <div class="achievements-progress-info">
+        <span class="achievements-progress-text">${unlockedCount} de ${achievements.length} conquistas liberadas</span>
+        <span class="achievements-progress-percent">${percent}%</span>
+      </div>
+      <div class="achievements-progress-bar-bg">
+        <div class="achievements-progress-bar-fill" style="width: ${percent}%"></div>
+      </div>
+    `;
+    container.appendChild(progressContainer);
+
     const grid = document.createElement('div');
     grid.className = 'achievements-grid';
 
     achievements.forEach((ach, i) => {
       const card = document.createElement('div');
       card.className = `achievement-card ${ach.isUnlocked ? 'unlocked' : 'locked'}`;
-      card.setAttribute('data-animate', '');
-      card.style.animationDelay = `${i * 0.05}s`;
+      card.style.animation = `achievementFadeIn 0.4s ease ${i * 0.06}s both`;
 
       card.innerHTML = `
-        <div class="achievement-icon">${ach.isUnlocked ? ach.icon : '🔒'}</div>
-        <div class="achievement-info">
+        <div class="achievement-icon-wrapper ${ach.isUnlocked ? 'is-unlocked' : 'is-locked'}">
+          <span class="achievement-emoji">${ach.icon}</span>
+          ${ach.isUnlocked ? '' : '<span class="achievement-lock-badge"><i class="fas fa-lock"></i></span>'}
+        </div>
+        <div class="achievement-content">
           <p class="achievement-title">${ach.title}</p>
           <p class="achievement-desc">${ach.desc}</p>
         </div>
-        ${ach.isUnlocked ? '<span class="achievement-badge">✓</span>' : ''}
       `;
 
       grid.appendChild(card);
     });
 
     container.appendChild(grid);
-
-    const unlockedCount = achievements.filter(a => a.isUnlocked).length;
-    const summary = document.createElement('div');
-    summary.className = 'achievements-summary';
-    summary.textContent = `${unlockedCount}/${achievements.length} conquistas`;
-    container.insertBefore(summary, container.firstChild);
   }
 
   window.FMAchievements = {
@@ -104,76 +116,7 @@
   };
 })();
 
+// A estilização agora está centralizada no profile.css para melhor performance e organização de design
 document.addEventListener('DOMContentLoaded', () => {
-  const style = document.createElement('style');
-  style.textContent = `
-    .achievements-summary {
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      font-weight: 600;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .achievements-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 10px;
-    }
-    .achievement-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.2s var(--ease-out-expo);
-    }
-    .achievement-card.unlocked {
-      border-color: rgba(16, 185, 129, 0.25);
-      background: rgba(16, 185, 129, 0.06);
-    }
-    .achievement-card.locked {
-      opacity: 0.5;
-      filter: grayscale(0.6);
-    }
-    .achievement-icon {
-      font-size: 1.6rem;
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: var(--radius-sm);
-      background: rgba(255,255,255,0.05);
-      flex-shrink: 0;
-    }
-    .achievement-info { flex: 1; min-width: 0; }
-    .achievement-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin: 0;
-    }
-    .achievement-desc {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin: 2px 0 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .achievement-badge {
-      font-size: 1rem;
-      color: var(--accent-green);
-      flex-shrink: 0;
-    }
-    @media (max-width: 480px) {
-      .achievements-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-  `;
-  document.head.appendChild(style);
+  console.log('[Achievements] Carregado. Estilos centralizados no profile.css.');
 });
